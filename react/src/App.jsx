@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import DecryptedText from './components/DecryptedText.jsx'
-import ElectricBorder from './components/ElectricBorder.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
+import Folder from './components/Folder.jsx'
+import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.png'
 import './index.css'
 
@@ -262,58 +263,76 @@ function App() {
         </div>
       </section>
 
-      <section id="skills" className="section fade-in-section">
+      <section id="skills" className="section fade-in-section" style={{ paddingTop: 40, paddingBottom: 40 }}>
         <div className="container">
           <h2 className="section-title">Technical Arsenal</h2>
-          <div className="skills-grid">
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16}}>
-              <div className="skill-category">
-                <h3><i className="fab fa-python"></i> Python Ecosystem</h3>
-                <div className="skill-item"><span>NumPy & PyTorch</span><span>Advanced</span></div>
-                <div className="skill-item"><span>Django & FastAPI</span><span>Advanced</span></div>
-                <div className="skill-item"><span>AI/ML Development</span><span>Advanced</span></div>
-              </div>
-            </ElectricBorder>
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16 }}>
-              <div className="skill-category">
-                <h3><i className="fab fa-js-square"></i> Web Technologies</h3>
-                <div className="skill-item"><span>React & React Native</span><span>Expert</span></div>
-                <div className="skill-item"><span>TypeScript/JavaScript</span><span>Advanced</span></div>
-                <div className="skill-item"><span>50+ JS Libraries</span><span>Proficient</span></div>
-              </div>
-            </ElectricBorder>
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16 }}>
-              <div className="skill-category">
-                <h3><i className="fas fa-microchip"></i> Systems & Low-Level</h3>
-                <div className="skill-item"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>
-                <div className="skill-item"><span>Rust (Rocket, Burn)</span><span>Intermediate</span></div>
-                <div className="skill-item"><span>Assembly Language</span><span>Basic</span></div>
-              </div>
-            </ElectricBorder>
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16 }}>
-              <div className="skill-category">
-                <h3><i className="fab fa-linux"></i> Linux & DevOps</h3>
-                <div className="skill-item"><span>Arch, Gentoo, Kali</span><span>Expert</span></div>
-                <div className="skill-item"><span>Kernel Knowledge</span><span>Advanced</span></div>
-                <div className="skill-item"><span>Microservices</span><span>Advanced</span></div>
-              </div>
-            </ElectricBorder>
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16 }}>
-              <div className="skill-category">
-                <h3><i className="fas fa-robot"></i> AI & Neural Networks</h3>
-                <div className="skill-item"><span>Neural Architecture Design</span><span>Expert</span></div>
-                <div className="skill-item"><span>LLMs & AI Engines</span><span>Advanced</span></div>
-                <div className="skill-item"><span>Softmax, ReLU, etc.</span><span>Expert</span></div>
-              </div>
-            </ElectricBorder>
-            <ElectricBorder color="#7df9ff" speed={1} chaos={0.5} thickness={1} style={{ borderRadius: 16 }}>
-              <div className="skill-category">
-                <h3><i className="fas fa-shield-alt"></i> Security & Crypto</h3>
-                <div className="skill-item"><span>Cybersecurity & AppSec</span><span>Intermediate</span></div>
-                <div className="skill-item"><span>Cryptography</span><span>Advanced</span></div>
-                <div className="skill-item"><span>SSH Tunneling</span><span>Advanced</span></div>
-              </div>
-            </ElectricBorder>
+          <div className="folders-grid">
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="Python"
+              iconClass="fab fa-python"
+              items={[
+                <div className="skill-item" key="p1"><span>NumPy & PyTorch</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p3"><span>AI/ML Development</span><span>Advanced</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="Web"
+              iconClass="fab fa-js-square"
+              items={[
+                <div className="skill-item" key="w1"><span>React & React Native</span><span>Expert</span></div>,
+                <div className="skill-item" key="w2"><span>TS/JS</span><span>Advanced</span></div>,
+                <div className="skill-item" key="w3"><span>50+ JS Libraries</span><span>Proficient</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="C,Rust,ASM"
+              iconClass="fas fa-microchip"
+              items={[
+                <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
+                <div className="skill-item" key="s2"><span>Rust (Rocket, Burn)</span><span>Intermediate</span></div>,
+                <div className="skill-item" key="s3"><span>Assembly Language</span><span>Basic</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="Linux"
+              iconClass="fab fa-linux"
+              items={[
+                <div className="skill-item" key="l1"><span>Arch, Gentoo, Kali</span><span>Expert</span></div>,
+                <div className="skill-item" key="l2"><span>Kernel Knowledge</span><span>Advanced</span></div>,
+                <div className="skill-item" key="l3"><span>Microservices</span><span>Advanced</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="AI & Neural Networks"
+              iconClass="fas fa-robot"
+              items={[
+                <div className="skill-item" key="a1"><span>Neural Architecture Design</span><span>Expert</span></div>,
+                <div className="skill-item" key="a2"><span>LLMs & AI Engines</span><span>Advanced</span></div>,
+                <div className="skill-item" key="a3"><span>Softmax, ReLU, etc.</span><span>Expert</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#7c3aed"
+              label="Security & Crypto"
+              iconClass="fas fa-shield-alt"
+              items={[
+                <div className="skill-item" key="c1"><span>Cybersecurity & AppSec</span><span>Intermediate</span></div>,
+                <div className="skill-item" key="c2"><span>Cryptography</span><span>Advanced</span></div>,
+                <div className="skill-item" key="c3"><span>SSH Tunneling</span><span>Advanced</span></div>,
+              ]}
+            />
           </div>
         </div>
       </section>
@@ -394,7 +413,9 @@ function App() {
 
             <a href="https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN" target="_blank" rel="noopener noreferrer">
               <div className="contact-item">
-                <div className="contact-icon"><i className="fas fa-signal"></i></div>
+                <div className="contact-icon signal-icon-wrap">
+                  <img src={signalLogo} alt="Signal" className="signal-icon" />
+                </div>
                 <h3>Signal</h3>
                 <p>qwantum.01</p>
               </div>

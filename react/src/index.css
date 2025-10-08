@@ -286,17 +286,34 @@ nav.scrolled {
 }
 
 .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 50px;
+    display: none;
 }
+/* New folders grid replacing heavy skill cards */
+.folders-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 120px 40px;
+    margin: 140px auto 140px;
+    align-items: start;
+    justify-items: center;
+    grid-auto-rows: minmax(220px, auto);
+    max-width: 900px;
+}
+
+@media (max-width: 1024px) {
+  .folders-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .folders-grid { grid-template-columns: 1fr; }
+}
+
 
 .skill-category {
     background: var(--bg-secondary);
     border-radius: 20px;
     padding: 30px;
-    border: none; /* ElectricBorder provides the border */
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.3s ease;
     min-height: 220px; /* standardize height */
     height: 100%;
@@ -305,7 +322,7 @@ nav.scrolled {
 }
 
 /* Remove hover effects; keep only electric border */
-.skill-category:hover { transform: none; box-shadow: none; }
+.skill-category:hover { transform: none; box-shadow: none; border-color: var(--primary); }
 
 
 
@@ -443,6 +460,15 @@ nav.scrolled {
     justify-content: center;
     font-size: 24px;
     color: white;
+}
+
+/* Proper Signal brand SVG sizing inside the badge */
+.signal-icon-wrap {
+  background: var(--gradient);
+}
+.signal-icon {
+  width: 28px;
+  height: 28px;
 }
 
 .footer {

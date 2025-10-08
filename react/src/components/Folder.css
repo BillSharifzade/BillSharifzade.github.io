@@ -1,0 +1,210 @@
+:root {
+  --folder-color: #7c3aed; /* purple-600 */
+  --folder-back-color: #6d28d9; /* purple-700 */
+  --paper-1: #e6e6e6;
+  --paper-2: #f2f2f2;
+  --paper-3: #ffffff;
+}
+
+.folder {
+  transition: all 0.2s ease-in;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+/* Raise entire folder above neighbors while interacting */
+.folder:hover,
+.folder.open { z-index: 20; }
+
+.folder:not(.folder--click):hover {
+  transform: translateY(-8px);
+}
+
+.folder:not(.folder--click):hover .paper {
+  transform: translate(-50%, 0%);
+}
+
+.folder:not(.folder--click):hover .folder__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.folder:not(.folder--click):hover .right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.folder.open {
+  transform: translateY(-8px);
+}
+
+.folder.open .paper:nth-child(1) {
+  transform: translate(-120%, -70%) rotateZ(-15deg);
+  z-index: 5;
+}
+
+.folder.open .paper:nth-child(1):hover {
+  transform: translate(-120%, -70%) rotateZ(-15deg) scale(1.1);
+}
+
+.folder.open .paper:nth-child(2) {
+  transform: translate(10%, -70%) rotateZ(15deg);
+  height: 80%;
+  z-index: 5;
+}
+
+.folder.open .paper:nth-child(2):hover {
+  transform: translate(10%, -70%) rotateZ(15deg) scale(1.1);
+}
+
+.folder.open .paper:nth-child(3) {
+  transform: translate(-50%, -100%) rotateZ(5deg);
+  height: 80%;
+  z-index: 5;
+}
+
+.folder.open .paper:nth-child(3):hover {
+  transform: translate(-50%, -100%) rotateZ(5deg) scale(1.1);
+}
+
+.folder.open .folder__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.folder.open .right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.folder__back {
+  position: relative;
+  width: 140px;
+  height: 110px;
+  background: var(--folder-back-color);
+  border-radius: 0px 10px 10px 10px;
+  overflow: visible;
+}
+
+.folder__back::after {
+  position: absolute;
+  z-index: 0;
+  bottom: 98%;
+  left: 0;
+  content: '';
+  width: 42px;
+  height: 14px;
+  background: var(--folder-back-color);
+  border-radius: 5px 5px 0 0;
+}
+
+.paper {
+  position: absolute;
+  z-index: 2;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(calc(-50% + var(--magnet-x, 0px)), calc(10% + var(--magnet-y, 0px)));
+  width: 86%;
+  height: 90%;
+  background: var(--paper-1);
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  align-items: stretch;
+  padding: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+.paper:nth-child(2) {
+  background: var(--paper-2);
+  width: 92%;
+  height: 82%;
+}
+
+.paper:nth-child(3) {
+  background: var(--paper-3);
+  width: 98%;
+  height: 74%;
+}
+
+/* Hide paper contents when folder is closed */
+.folder:not(.open) .paper .skill-item { display: none; }
+
+/* Tweak skill item appearance inside papers */
+.folder .paper .skill-item {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #111;
+  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.folder .paper .skill-item span:first-child { font-weight: 700; line-height: 1.1; font-size: 13px; }
+.folder .paper .skill-item span:last-child { opacity: 0.75; font-size: 11px; line-height: 1.1; }
+
+/* remove previous flex tricks for truncation; allow wrapping to two lines */
+
+/* Hover highlight for closed state */
+.folder:not(.open) .paper:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25);
+  filter: brightness(1.03);
+}
+
+/* Hover lift and highlight when open */
+.folder.open .paper:hover { box-shadow: 0 18px 36px rgba(0,0,0,0.35); filter: brightness(1.02); z-index: 50; }
+.folder.open .paper:nth-child(1):hover { transform: translate(-120%, -70%) rotateZ(-15deg) scale(1.1); }
+.folder.open .paper:nth-child(2):hover { transform: translate(10%, -70%) rotateZ(15deg) scale(1.1); }
+.folder.open .paper:nth-child(3):hover { transform: translate(-50%, -100%) rotateZ(5deg) scale(1.1); }
+
+/* Ensure hovered paper sits above others */
+.folder .paper:hover { z-index: 10; }
+
+.folder__front {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background: var(--folder-color);
+  border-radius: 5px 10px 10px 10px;
+  transform-origin: bottom;
+  transition: all 0.3s ease-in-out;
+}
+
+.folder__front.right {
+  transform-origin: bottom;
+}
+
+.folder__label {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.folder__label i {
+  font-size: 16px;
+}
+
+
