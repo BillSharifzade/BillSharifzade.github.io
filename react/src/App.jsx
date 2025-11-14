@@ -403,14 +403,6 @@ function App() {
               <p>+992985447072</p>
             </div>
 
-            <a href="https://t.me/qwantuw" target="_blank" rel="noopener noreferrer">
-              <div className="contact-item">
-                <div className="contact-icon"><i className="fab fa-telegram"></i></div>
-                <h3>Telegram</h3>
-                <p>@qwantuw</p>
-              </div>
-            </a>
-
             <a href="https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN" target="_blank" rel="noopener noreferrer">
               <div className="contact-item">
                 <div className="contact-icon signal-icon-wrap">
