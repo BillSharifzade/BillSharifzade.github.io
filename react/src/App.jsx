@@ -343,10 +343,27 @@ function App() {
           <div className="experience-timeline">
             <div className="experience-item">
               <div className="experience-content">
+                <div className="experience-date">October 2025 - Present</div>
+                <div className="experience-title">Full-Stack Software Engineer</div>
+                <div className="experience-company">Koinoti Nav</div>
+                <p>Creating performant, secure, optimized, and scalable software with Rust and NextJS. Planning enormous, high-load architectures for modern systems.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">HR automation:</span> Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows.</li>
+                  <li><span className="achievement-label">Secure platforms:</span> Engineered a closed, security-first Linux distribution with a custom kernel tailored for enterprise partners.</li>
+                  <li><span className="achievement-label">Team culture:</span> Thrived within a highly professional, collaborative engineering team focused on excellence and knowledge sharing.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="experience-item">
+              <div className="experience-content">
                 <div className="experience-date">June 2025 - Present</div>
                 <div className="experience-title">Software Engineer</div>
                 <div className="experience-company">ZOOD Organization</div>
                 <p>Created cross-platform mobile delivery app with 3-sided architecture. Optimized performance and implemented scalable solutions.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">High-load design:</span> Delivered a secure, high-performance architecture that improved delivery speeds by over 70% versus the prior system.</li>
+                  <li><span className="achievement-label">Realtime stack:</span> Implemented GPS tracking and real-time update services with first-class native support on iOS and Android.</li>
+                </ul>
               </div>
             </div>
             <div className="experience-item">
@@ -355,6 +372,11 @@ function App() {
                 <div className="experience-title">Technical Instructor</div>
                 <div className="experience-company">TechnoHub</div>
                 <p>Teaching programming concepts, training corporate teams, and developing software projects for enterprise clients.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Curriculum leadership:</span> Mentored cohorts across Python, JavaScript, C, Ruby, and Assembly for beginner through advanced levels.</li>
+                  <li><span className="achievement-label">Enterprise enablement:</span> Trained 55 Group, TGEM, Avesto, Koinoti Nav, and others to embed AI tooling into daily operations.</li>
+                  <li><span className="achievement-label">Community impact:</span> Delivered numerous presentations and events covering cybersecurity, AI, engineering, and IT essentials.</li>
+                </ul>
               </div>
             </div>
             <div className="experience-item">
@@ -363,6 +385,10 @@ function App() {
                 <div className="experience-title">AI Specialist</div>
                 <div className="experience-company">TAG Marketeer Agency</div>
                 <p>Implemented AI solutions and automated marketing workflows, optimizing business processes through intelligent automation.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Data intelligence:</span> Built an AI product that analyzes big data and surfaces statistical, analytical, and predictive dashboards.</li>
+                  <li><span className="achievement-label">Throughput gains:</span> Reduced workflows that previously took months down to a single day with targeted automation.</li>
+                </ul>
               </div>
             </div>
             <div className="experience-item">
@@ -371,6 +397,10 @@ function App() {
                 <div className="experience-title">Founder</div>
                 <div className="experience-company">Founders School Bootcamp</div>
                 <p>Developed startup concept, networked with industry experts, and gained entrepreneurial experience in tech innovation.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Resilience:</span> Although the product never launched, transformed the journey into deep lessons across social engineering, marketing, and business management.</li>
+                  <li><span className="achievement-label">Leadership growth:</span> Strengthened leadership, negotiation, and networking skills while collaborating with influential mentors.</li>
+                </ul>
               </div>
             </div>
             <div className="experience-item">
@@ -379,6 +409,10 @@ function App() {
                 <div className="experience-title">Crypto Analyst</div>
                 <div className="experience-company">International Transactions</div>
                 <p>Processed and analyzed cryptocurrency transactions between various countries and Tajikistan, identifying financial patterns.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Blockchain insight:</span> Developed a nuanced understanding of blockchain architecture and trading ecosystems.</li>
+                  <li><span className="achievement-label">Pattern discovery:</span> Identified actionable trading patterns to guide cross-border transaction strategies.</li>
+                </ul>
               </div>
             </div>
             <div className="experience-item">
@@ -387,6 +421,10 @@ function App() {
                 <div className="experience-title">Financial Automation Developer</div>
                 <div className="experience-company">Micro-Credit Organization</div>
                 <p>Developed financial workflow automation systems, maintained existing infrastructure, and optimized operational processes.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Scoring models:</span> Authored 15+ mathematical formulas powering a robust, secure microcredit evaluation engine.</li>
+                  <li><span className="achievement-label">Regulatory reporting:</span> Delivered automated reporting and analytics that satisfy stringent audit requirements.</li>
+                </ul>
               </div>
             </div>
           </div>

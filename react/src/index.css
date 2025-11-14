@@ -133,7 +133,7 @@ nav {
     top: 0;
     width: 100%;
     padding: 20px 50px;
-    background: rgba(10, 10, 10, 0.7);
+    background: rgba(10, 10, 10, 0.3);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;
@@ -141,9 +141,9 @@ nav {
 }
 
 nav.scrolled {
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(30px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(10, 10, 10, 0.5);
+    backdrop-filter: blur(26px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .nav-content {
@@ -396,6 +396,33 @@ nav.scrolled {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     transition: all 0.3s ease;
+}
+
+.experience-achievements {
+    margin-top: 24px;
+    padding-left: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+}
+
+.experience-achievements li {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.achievement-label {
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+    display: inline-block;
 }
 
 .experience-content:hover {
