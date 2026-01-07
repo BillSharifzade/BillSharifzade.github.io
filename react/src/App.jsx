@@ -4,6 +4,13 @@ import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.png'
+import BounceCards from './components/BounceCards.jsx'
+import rustLogo from './assets/rust-logo-512x512.png'
+import tsxLogo from './assets/tsx.png'
+import nextLogo from './assets/nextjs-original.png'
+import dockerLogo from './assets/docker.jpg'
+import linuxLogo from './assets/linuxxx.png'
+import VariableProximity from './components/VariableProximity.jsx'
 import './index.css'
 
 function App() {
@@ -20,6 +27,7 @@ function App() {
   const heroContentRef = useRef(null)
   const hamburgerRef = useRef(null)
   const mobileNavRef = useRef(null)
+  const navContainerRef = useRef(null)
 
   // Typing effect (single-timer logic)
   useEffect(() => {
@@ -127,9 +135,9 @@ function App() {
   useEffect(() => {
     const expObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.style.animationPlayState = 'running'
+        if (entry.isIntersecting) entry.target.classList.add('animate')
       })
-    }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' })
+    }, { threshold: 0.01, rootMargin: '0px' })
     document.querySelectorAll('.experience-item').forEach(item => expObserver.observe(item))
 
     const sectionObserver = new IntersectionObserver((entries, observer) => {
@@ -139,13 +147,12 @@ function App() {
           observer.unobserve(entry.target)
         }
       })
-    }, { root: null, threshold: 0.15, rootMargin: '0px' })
+    }, { root: null, threshold: 0.05, rootMargin: '0px' })
     document.querySelectorAll('.fade-in-section').forEach(section => sectionObserver.observe(section))
 
     return () => { expObserver.disconnect(); sectionObserver.disconnect() }
   }, [])
 
-  // Smooth anchor scroll
   useEffect(() => {
     const links = document.querySelectorAll('.nav-link, .cta-button')
     const onClick = (e) => {
@@ -190,9 +197,18 @@ function App() {
       <div className="floating-particles" id="particles"></div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
-      <nav>
+      <nav ref={navContainerRef}>
         <div className="nav-content">
-          <div className="logo">qwantum</div>
+          <div className="logo">
+            <VariableProximity
+              label={'qwantum'}
+              fromFontVariationSettings="'wght' 400, 'opsz' 9"
+              toFontVariationSettings="'wght' 1000, 'opsz' 40"
+              containerRef={navContainerRef}
+              radius={100}
+              falloff='linear'
+            />
+          </div>
           <div className="nav-links">
             <a href="#home" className="nav-link">Home</a>
             <a href="#about" className="nav-link">About</a>
@@ -215,7 +231,7 @@ function App() {
 
       <section id="home" className="hero">
         <div className="hero-content" ref={heroContentRef}>
-          
+
           <div style={{ maxWidth: 420, margin: '20px auto 30px' }}>
             <ProfileCard
               name="Sharifzoda Bilol"
@@ -333,6 +349,26 @@ function App() {
                 <div className="skill-item" key="c3"><span>SSH Tunneling</span><span>Advanced</span></div>,
               ]}
             />
+          </div>
+
+          <div className="current-stack-wrapper" style={{ marginTop: '40px', textAlign: 'center' }}>
+            <h2 className="section-title" style={{ marginBottom: '40px' }}>Current Stack</h2>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '60px' }}>
+              <BounceCards
+                className="custom-bounceCards"
+                images={[rustLogo, tsxLogo, nextLogo, dockerLogo, linuxLogo]}
+                containerWidth={'min(500px, 95vw)'}
+                containerHeight={'min(500px, 400px)'}
+                enableHover={true}
+                transformStyles={[
+                  "rotate(5deg) translate(-150px)",
+                  "rotate(0deg) translate(-70px)",
+                  "rotate(-5deg)",
+                  "rotate(5deg) translate(70px)",
+                  "rotate(-5deg) translate(150px)"
+                ]}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -457,18 +493,18 @@ function App() {
                 <h3>GitHub</h3>
                 <p>BillSharifzade</p>
               </div>
-        </a>
-      </div>
+            </a>
+          </div>
         </div>
       </section>
 
       <footer className="footer">
         <div className="container">
-          <p>&copy; 2025 Sharifzoda Bilol. Crafted with cutting-edge web technologies.</p>
+          <p>&copy; 2026 Sharifzoda Bilol. Crafted with cutting-edge web technologies.</p>
           <p style={{ marginTop: '10px', color: 'var(--text-secondary)' }}>
             NASA Certified • CISCO Instructor • TechnoHub Certified
-        </p>
-      </div>
+          </p>
+        </div>
       </footer>
     </>
   )
