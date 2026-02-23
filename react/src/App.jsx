@@ -285,7 +285,7 @@ function App() {
           <div className="folders-grid">
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="Python"
               iconClass="fab fa-python"
               items={[
@@ -296,7 +296,7 @@ function App() {
             />
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="Web"
               iconClass="fab fa-js-square"
               items={[
@@ -307,7 +307,7 @@ function App() {
             />
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="C,Rust,ASM"
               iconClass="fas fa-microchip"
               items={[
@@ -318,7 +318,7 @@ function App() {
             />
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="Linux"
               iconClass="fab fa-linux"
               items={[
@@ -329,7 +329,7 @@ function App() {
             />
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="AI & Neural Networks"
               iconClass="fas fa-robot"
               items={[
@@ -340,7 +340,7 @@ function App() {
             />
             <Folder
               size={1.35}
-              color="#9a8ec8"
+              color="#7b6db3"
               label="Security & Crypto"
               iconClass="fas fa-shield-alt"
               items={[

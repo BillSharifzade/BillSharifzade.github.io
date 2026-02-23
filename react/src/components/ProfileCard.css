@@ -13,12 +13,12 @@
   --icon: none;
   --behind-gradient: none;
   --inner-gradient: none;
-  --sunpillar-1: hsl(210, 45%, 65%);
-  --sunpillar-2: hsl(35, 55%, 60%);
-  --sunpillar-3: hsl(160, 35%, 55%);
-  --sunpillar-4: hsl(200, 50%, 65%);
-  --sunpillar-5: hsl(250, 40%, 65%);
-  --sunpillar-6: hsl(30, 50%, 60%);
+  --sunpillar-1: hsl(210, 55%, 58%);
+  --sunpillar-2: hsl(35, 65%, 55%);
+  --sunpillar-3: hsl(160, 45%, 48%);
+  --sunpillar-4: hsl(195, 60%, 55%);
+  --sunpillar-5: hsl(250, 50%, 58%);
+  --sunpillar-6: hsl(28, 60%, 55%);
   --sunpillar-clr-1: var(--sunpillar-1);
   --sunpillar-clr-2: var(--sunpillar-2);
   --sunpillar-clr-3: var(--sunpillar-3);
@@ -45,8 +45,8 @@
   border-radius: 999px;
   pointer-events: none;
   background: radial-gradient(closest-side at 50% 0%,
-      rgba(126, 200, 227, 0.2),
-      rgba(126, 200, 227, 0) 72%);
+      rgba(74, 175, 207, 0.25),
+      rgba(74, 175, 207, 0) 72%);
   filter: blur(24px) saturate(1.05) contrast(1) opacity(0.65);
   transform: translate3d(0, 0, 0.1px);
 }
@@ -82,13 +82,13 @@
     0 0;
   background-image:
     radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),
-      hsla(250, 30%, 80%, var(--card-opacity)) 4%,
-      hsla(250, 20%, 70%, calc(var(--card-opacity) * 0.75)) 10%,
-      hsla(250, 10%, 60%, calc(var(--card-opacity) * 0.5)) 50%,
+      hsla(250, 35%, 75%, var(--card-opacity)) 4%,
+      hsla(250, 25%, 65%, calc(var(--card-opacity) * 0.75)) 10%,
+      hsla(250, 15%, 55%, calc(var(--card-opacity) * 0.5)) 50%,
       hsla(250, 0%, 50%, 0) 100%),
-    radial-gradient(35% 52% at 55% 20%, #7ec8e3c4 0%, #073aff00 100%),
-    radial-gradient(100% 100% at 50% 50%, #9a8ec8dd 1%, #073aff00 76%),
-    conic-gradient(from 124deg at 50% 50%, #9a8ec8ee 0%, #7ec8e3cc 40%, #7ec8e3cc 60%, #9a8ec8ee 100%);
+    radial-gradient(35% 52% at 55% 20%, #4aafcfc4 0%, #073aff00 100%),
+    radial-gradient(100% 100% at 50% 50%, #7b6db3dd 1%, #073aff00 76%),
+    conic-gradient(from 124deg at 50% 50%, #7b6db3ee 0%, #4aafcfcc 40%, #4aafcfcc 60%, #7b6db3ee 100%);
   overflow: hidden;
 }
 
@@ -398,11 +398,7 @@
   margin: 0;
   font-size: min(5svh, 3em);
   margin: 0;
-  background-image: linear-gradient(to bottom, #e1e4ea, #9a8ec8);
-  background-size: 1em 1.5em;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: #e1e4ea;
 }
 
 .pc-details p {
@@ -413,11 +409,7 @@
   font-size: 16px;
   margin: 0 auto;
   width: min-content;
-  background-image: linear-gradient(to bottom, #e1e4ea, #7b6fad);
-  background-size: 1em 1.5em;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: #8a8fa3;
 }
 
 @keyframes glow-bg {
