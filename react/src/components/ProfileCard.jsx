@@ -3,9 +3,9 @@ import archPattern from '../assets/arch.png';
 import './ProfileCard.css';
 
 const DEFAULT_BEHIND_GRADIENT =
-  'radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(266,100%,90%,calc(var(--card-opacity)*0.35)) 6%,hsla(266,50%,80%,calc(var(--card-opacity)*0.25)) 14%,hsla(266,25%,70%,calc(var(--card-opacity)*0.15)) 55%,hsla(266,0%,60%,0) 100%),radial-gradient(35% 52% at 55% 20%,#00ffaae0 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#00c1ffcc 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#c137ffcc 0%,#07c6ffcc 40%,#07c6ffcc 60%,#c137ffcc 100%)';
+  'radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(250,30%,80%,calc(var(--card-opacity)*0.35)) 6%,hsla(250,20%,70%,calc(var(--card-opacity)*0.25)) 14%,hsla(250,10%,60%,calc(var(--card-opacity)*0.15)) 55%,hsla(250,0%,50%,0) 100%),radial-gradient(35% 52% at 55% 20%,#7ec8e3e0 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#9a8ec8cc 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#9a8ec8cc 0%,#7ec8e3cc 40%,#7ec8e3cc 60%,#9a8ec8cc 100%)';
 
-const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)';
+const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,#2a2438cc 0%,#7ec8e344 100%)';
 
 const ANIMATION_CONFIG = {
   SMOOTH_DURATION: 600,

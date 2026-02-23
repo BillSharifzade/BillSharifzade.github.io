@@ -5,14 +5,14 @@
 }
 
 :root {
-    --primary: #00d9ff;
-    --secondary: #ff3366;
-    --accent: #7c3aed;
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #111111;
-    --text-primary: #ffffff;
-    --text-secondary: #b3b3b3;
-    --gradient: linear-gradient(135deg, #00d9ff 0%, #7c3aed 50%, #ff3366 100%);
+    --primary: #7ec8e3;
+    --secondary: #d4976a;
+    --accent: #9a8ec8;
+    --bg-primary: #0b0d12;
+    --bg-secondary: #141821;
+    --text-primary: #e1e4ea;
+    --text-secondary: #7b8294;
+    --gradient: linear-gradient(135deg, #7ec8e3 0%, #9a8ec8 50%, #d4976a 100%);
 }
 
 body {
@@ -269,12 +269,12 @@ nav.scrolled {
     border-radius: 50px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(126, 200, 227, 0.25);
 }
 
 .cta-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(0, 217, 255, 0.4);
+    box-shadow: 0 20px 40px rgba(126, 200, 227, 0.3);
 }
 
 .section {
@@ -465,7 +465,7 @@ nav.scrolled {
 
 .experience-content:hover {
     border-color: var(--primary);
-    box-shadow: 0 15px 35px rgba(0, 217, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(126, 200, 227, 0.15);
 }
 
 .experience-date {
