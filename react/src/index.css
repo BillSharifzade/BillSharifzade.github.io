@@ -5,13 +5,13 @@
 }
 
 :root {
-    --primary: #4aafcf;
-    --secondary: #c8854d;
-    --accent: #7b6db3;
-    --bg-primary: #0b0d12;
-    --bg-secondary: #141821;
-    --text-primary: #e1e4ea;
-    --text-secondary: #8a8fa3;
+    --primary: #ffffff;
+    --secondary: #413218;
+    --accent: #818cf8;
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --text-primary: #e3d3d3;
+    --text-secondary: #c8b9b9;
 }
 
 body {
@@ -30,112 +30,6 @@ body {
     height: 100%;
     z-index: -1;
     background: var(--bg-primary);
-}
-
-.circuit-board {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    opacity: 0.3;
-}
-
-.circuit-line {
-    position: absolute;
-    background: linear-gradient(90deg, transparent, var(--primary), transparent);
-    animation: pulse 3s infinite ease-in-out;
-}
-
-.circuit-line.horizontal {
-    height: 2px;
-    width: 200px;
-}
-
-.circuit-line.vertical {
-    width: 2px;
-    height: 200px;
-}
-
-.circuit-node {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: var(--primary);
-    border-radius: 50%;
-    box-shadow: 0 0 20px var(--primary);
-    animation: glow 2s infinite ease-in-out alternate;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 0.1;
-        transform: scaleX(0);
-    }
-
-    50% {
-        opacity: 0.8;
-        transform: scaleX(1);
-    }
-}
-
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 10px var(--primary);
-        opacity: 0.5;
-    }
-
-    100% {
-        box-shadow: 0 0 30px var(--primary);
-        opacity: 1;
-    }
-}
-
-.floating-particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-.particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--primary);
-    border-radius: 50%;
-    animation: float 12s infinite ease-in-out;
-    opacity: 0.4;
-    box-shadow: 0 0 10px var(--primary);
-}
-
-.particle:nth-child(2n) {
-    background: var(--secondary);
-    box-shadow: 0 0 10px var(--secondary);
-    animation-duration: 15s;
-}
-
-.particle:nth-child(3n) {
-    background: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
-    animation-duration: 18s;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px) rotate(0deg);
-    }
-
-    50% {
-        transform: translateY(-20px) rotate(180deg);
-    }
 }
 
 nav {
@@ -262,12 +156,12 @@ nav.scrolled {
     border-radius: 50px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(74, 175, 207, 0.25);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
 }
 
 .cta-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(74, 175, 207, 0.3);
+    box-shadow: 0 20px 40px rgba(56, 189, 248, 0.25);
 }
 
 .section {
@@ -455,7 +349,7 @@ nav.scrolled {
 
 .experience-content:hover {
     border-color: var(--primary);
-    box-shadow: 0 15px 35px rgba(74, 175, 207, 0.15);
+    box-shadow: 0 15px 35px rgba(56, 189, 248, 0.1);
 }
 
 .experience-date {
@@ -515,7 +409,7 @@ nav.scrolled {
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: white;
+    color: black;
 }
 
 /* Proper Signal brand SVG sizing inside the badge */
@@ -526,13 +420,15 @@ nav.scrolled {
 .signal-icon {
     width: 28px;
     height: 28px;
+    filter: brightness(0);
 }
 
 .footer {
     text-align: center;
     padding: 50px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: var(--bg-secondary);
+    background: rgba(10, 10, 10, 0.3);
+    backdrop-filter: blur(20px);
 }
 
 @keyframes fadeInUp {

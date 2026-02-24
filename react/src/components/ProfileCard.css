@@ -13,12 +13,12 @@
   --icon: none;
   --behind-gradient: none;
   --inner-gradient: none;
-  --sunpillar-1: hsl(210, 55%, 58%);
-  --sunpillar-2: hsl(35, 65%, 55%);
-  --sunpillar-3: hsl(160, 45%, 48%);
-  --sunpillar-4: hsl(195, 60%, 55%);
-  --sunpillar-5: hsl(250, 50%, 58%);
-  --sunpillar-6: hsl(28, 60%, 55%);
+  --sunpillar-1: hsl(0, 0%, 40%);
+  --sunpillar-2: hsl(0, 0%, 70%);
+  --sunpillar-3: hsl(0, 0%, 20%);
+  --sunpillar-4: hsl(0, 0%, 60%);
+  --sunpillar-5: hsl(0, 0%, 85%);
+  --sunpillar-6: hsl(0, 0%, 30%);
   --sunpillar-clr-1: var(--sunpillar-1);
   --sunpillar-clr-2: var(--sunpillar-2);
   --sunpillar-clr-3: var(--sunpillar-3);
@@ -45,8 +45,8 @@
   border-radius: 999px;
   pointer-events: none;
   background: radial-gradient(closest-side at 50% 0%,
-      rgba(74, 175, 207, 0.25),
-      rgba(74, 175, 207, 0) 72%);
+      rgba(255, 255, 255, 0.08),
+      rgba(0, 0, 0, 0) 72%);
   filter: blur(24px) saturate(1.05) contrast(1) opacity(0.65);
   transform: translate3d(0, 0, 0.1px);
 }
@@ -82,13 +82,13 @@
     0 0;
   background-image:
     radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),
-      hsla(250, 35%, 75%, var(--card-opacity)) 4%,
-      hsla(250, 25%, 65%, calc(var(--card-opacity) * 0.75)) 10%,
-      hsla(250, 15%, 55%, calc(var(--card-opacity) * 0.5)) 50%,
-      hsla(250, 0%, 50%, 0) 100%),
-    radial-gradient(35% 52% at 55% 20%, #4aafcfc4 0%, #073aff00 100%),
-    radial-gradient(100% 100% at 50% 50%, #7b6db3dd 1%, #073aff00 76%),
-    conic-gradient(from 124deg at 50% 50%, #7b6db3ee 0%, #4aafcfcc 40%, #4aafcfcc 60%, #7b6db3ee 100%);
+      hsla(0, 0%, 100%, var(--card-opacity)) 4%,
+      hsla(0, 0%, 60%, calc(var(--card-opacity) * 0.75)) 10%,
+      hsla(0, 0%, 40%, calc(var(--card-opacity) * 0.5)) 50%,
+      hsla(0, 0%, 20%, 0) 100%),
+    radial-gradient(35% 52% at 55% 20%, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(100% 100% at 50% 50%, rgba(200, 200, 200, 0.15) 1%, rgba(0, 0, 0, 0) 76%),
+    conic-gradient(from 124deg at 50% 50%, rgba(20, 20, 20, 1) 0%, rgba(150, 150, 150, 0.9) 35%, rgba(255, 255, 255, 1) 50%, rgba(150, 150, 150, 0.9) 65%, rgba(20, 20, 20, 1) 100%);
   overflow: hidden;
 }
 
@@ -114,7 +114,6 @@
   transform: translate3d(0, 0, 0.01px);
 }
 
-/* Visible icon pattern overlay */
 .pc-icon-overlay {
   position: absolute;
   inset: 0;
@@ -122,7 +121,7 @@
   background-repeat: no-repeat;
   background-size: 95% auto;
   background-position: center;
-  opacity: 0.32;
+  opacity: 1;
   mix-blend-mode: overlay;
   filter: contrast(1.25) brightness(1.05) saturate(1.05);
   pointer-events: none;
@@ -264,7 +263,8 @@
   left: 50%;
   transform: translateX(-50%) scale(1);
   bottom: 2px;
-  opacity: calc(1.75 - var(--pointer-from-center));
+  opacity: calc(0.9 - (var(--pointer-from-center) * 0.3));
+  filter: brightness(0.9) contrast(1.05);
 }
 
 .pc-avatar-content::before {

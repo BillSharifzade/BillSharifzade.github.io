@@ -3,9 +3,9 @@ import archPattern from '../assets/arch.png';
 import './ProfileCard.css';
 
 const DEFAULT_BEHIND_GRADIENT =
-  'radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(250,35%,75%,calc(var(--card-opacity)*0.4)) 6%,hsla(250,25%,65%,calc(var(--card-opacity)*0.3)) 14%,hsla(250,15%,55%,calc(var(--card-opacity)*0.18)) 55%,hsla(250,0%,50%,0) 100%),radial-gradient(35% 52% at 55% 20%,#4aafcfe0 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#7b6db3cc 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#7b6db3cc 0%,#4aafcfcc 40%,#4aafcfcc 60%,#7b6db3cc 100%)';
+  'radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(0,0%,100%,calc(var(--card-opacity)*0.4)) 6%,hsla(0,0%,60%,calc(var(--card-opacity)*0.3)) 14%,hsla(0,0%,40%,calc(var(--card-opacity)*0.18)) 55%,hsla(0,0%,20%,0) 100%),radial-gradient(35% 52% at 55% 20%,rgba(255,255,255,0.2) 0%,rgba(0,0,0,0) 100%),radial-gradient(100% 100% at 50% 50%,rgba(200,200,200,0.15) 1%,rgba(0,0,0,0) 76%),conic-gradient(from 124deg at 50% 50%,rgba(20,20,20,1) 0%,rgba(150,150,150,0.9) 35%,rgba(255,255,255,1) 50%,rgba(150,150,150,0.9) 65%,rgba(20,20,20,1) 100%)';
 
-const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,#1e1a2ecc 0%,#4aafcf44 100%)';
+const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,rgba(0,0,0,0.95) 0%,rgba(45,45,45,0.4) 100%)';
 
 const ANIMATION_CONFIG = {
   SMOOTH_DURATION: 600,

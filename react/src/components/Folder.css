@@ -1,8 +1,6 @@
 :root {
-  --folder-color: #7b6db3;
-  /* deep amethyst */
-  --folder-back-color: #655a9a;
-  /* darker amethyst */
+  --folder-color: #000000;
+  --folder-back-color: #000000;
   --paper-1: #e6e6e6;
   --paper-2: #f2f2f2;
   --paper-3: #ffffff;
@@ -15,7 +13,6 @@
   z-index: 0;
 }
 
-/* Raise entire folder above neighbors while interacting */
 .folder:hover,
 .folder.open {
   z-index: 20;

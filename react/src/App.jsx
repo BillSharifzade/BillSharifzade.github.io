@@ -11,14 +11,15 @@ import nextLogo from './assets/nextjs-original.png'
 import dockerLogo from './assets/docker.jpg'
 import linuxLogo from './assets/linuxxx.png'
 import VariableProximity from './components/VariableProximity.jsx'
+import Beams from './components/Beams.jsx'
 import './index.css'
 
 function App() {
   const typingTexts = [
-    'Software Engineer',
-    'AI Specialist',
+    'Backend Architect',
+    'AI Architecture Specialist',
     'Full-Stack Developer',
-    'Systems Programmer',
+    'Systems Engineer',
     'Tech Innovator'
   ]
   const [textIndex, setTextIndex] = useState(0)
@@ -29,16 +30,13 @@ function App() {
   const mobileNavRef = useRef(null)
   const navContainerRef = useRef(null)
 
-  // Typing effect (single-timer logic)
   useEffect(() => {
     const currentText = typingTexts[textIndex]
     let timeoutId
 
     if (!isDeleting && charIndex === currentText.length) {
-      // Pause at end, then start deleting
       timeoutId = setTimeout(() => setIsDeleting(true), 1500)
     } else if (isDeleting && charIndex === 0) {
-      // Short pause at start, then move to next word
       timeoutId = setTimeout(() => {
         setIsDeleting(false)
         setTextIndex((idx) => (idx + 1) % typingTexts.length)
@@ -53,56 +51,6 @@ function App() {
     return () => clearTimeout(timeoutId)
   }, [charIndex, isDeleting, textIndex])
 
-  // Create circuit board and particles
-  useEffect(() => {
-    const circuitBoard = document.getElementById('circuitBoard')
-    const particlesContainer = document.getElementById('particles')
-    if (!circuitBoard || !particlesContainer) return
-
-    for (let i = 0; i < 15; i++) {
-      const line = document.createElement('div')
-      line.className = 'circuit-line horizontal'
-      line.style.top = Math.random() * 100 + '%'
-      line.style.left = Math.random() * 80 + '%'
-      line.style.animationDelay = Math.random() * 3 + 's'
-      line.style.animationDuration = (Math.random() * 2 + 3) + 's'
-      circuitBoard.appendChild(line)
-    }
-    for (let i = 0; i < 15; i++) {
-      const line = document.createElement('div')
-      line.className = 'circuit-line vertical'
-      line.style.left = Math.random() * 100 + '%'
-      line.style.top = Math.random() * 80 + '%'
-      line.style.animationDelay = Math.random() * 3 + 's'
-      line.style.animationDuration = (Math.random() * 2 + 3) + 's'
-      circuitBoard.appendChild(line)
-    }
-    for (let i = 0; i < 25; i++) {
-      const node = document.createElement('div')
-      node.className = 'circuit-node'
-      node.style.left = Math.random() * 100 + '%'
-      node.style.top = Math.random() * 100 + '%'
-      node.style.animationDelay = Math.random() * 2 + 's'
-      node.style.animationDuration = (Math.random() * 3 + 2) + 's'
-      circuitBoard.appendChild(node)
-    }
-    for (let i = 0; i < 75; i++) {
-      const particle = document.createElement('div')
-      particle.className = 'particle'
-      particle.style.left = Math.random() * 100 + '%'
-      particle.style.top = Math.random() * 100 + '%'
-      particle.style.animationDelay = Math.random() * 12 + 's'
-      particle.style.animationDuration = (Math.random() * 15 + 8) + 's'
-      particlesContainer.appendChild(particle)
-    }
-
-    return () => {
-      circuitBoard.innerHTML = ''
-      particlesContainer.innerHTML = ''
-    }
-  }, [])
-
-  // Scroll effects and indicator
   useEffect(() => {
     const nav = document.querySelector('nav')
     function updateScrollIndicator() {
@@ -131,7 +79,6 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Intersection observers
   useEffect(() => {
     const expObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -192,9 +139,18 @@ function App() {
   }
   return (
     <>
-      <div className="bg-animation"></div>
-      <div className="circuit-board" id="circuitBoard"></div>
-      <div className="floating-particles" id="particles"></div>
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
+        <Beams
+          beamWidth={2}
+          beamHeight={20}
+          beamNumber={20}
+          lightColor="#000000ff"
+          speed={1.5}
+          noiseIntensity={1.5}
+          scale={0.2}
+          rotation={30}
+        />
+      </div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
       <nav ref={navContainerRef}>
@@ -210,7 +166,7 @@ function App() {
             />
           </div>
           <div className="nav-links">
-            <a href="#home" className="nav-link">Home</a>
+            <a href="#home" className="nav-link">Profile</a>
             <a href="#about" className="nav-link">About</a>
             <a href="#skills" className="nav-link">Skills</a>
             <a href="#experience" className="nav-link">Experience</a>
@@ -221,7 +177,7 @@ function App() {
           </button>
         </div>
         <div className="mobile-nav-links" id="mobileNavLinks" ref={mobileNavRef}>
-          <a href="#home" className="nav-link" onClick={closeMobileNav}>Home</a>
+          <a href="#home" className="nav-link" onClick={closeMobileNav}>Profile</a>
           <a href="#about" className="nav-link" onClick={closeMobileNav}>About</a>
           <a href="#skills" className="nav-link" onClick={closeMobileNav}>Skills</a>
           <a href="#experience" className="nav-link" onClick={closeMobileNav}>Experience</a>
@@ -235,7 +191,7 @@ function App() {
           <div style={{ maxWidth: 420, margin: '20px auto 30px' }}>
             <ProfileCard
               name="Sharifzoda Bilol"
-              title="Software Engineer"
+              title=""
               handle="qwantum"
               status="Online"
               contactText="Contact Me"
@@ -253,8 +209,7 @@ function App() {
             <span className="typing-text">{typingTexts[textIndex].substring(0, charIndex)}</span>
           </div>
           <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '600px' }}>
-            Passionate about creating cutting-edge solutions with AI, blockchain, and modern web technologies.
-            Certified by NASA, CISCO, and TechnoHub.
+            I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details.
           </p>
         </div>
       </section>
@@ -266,11 +221,11 @@ function App() {
           </h2>
           <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
             <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '30px' }}>
-              <DecryptedText text="I'm a middle-level software engineer with deep expertise in full-stack development, AI architectures, and system administration. Currently working on cutting-edge projects in fintech, AI, and mobile development." intervalMs={8} step={1} />
+              <DecryptedText text="I'm a middle backend architect with deep expertise in wide areas of engineering all-range systems. Currently working on cutting-edge projects in fintech, high-load systems, AI creation and integration into systems." intervalMs={8} step={1} />
             </p>
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
               <DecryptedText
-                text="My passion lies in creating scalable, efficient solutions using modern technologies and architectural patterns. I'm particularly interested in AI/ML, cryptography, and low-level programming."
+                text="My passion lies in creating robust, high-quality, long-term, efficient solutions. I'm particularly interested in low-level programming, ML, blockchain, architecturing enourmous systems from scratch. Also have passion in maths, non-euclidean geometry, astrophysics and philosophy."
                 intervalMs={8}
                 step={1}
               />
@@ -285,68 +240,68 @@ function App() {
           <div className="folders-grid">
             <Folder
               size={1.35}
-              color="#7b6db3"
+              color="#2d2d2d"
               label="Python"
               iconClass="fab fa-python"
               items={[
-                <div className="skill-item" key="p1"><span>NumPy & PyTorch</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p1"><span>NumPy/Pandas</span><span>Advanced</span></div>,
                 <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
-                <div className="skill-item" key="p3"><span>AI/ML Development</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p3"><span>TensorFlow</span><span>Advanced</span></div>,
               ]}
             />
             <Folder
               size={1.35}
-              color="#7b6db3"
+              color="#2d2d2d"
               label="Web"
               iconClass="fab fa-js-square"
               items={[
                 <div className="skill-item" key="w1"><span>React & React Native</span><span>Expert</span></div>,
-                <div className="skill-item" key="w2"><span>TS/JS</span><span>Advanced</span></div>,
-                <div className="skill-item" key="w3"><span>50+ JS Libraries</span><span>Proficient</span></div>,
+                <div className="skill-item" key="w2"><span>Typescript</span><span>Advanced</span></div>,
+                <div className="skill-item" key="w3"><span>NextJS</span><span>Advanced</span></div>,
               ]}
             />
             <Folder
               size={1.35}
-              color="#7b6db3"
-              label="C,Rust,ASM"
+              color="#2d2d2d"
+              label="Low-level"
               iconClass="fas fa-microchip"
               items={[
                 <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
-                <div className="skill-item" key="s2"><span>Rust (Rocket, Burn)</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="s3"><span>Assembly Language</span><span>Basic</span></div>,
+                <div className="skill-item" key="s2"><span>Zig</span><span>Intermediate</span></div>,
+                <div className="skill-item" key="s3"><span>Assembly</span><span>Basic</span></div>,
               ]}
             />
             <Folder
               size={1.35}
-              color="#7b6db3"
+              color="#2d2d2d"
               label="Linux"
               iconClass="fab fa-linux"
               items={[
                 <div className="skill-item" key="l1"><span>Arch, Gentoo, Kali</span><span>Expert</span></div>,
-                <div className="skill-item" key="l2"><span>Kernel Knowledge</span><span>Advanced</span></div>,
-                <div className="skill-item" key="l3"><span>Microservices</span><span>Advanced</span></div>,
+                <div className="skill-item" key="l2"><span>Kernel, Systemd, Syscalls</span><span>Expert</span></div>,
+                <div className="skill-item" key="l3"><span>Unix Philosophy</span><span>Expert</span></div>,
               ]}
             />
             <Folder
               size={1.35}
-              color="#7b6db3"
-              label="AI & Neural Networks"
-              iconClass="fas fa-robot"
+              color="#2d2d2d"
+              label="Rust"
+              iconClass="fab fa-rust"
               items={[
-                <div className="skill-item" key="a1"><span>Neural Architecture Design</span><span>Expert</span></div>,
-                <div className="skill-item" key="a2"><span>LLMs & AI Engines</span><span>Advanced</span></div>,
-                <div className="skill-item" key="a3"><span>Softmax, ReLU, etc.</span><span>Expert</span></div>,
+                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Advanced</span></div>,
+                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Advanced</span></div>,
+                <div className="skill-item" key="a3"><span>Tokio</span><span>Advanced</span></div>,
               ]}
             />
             <Folder
               size={1.35}
-              color="#7b6db3"
+              color="#2d2d2d"
               label="Security & Crypto"
               iconClass="fas fa-shield-alt"
               items={[
-                <div className="skill-item" key="c1"><span>Cybersecurity & AppSec</span><span>Intermediate</span></div>,
+                <div className="skill-item" key="c1"><span>Cybersecurity, AppSec</span><span>Intermediate</span></div>,
                 <div className="skill-item" key="c2"><span>Cryptography</span><span>Advanced</span></div>,
-                <div className="skill-item" key="c3"><span>SSH Tunneling</span><span>Advanced</span></div>,
+                <div className="skill-item" key="c3"><span>Network Security</span><span>Intermediate</span></div>,
               ]}
             />
           </div>
@@ -380,7 +335,7 @@ function App() {
             <div className="experience-item">
               <div className="experience-content">
                 <div className="experience-date">October 2025 - Present</div>
-                <div className="experience-title">Full-Stack Software Engineer</div>
+                <div className="experience-title">Middle software engineer and backend architect</div>
                 <div className="experience-company">Koinoti Nav</div>
                 <p>Creating performant, secure, optimized, and scalable software with Rust and NextJS. Planning enormous, high-load architectures for modern systems.</p>
                 <ul className="experience-achievements">
