@@ -16,6 +16,19 @@ import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import './index.css'
 
+// Route anchor navigation through Lenis when it's active (the hobbies stack
+// runs Lenis on the window), otherwise fall back to native smooth scroll.
+// Offset accounts for the fixed nav bar.
+function scrollToTarget(target) {
+  if (!target) return
+  const lenis = typeof window !== 'undefined' ? window.__appLenis : null
+  if (lenis) {
+    lenis.scrollTo(target, { offset: -90, duration: 1.2 })
+  } else {
+    target.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 function App() {
   const typingTexts = [
     'Backend Architect',
@@ -110,7 +123,7 @@ function App() {
       if (href && href.startsWith('#')) {
         e.preventDefault()
         const target = document.querySelector(href)
-        if (target) target.scrollIntoView({ behavior: 'smooth' })
+        scrollToTarget(target)
       }
     }
     links.forEach(link => link.addEventListener('click', onClick))
@@ -205,10 +218,7 @@ function App() {
               showUserInfo={true}
               enableTilt={true}
               enableMobileTilt={true}
-              onContactClick={() => {
-                const el = document.querySelector('#contact')
-                if (el) el.scrollIntoView({ behavior: 'smooth' })
-              }}
+              onContactClick={() => scrollToTarget(document.querySelector('#contact'))}
             />
           </div>
           <div className="hero-subtitle">
