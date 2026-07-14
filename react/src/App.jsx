@@ -13,6 +13,7 @@ import linuxLogo from './assets/linuxxx.png'
 import VariableProximity from './components/VariableProximity.jsx'
 import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
+import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import './index.css'
 
 function App() {
@@ -171,6 +172,7 @@ function App() {
             <a href="#about" className="nav-link">About</a>
             <a href="#skills" className="nav-link">Skills</a>
             <a href="#experience" className="nav-link">Experience</a>
+            <a href="#hobbies" className="nav-link">Hobbies</a>
             <a href="#contact" className="nav-link">Contact</a>
             <DownloadCvButton />
           </div>
@@ -183,6 +185,7 @@ function App() {
           <a href="#about" className="nav-link" onClick={closeMobileNav}>About</a>
           <a href="#skills" className="nav-link" onClick={closeMobileNav}>Skills</a>
           <a href="#experience" className="nav-link" onClick={closeMobileNav}>Experience</a>
+          <a href="#hobbies" className="nav-link" onClick={closeMobileNav}>Hobbies</a>
           <a href="#contact" className="nav-link" onClick={closeMobileNav}>Contact</a>
           <DownloadCvButton className="download-cv-btn--mobile" onDownloaded={closeMobileNav} />
         </div>
@@ -452,6 +455,61 @@ function App() {
         </div>
       </section>
 
+      <section id="hobbies" className="section fade-in-section">
+        <div className="container">
+          <h2 className="section-title">Beyond the Code</h2>
+          <ScrollStack
+            useWindowScroll={true}
+            itemDistance={80}
+            itemStackDistance={26}
+            baseScale={0.86}
+            stackPosition="22%"
+            scaleEndPosition="12%"
+          >
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-meteor"></i></div>
+              <h3 className="hobby-card-title">Astrophysics</h3>
+              <p className="hobby-card-desc">Chasing the physics of the cosmos — from relativity and spacetime curvature to the strange geometry of the universe.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-chess-knight"></i></div>
+              <h3 className="hobby-card-title">Chess</h3>
+              <p className="hobby-card-desc">Calculation, patience, and long-term strategy — the same discipline I bring to architecting systems.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-yin-yang"></i></div>
+              <h3 className="hobby-card-title">Philosophy</h3>
+              <p className="hobby-card-desc">Questioning first principles, epistemology, and meaning — reasoning carefully about how and why things are.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-infinity"></i></div>
+              <h3 className="hobby-card-title">Mathematics</h3>
+              <p className="hobby-card-desc">Pure and applied — non-Euclidean geometry, proofs, and the elegant structures underneath everything I build.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-guitar"></i></div>
+              <h3 className="hobby-card-title">Guitar</h3>
+              <p className="hobby-card-desc">Unwinding through strings and melodies — improvising and learning pieces one riff at a time.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-mitten"></i></div>
+              <h3 className="hobby-card-title">Knitting</h3>
+              <p className="hobby-card-desc">A meditative craft of patterns and precision — building something warm and tangible row by row.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-feather-pointed"></i></div>
+              <h3 className="hobby-card-title">Poems</h3>
+              <p className="hobby-card-desc">Writing verse to capture thought and feeling — compressing ideas into rhythm and imagery.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <div className="hobby-card-icon"><i className="fas fa-crosshairs"></i></div>
+              <h3 className="hobby-card-title">Counter Strike 2</h3>
+              <p className="hobby-card-desc">Competitive FPS reflexes and team tactics — aim, positioning, and split-second decision making.</p>
+            </ScrollStackItem>
+          </ScrollStack>
+        </div>
+      </section>
+
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
@@ -512,7 +570,7 @@ function App() {
               role="note"
               aria-label="I also work as solar knight for my Bonnie"
             >
-              <i className="fas fa-sun"></i> Secret job
+              <i className="fas fa-heart"></i> Secret job
               <span className="secret-job-tooltip">I also work as solar knight for my Bonnie</span>
             </span>
           </div>
