@@ -608,15 +608,15 @@ nav.scrolled {
     white-space: nowrap;
     padding: 10px 16px;
     background: rgba(10, 10, 10, 0.95);
-    border: 1px solid var(--accent);
+    border: 1px solid #ffc0cb;
     border-radius: 10px;
-    color: var(--primary);
+    color: #ffc0cb;
     font-size: 0.85rem;
     font-style: italic;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(255, 192, 203, 0.25);
     transition: opacity 0.3s ease, transform 0.3s ease;
     z-index: 5;
 }
@@ -628,7 +628,21 @@ nav.scrolled {
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: var(--accent);
+    border-top-color: #ffc0cb;
+}
+
+/* Hobbies scroll stack — contained internal scroller */
+.scroll-stack-scroller.hobbies-stack {
+    height: 620px;
+    max-height: 80vh;
+    margin: 0 auto;
+    border-radius: 40px;
+}
+
+@media (max-width: 768px) {
+    .scroll-stack-scroller.hobbies-stack {
+        height: 540px;
+    }
 }
 
 .secret-job:hover .secret-job-tooltip,

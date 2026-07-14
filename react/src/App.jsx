@@ -458,53 +458,38 @@ function App() {
       <section id="hobbies" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Beyond the Code</h2>
-          <ScrollStack
-            useWindowScroll={true}
-            itemDistance={80}
-            itemStackDistance={26}
-            baseScale={0.86}
-            stackPosition="22%"
-            scaleEndPosition="12%"
-          >
+          <ScrollStack className="hobbies-stack">
             <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-meteor"></i></div>
-              <h3 className="hobby-card-title">Astrophysics</h3>
-              <p className="hobby-card-desc">Chasing the physics of the cosmos — from relativity and spacetime curvature to the strange geometry of the universe.</p>
+              <h3 className="hobby-card-title">Cosmos &amp; Numbers</h3>
+              <p className="hobby-card-desc">The analytical side — decoding the universe and the mathematics beneath it, from relativity to non-Euclidean geometry.</p>
+              <div className="hobby-chips">
+                <span className="hobby-chip"><i className="fas fa-meteor"></i> Astrophysics</span>
+                <span className="hobby-chip"><i className="fas fa-infinity"></i> Mathematics</span>
+              </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-chess-knight"></i></div>
-              <h3 className="hobby-card-title">Chess</h3>
-              <p className="hobby-card-desc">Calculation, patience, and long-term strategy — the same discipline I bring to architecting systems.</p>
+              <h3 className="hobby-card-title">Strategy &amp; Play</h3>
+              <p className="hobby-card-desc">Competition and calculation — long-term planning on the board and split-second tactics on the server.</p>
+              <div className="hobby-chips">
+                <span className="hobby-chip"><i className="fas fa-chess-knight"></i> Chess</span>
+                <span className="hobby-chip"><i className="fas fa-crosshairs"></i> Counter Strike 2</span>
+              </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-yin-yang"></i></div>
-              <h3 className="hobby-card-title">Philosophy</h3>
-              <p className="hobby-card-desc">Questioning first principles, epistemology, and meaning — reasoning carefully about how and why things are.</p>
+              <h3 className="hobby-card-title">Craft &amp; Sound</h3>
+              <p className="hobby-card-desc">Hands-on creativity — building something tangible row by row and unwinding through strings and melody.</p>
+              <div className="hobby-chips">
+                <span className="hobby-chip"><i className="fas fa-guitar"></i> Guitar</span>
+                <span className="hobby-chip"><i className="fas fa-mitten"></i> Knitting</span>
+              </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-infinity"></i></div>
-              <h3 className="hobby-card-title">Mathematics</h3>
-              <p className="hobby-card-desc">Pure and applied — non-Euclidean geometry, proofs, and the elegant structures underneath everything I build.</p>
-            </ScrollStackItem>
-            <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-guitar"></i></div>
-              <h3 className="hobby-card-title">Guitar</h3>
-              <p className="hobby-card-desc">Unwinding through strings and melodies — improvising and learning pieces one riff at a time.</p>
-            </ScrollStackItem>
-            <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-mitten"></i></div>
-              <h3 className="hobby-card-title">Knitting</h3>
-              <p className="hobby-card-desc">A meditative craft of patterns and precision — building something warm and tangible row by row.</p>
-            </ScrollStackItem>
-            <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-feather-pointed"></i></div>
-              <h3 className="hobby-card-title">Poems</h3>
-              <p className="hobby-card-desc">Writing verse to capture thought and feeling — compressing ideas into rhythm and imagery.</p>
-            </ScrollStackItem>
-            <ScrollStackItem>
-              <div className="hobby-card-icon"><i className="fas fa-crosshairs"></i></div>
-              <h3 className="hobby-card-title">Counter Strike 2</h3>
-              <p className="hobby-card-desc">Competitive FPS reflexes and team tactics — aim, positioning, and split-second decision making.</p>
+              <h3 className="hobby-card-title">Words &amp; Thought</h3>
+              <p className="hobby-card-desc">Reflection and expression — questioning first principles and compressing ideas into rhythm and imagery.</p>
+              <div className="hobby-chips">
+                <span className="hobby-chip"><i className="fas fa-feather-pointed"></i> Poems</span>
+                <span className="hobby-chip"><i className="fas fa-yin-yang"></i> Philosophy</span>
+              </div>
             </ScrollStackItem>
           </ScrollStack>
         </div>
