@@ -63,8 +63,17 @@ const ScrollStack = ({
   const getElementOffset = useCallback(
     element => {
       if (useWindowScroll) {
-        const rect = element.getBoundingClientRect();
-        return rect.top + window.scrollY;
+        // Walk the offsetTop chain instead of getBoundingClientRect: offsetTop
+        // is layout-based and unaffected by the transforms we apply to cards,
+        // so the measured position stays stable frame-to-frame (no feedback
+        // loop / flicker while scrolling).
+        let top = 0;
+        let node = element;
+        while (node) {
+          top += node.offsetTop || 0;
+          node = node.offsetParent;
+        }
+        return top;
       } else {
         return element.offsetTop;
       }
@@ -188,17 +197,9 @@ const ScrollStack = ({
     if (useWindowScroll) {
       // Use native page scroll (no Lenis) so the stack animates with the
       // normal document scroll — no nested scroll area, no global smooth-scroll
-      // hijack. Transforms are recomputed per animation frame while scrolling.
-      let ticking = false;
-      const onScroll = () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(() => {
-            updateCardTransforms();
-            ticking = false;
-          });
-        }
-      };
+      // hijack. Apply transforms synchronously in the scroll handler (before the
+      // browser paints the frame) so pinned cards stay locked and don't jitter.
+      const onScroll = () => updateCardTransforms();
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onScroll);
       nativeCleanupRef.current = () => {
