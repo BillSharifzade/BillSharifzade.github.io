@@ -139,6 +139,26 @@ const experience = [
     ],
   },
   {
+    title: 'Founder',
+    company: 'Founders School Bootcamp',
+    date: 'Autumn - Winter 2024',
+    desc: 'Developed a startup concept, networked with industry experts, and gained entrepreneurial experience in tech innovation.',
+    bullets: [
+      ['Resilience:', 'Though the product never launched, turned the journey into deep lessons across social engineering, marketing, and business management.'],
+      ['Leadership growth:', 'Strengthened leadership, negotiation, and networking skills while collaborating with influential mentors.'],
+    ],
+  },
+  {
+    title: 'Crypto Analyst',
+    company: 'International Transactions',
+    date: 'Summer 2023',
+    desc: 'Processed and analyzed cryptocurrency transactions between various countries and Tajikistan, identifying financial patterns.',
+    bullets: [
+      ['Blockchain insight:', 'Developed a nuanced understanding of blockchain architecture and trading ecosystems.'],
+      ['Pattern discovery:', 'Identified actionable trading patterns to guide cross-border transaction strategies.'],
+    ],
+  },
+  {
     title: 'Financial Automation Developer',
     company: 'Micro-Credit Organization',
     date: 'Summer 2020 - Present',
@@ -165,6 +185,7 @@ function CvDocument() {
             <Text style={styles.contactItem}>+992 985 447 072</Text>
             <Text style={styles.contactItem}>Signal: qwantum.01</Text>
             <Text style={styles.contactItem}>Telegram: @knight_of_bonnie</Text>
+            <Text style={styles.contactItem}>Steam: QuaZZZar2005</Text>
             <Link src="https://github.com/BillSharifzade" style={[styles.contactItem, styles.contactLink]}>
               github.com/BillSharifzade
             </Link>
@@ -209,6 +230,11 @@ function CvDocument() {
             ))}
           </View>
         ))}
+
+        <Text style={styles.sectionTitle}>Interests</Text>
+        <Text style={styles.certRow}>
+          Astrophysics · Mathematics · Chess · Counter Strike 2 · Guitar · Knitting · Poems · Philosophy
+        </Text>
 
         <Text style={styles.sectionTitle}>Certifications</Text>
         <Text style={styles.certRow}>NASA Certified · CISCO Instructor · TechnoHub Certified</Text>

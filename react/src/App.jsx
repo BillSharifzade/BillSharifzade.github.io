@@ -455,10 +455,10 @@ function App() {
         </div>
       </section>
 
-      <section id="hobbies" className="section fade-in-section">
+      <section id="hobbies" className="section">
         <div className="container">
           <h2 className="section-title">Beyond the Code</h2>
-          <ScrollStack className="hobbies-stack">
+          <ScrollStack className="hobbies-stack" useWindowScroll={true}>
             <ScrollStackItem>
               <h3 className="hobby-card-title">Cosmos &amp; Numbers</h3>
               <p className="hobby-card-desc">The analytical side — decoding the universe and the mathematics beneath it, from relativity to non-Euclidean geometry.</p>
