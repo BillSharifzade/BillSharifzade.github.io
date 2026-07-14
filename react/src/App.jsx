@@ -12,6 +12,7 @@ import dockerLogo from './assets/docker.jpg'
 import linuxLogo from './assets/linuxxx.png'
 import VariableProximity from './components/VariableProximity.jsx'
 import Beams from './components/Beams.jsx'
+import DownloadCvButton from './components/DownloadCvButton.jsx'
 import './index.css'
 
 function App() {
@@ -171,6 +172,7 @@ function App() {
             <a href="#skills" className="nav-link">Skills</a>
             <a href="#experience" className="nav-link">Experience</a>
             <a href="#contact" className="nav-link">Contact</a>
+            <DownloadCvButton />
           </div>
           <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>
             <i className="fas fa-bars"></i>
@@ -182,6 +184,7 @@ function App() {
           <a href="#skills" className="nav-link" onClick={closeMobileNav}>Skills</a>
           <a href="#experience" className="nav-link" onClick={closeMobileNav}>Experience</a>
           <a href="#contact" className="nav-link" onClick={closeMobileNav}>Contact</a>
+          <DownloadCvButton className="download-cv-btn--mobile" onDownloaded={closeMobileNav} />
         </div>
       </nav>
 
@@ -334,11 +337,38 @@ function App() {
           <div className="experience-timeline">
             <div className="experience-item">
               <div className="experience-content">
+                <div className="experience-date">January 2026 - Present</div>
+                <div className="experience-title">Head of Software Department</div>
+                <div className="experience-company">Azal Telecommunications</div>
+                <p>Leading technical enablement and architecture for enterprise and government-scale systems, from corporate training to designing enormous software from the ground up.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Corporate training:</span> Delivered corporate trainings on Unix philosophy, cybersecurity, and IT fundamentals across internal teams.</li>
+                  <li><span className="achievement-label">Architecture:</span> Designed and architected enormous software systems, authored technical specifications, and audited closed, mission-critical software.</li>
+                  <li><span className="achievement-label">International reach:</span> Led international meetings for B2G and B2B systems, aligning stakeholders across organizations.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="experience-item">
+              <div className="experience-content">
+                <div className="experience-date">December 2025 - Present</div>
+                <div className="experience-title">Co-Founder, CEO &amp; Team Lead</div>
+                <div className="experience-company">4Byte</div>
+                <p>Founded and lead a software company that builds efficient, reliable, and secure solutions with polished UI/UX for B2C, B2B, and B2G — across any platform, system, and SaaS.</p>
+                <ul className="experience-achievements">
+                  <li><span className="achievement-label">Leadership:</span> Grew as a leader — learning to communicate with people, business, and government, and to manage and divide work across the team.</li>
+                  <li><span className="achievement-label">Team building:</span> Raised the level of everyone on the team while nurturing genuine friendship and lasting relationships.</li>
+                  <li><span className="achievement-label">Product breadth:</span> Delivered end-to-end software solutions spanning platforms, systems, and SaaS products.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="experience-item">
+              <div className="experience-content">
                 <div className="experience-date">October 2025 - Present</div>
                 <div className="experience-title">Middle software engineer and backend architect</div>
                 <div className="experience-company">Koinoti Nav</div>
                 <p>Creating performant, secure, optimized, and scalable software with Rust and NextJS. Planning enormous, high-load architectures for modern systems.</p>
                 <ul className="experience-achievements">
+                  <li><span className="achievement-label">Business automation:</span> Built 10+ large-scale systems that automate core business processes for major companies.</li>
                   <li><span className="achievement-label">HR automation:</span> Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows.</li>
                   <li><span className="achievement-label">Secure platforms:</span> Engineered a closed, security-first Linux distribution with a custom kernel tailored for enterprise partners.</li>
                   <li><span className="achievement-label">Team culture:</span> Thrived within a highly professional, collaborative engineering team focused on excellence and knowledge sharing.</li>
@@ -442,6 +472,22 @@ function App() {
               </div>
             </a>
 
+            <a href="https://t.me/knight_of_bonnie" target="_blank" rel="noopener noreferrer">
+              <div className="contact-item">
+                <div className="contact-icon"><i className="fab fa-telegram"></i></div>
+                <h3>Telegram</h3>
+                <p>@knight_of_bonnie</p>
+              </div>
+            </a>
+
+            <a href="https://steamcommunity.com/id/QuaZZZar2005/" target="_blank" rel="noopener noreferrer">
+              <div className="contact-item">
+                <div className="contact-icon"><i className="fab fa-steam"></i></div>
+                <h3>Steam</h3>
+                <p>QuaZZZar2005</p>
+              </div>
+            </a>
+
             <a href="https://github.com/BillSharifzade" target="_blank" rel="noopener noreferrer">
               <div className="contact-item">
                 <div className="contact-icon"><i className="fab fa-github"></i></div>
@@ -459,6 +505,17 @@ function App() {
           <p style={{ marginTop: '10px', color: 'var(--text-secondary)' }}>
             NASA Certified • CISCO Instructor • TechnoHub Certified
           </p>
+          <div className="footer-tags">
+            <span
+              className="secret-job"
+              tabIndex={0}
+              role="note"
+              aria-label="I also work as solar knight for my Bonnie"
+            >
+              <i className="fas fa-sun"></i> Secret job
+              <span className="secret-job-tooltip">I also work as solar knight for my Bonnie</span>
+            </span>
+          </div>
         </div>
       </footer>
     </>
