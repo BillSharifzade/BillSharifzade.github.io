@@ -5,12 +5,10 @@ import Folder from './components/Folder.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.png'
 import BounceCards from './components/BounceCards.jsx'
-import rustLogo from './assets/rust-logo-512x512.png'
-import tsxLogo from './assets/tsx.png'
-import nextLogo from './assets/nextjs-original.png'
-import dockerLogo from './assets/docker.jpg'
-import linuxLogo from './assets/linuxxx.png'
+import { techIcons } from './data/techIcons.js'
+import ExperienceJourney from './components/ExperienceJourney.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
+import './components/HobbyBackgrounds.css'
 import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
@@ -95,13 +93,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const expObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('animate')
-      })
-    }, { threshold: 0.01, rootMargin: '0px' })
-    document.querySelectorAll('.experience-item').forEach(item => expObserver.observe(item))
-
     const sectionObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -112,7 +103,7 @@ function App() {
     }, { root: null, threshold: 0.05, rootMargin: '0px' })
     document.querySelectorAll('.fade-in-section').forEach(section => sectionObserver.observe(section))
 
-    return () => { expObserver.disconnect(); sectionObserver.disconnect() }
+    return () => { sectionObserver.disconnect() }
   }, [])
 
   useEffect(() => {
@@ -327,16 +318,20 @@ function App() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '60px' }}>
               <BounceCards
                 className="custom-bounceCards"
-                images={[rustLogo, tsxLogo, nextLogo, dockerLogo, linuxLogo]}
-                containerWidth={'min(500px, 95vw)'}
+                items={techIcons}
+                containerWidth={'min(760px, 95vw)'}
                 containerHeight={'min(500px, 400px)'}
                 enableHover={true}
+                pushOffset={100}
                 transformStyles={[
-                  "rotate(5deg) translate(-150px)",
-                  "rotate(0deg) translate(-70px)",
-                  "rotate(-5deg)",
-                  "rotate(5deg) translate(70px)",
-                  "rotate(-5deg) translate(150px)"
+                  "rotate(6deg) translate(-245px)",
+                  "rotate(-4deg) translate(-175px)",
+                  "rotate(3deg) translate(-105px)",
+                  "rotate(-2deg) translate(-35px)",
+                  "rotate(2deg) translate(35px)",
+                  "rotate(-3deg) translate(105px)",
+                  "rotate(4deg) translate(175px)",
+                  "rotate(-6deg) translate(245px)"
                 ]}
               />
             </div>
@@ -347,121 +342,7 @@ function App() {
       <section id="experience" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Professional Journey</h2>
-          <div className="experience-timeline">
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">January 2026 - Present</div>
-                <div className="experience-title">Head of Software Department</div>
-                <div className="experience-company">Azal Telecommunications</div>
-                <p>Leading technical enablement and architecture for enterprise and government-scale systems, from corporate training to designing enormous software from the ground up.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Corporate training:</span> Delivered corporate trainings on Unix philosophy, cybersecurity, and IT fundamentals across internal teams.</li>
-                  <li><span className="achievement-label">Architecture:</span> Designed and architected enormous software systems, authored technical specifications, and audited closed, mission-critical software.</li>
-                  <li><span className="achievement-label">International reach:</span> Led international meetings for B2G and B2B systems, aligning stakeholders across organizations.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">December 2025 - Present</div>
-                <div className="experience-title">Co-Founder, CEO &amp; Team Lead</div>
-                <div className="experience-company">4Byte</div>
-                <p>Founded and lead a software company that builds efficient, reliable, and secure solutions with polished UI/UX for B2C, B2B, and B2G — across any platform, system, and SaaS.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Leadership:</span> Grew as a leader — learning to communicate with people, business, and government, and to manage and divide work across the team.</li>
-                  <li><span className="achievement-label">Team building:</span> Raised the level of everyone on the team while nurturing genuine friendship and lasting relationships.</li>
-                  <li><span className="achievement-label">Product breadth:</span> Delivered end-to-end software solutions spanning platforms, systems, and SaaS products.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">October 2025 - Present</div>
-                <div className="experience-title">Middle software engineer and backend architect</div>
-                <div className="experience-company">Koinoti Nav</div>
-                <p>Creating performant, secure, optimized, and scalable software with Rust and NextJS. Planning enormous, high-load architectures for modern systems.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Business automation:</span> Built 10+ large-scale systems that automate core business processes for major companies.</li>
-                  <li><span className="achievement-label">HR automation:</span> Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows.</li>
-                  <li><span className="achievement-label">Secure platforms:</span> Engineered a closed, security-first Linux distribution with a custom kernel tailored for enterprise partners.</li>
-                  <li><span className="achievement-label">Team culture:</span> Thrived within a highly professional, collaborative engineering team focused on excellence and knowledge sharing.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">June 2025 - Present</div>
-                <div className="experience-title">Software Engineer</div>
-                <div className="experience-company">ZOOD Organization</div>
-                <p>Created cross-platform mobile delivery app with 3-sided architecture. Optimized performance and implemented scalable solutions.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">High-load design:</span> Delivered a secure, high-performance architecture that improved delivery speeds by over 70% versus the prior system.</li>
-                  <li><span className="achievement-label">Realtime stack:</span> Implemented GPS tracking and real-time update services with first-class native support on iOS and Android.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">January 2025 - Present</div>
-                <div className="experience-title">Technical Instructor</div>
-                <div className="experience-company">TechnoHub</div>
-                <p>Teaching programming concepts, training corporate teams, and developing software projects for enterprise clients.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Curriculum leadership:</span> Mentored cohorts across Python, JavaScript, C, Ruby, and Assembly for beginner through advanced levels.</li>
-                  <li><span className="achievement-label">Enterprise enablement:</span> Trained 55 Group, TGEM, Avesto, Koinoti Nav, and others to embed AI tooling into daily operations.</li>
-                  <li><span className="achievement-label">Community impact:</span> Delivered numerous presentations and events covering cybersecurity, AI, engineering, and IT essentials.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">February - March 2025</div>
-                <div className="experience-title">AI Specialist</div>
-                <div className="experience-company">TAG Marketeer Agency</div>
-                <p>Implemented AI solutions and automated marketing workflows, optimizing business processes through intelligent automation.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Data intelligence:</span> Built an AI product that analyzes big data and surfaces statistical, analytical, and predictive dashboards.</li>
-                  <li><span className="achievement-label">Throughput gains:</span> Reduced workflows that previously took months down to a single day with targeted automation.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">Autumn - Winter 2024</div>
-                <div className="experience-title">Founder</div>
-                <div className="experience-company">Founders School Bootcamp</div>
-                <p>Developed startup concept, networked with industry experts, and gained entrepreneurial experience in tech innovation.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Resilience:</span> Although the product never launched, transformed the journey into deep lessons across social engineering, marketing, and business management.</li>
-                  <li><span className="achievement-label">Leadership growth:</span> Strengthened leadership, negotiation, and networking skills while collaborating with influential mentors.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">Summer 2023</div>
-                <div className="experience-title">Crypto Analyst</div>
-                <div className="experience-company">International Transactions</div>
-                <p>Processed and analyzed cryptocurrency transactions between various countries and Tajikistan, identifying financial patterns.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Blockchain insight:</span> Developed a nuanced understanding of blockchain architecture and trading ecosystems.</li>
-                  <li><span className="achievement-label">Pattern discovery:</span> Identified actionable trading patterns to guide cross-border transaction strategies.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="experience-item">
-              <div className="experience-content">
-                <div className="experience-date">Summer 2020 - Present</div>
-                <div className="experience-title">Financial Automation Developer</div>
-                <div className="experience-company">Micro-Credit Organization</div>
-                <p>Developed financial workflow automation systems, maintained existing infrastructure, and optimized operational processes.</p>
-                <ul className="experience-achievements">
-                  <li><span className="achievement-label">Scoring models:</span> Authored 15+ mathematical formulas powering a robust, secure microcredit evaluation engine.</li>
-                  <li><span className="achievement-label">Regulatory reporting:</span> Delivered automated reporting and analytics that satisfy stringent audit requirements.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <ExperienceJourney />
         </div>
       </section>
 
@@ -470,35 +351,92 @@ function App() {
           <h2 className="section-title">Beyond the Code</h2>
           <ScrollStack className="hobbies-stack" useWindowScroll={true}>
             <ScrollStackItem>
-              <h3 className="hobby-card-title">Cosmos &amp; Numbers</h3>
-              <p className="hobby-card-desc">The analytical side — decoding the universe and the mathematics beneath it, from relativity to non-Euclidean geometry.</p>
-              <div className="hobby-chips">
-                <span className="hobby-chip"><i className="fas fa-meteor"></i> Astrophysics</span>
-                <span className="hobby-chip"><i className="fas fa-infinity"></i> Mathematics</span>
+              <div className="hobby-bg hobby-bg--cosmos" aria-hidden="true">
+                <div className="galaxy">
+                  <span className="galaxy-core"></span>
+                  <span className="galaxy-arm galaxy-arm--1"></span>
+                  <span className="galaxy-arm galaxy-arm--2"></span>
+                  <span className="galaxy-arm galaxy-arm--3"></span>
+                  <span className="galaxy-star galaxy-star--1"></span>
+                  <span className="galaxy-star galaxy-star--2"></span>
+                  <span className="galaxy-star galaxy-star--3"></span>
+                </div>
+                <div className="gr-formula">
+                  R<sub>μν</sub> − ½Rg<sub>μν</sub> + Λg<sub>μν</sub> = <span className="gr-frac">8πG⁄c⁴</span>T<sub>μν</sub>
+                </div>
+              </div>
+              <div className="hobby-content">
+                <h3 className="hobby-card-title">Cosmos &amp; Numbers</h3>
+                <p className="hobby-card-desc">The analytical side — decoding the universe and the mathematics beneath it, from relativity to non-Euclidean geometry.</p>
+                <div className="hobby-chips">
+                  <span className="hobby-chip"><i className="fas fa-meteor"></i> Astrophysics</span>
+                  <span className="hobby-chip"><i className="fas fa-infinity"></i> Mathematics</span>
+                </div>
               </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <h3 className="hobby-card-title">Strategy &amp; Play</h3>
-              <p className="hobby-card-desc">Competition and calculation — long-term planning on the board and split-second tactics on the server.</p>
-              <div className="hobby-chips">
-                <span className="hobby-chip"><i className="fas fa-chess-knight"></i> Chess</span>
-                <span className="hobby-chip"><i className="fas fa-crosshairs"></i> Counter Strike 2</span>
+              <div className="hobby-bg hobby-bg--strategy" aria-hidden="true">
+                <svg className="fps-crosshair" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="26" fill="none" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="40" cy="40" r="2.5" fill="currentColor" />
+                  <line x1="40" y1="2" x2="40" y2="22" stroke="currentColor" strokeWidth="2" />
+                  <line x1="40" y1="58" x2="40" y2="78" stroke="currentColor" strokeWidth="2" />
+                  <line x1="2" y1="40" x2="22" y2="40" stroke="currentColor" strokeWidth="2" />
+                  <line x1="58" y1="40" x2="78" y2="40" stroke="currentColor" strokeWidth="2" />
+                </svg>
+                <div className="knight-scene">
+                  <i className="fas fa-chess-knight knight-piece"></i>
+                  <span className="knight-board"></span>
+                </div>
+              </div>
+              <div className="hobby-content">
+                <h3 className="hobby-card-title">Strategy &amp; Play</h3>
+                <p className="hobby-card-desc">Competition and calculation — long-term planning on the board and split-second tactics on the server.</p>
+                <div className="hobby-chips">
+                  <span className="hobby-chip"><i className="fas fa-chess-knight"></i> Chess</span>
+                  <span className="hobby-chip"><i className="fas fa-crosshairs"></i> Counter Strike 2</span>
+                </div>
               </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <h3 className="hobby-card-title">Craft &amp; Sound</h3>
-              <p className="hobby-card-desc">Hands-on creativity — building something tangible row by row and unwinding through strings and melody.</p>
-              <div className="hobby-chips">
-                <span className="hobby-chip"><i className="fas fa-guitar"></i> Guitar</span>
-                <span className="hobby-chip"><i className="fas fa-mitten"></i> Knitting</span>
+              <div className="hobby-bg hobby-bg--craft" aria-hidden="true">
+                <div className="scarf">
+                  <span className="scarf-strip"></span>
+                  <span className="scarf-needle"></span>
+                </div>
+                <span className="float-note float-note--1">♪</span>
+                <span className="float-note float-note--2">♫</span>
+                <span className="float-note float-note--3">♩</span>
+                <span className="float-note float-note--4">♬</span>
+                <span className="float-note float-note--5">♪</span>
+              </div>
+              <div className="hobby-content">
+                <h3 className="hobby-card-title">Craft &amp; Sound</h3>
+                <p className="hobby-card-desc">Hands-on creativity — building something tangible row by row and unwinding through strings and melody.</p>
+                <div className="hobby-chips">
+                  <span className="hobby-chip"><i className="fas fa-guitar"></i> Guitar</span>
+                  <span className="hobby-chip"><i className="fas fa-mitten"></i> Knitting</span>
+                </div>
               </div>
             </ScrollStackItem>
             <ScrollStackItem>
-              <h3 className="hobby-card-title">Words &amp; Thought</h3>
-              <p className="hobby-card-desc">Reflection and expression — questioning first principles and compressing ideas into rhythm and imagery.</p>
-              <div className="hobby-chips">
-                <span className="hobby-chip"><i className="fas fa-feather-pointed"></i> Poems</span>
-                <span className="hobby-chip"><i className="fas fa-yin-yang"></i> Philosophy</span>
+              <div className="hobby-bg hobby-bg--words" aria-hidden="true">
+                <div className="book">
+                  <span className="book-page book-page--left"></span>
+                  <span className="book-page book-page--right"></span>
+                  <span className="book-flip book-flip--1"></span>
+                  <span className="book-flip book-flip--2"></span>
+                  <span className="book-flip book-flip--3"></span>
+                  <span className="book-spine"></span>
+                </div>
+              </div>
+              <div className="hobby-content">
+                <h3 className="hobby-card-title">Words &amp; Thought</h3>
+                <p className="hobby-card-desc">Reflection and expression — questioning first principles and compressing ideas into rhythm and imagery.</p>
+                <div className="hobby-chips">
+                  <span className="hobby-chip"><i className="fas fa-feather-pointed"></i> Poems</span>
+                  <span className="hobby-chip"><i className="fas fa-yin-yang"></i> Philosophy</span>
+                </div>
               </div>
             </ScrollStackItem>
           </ScrollStack>

@@ -34,3 +34,43 @@
     height: 100%;
     object-fit: cover;
 }
+
+/* Monochrome tech-icon cards */
+.card--icon {
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(160deg, #161616, #090909);
+}
+
+.card--icon .tech-icon {
+    width: 52%;
+    height: 52%;
+}
+
+.card--icon .tech-icon-label {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .card--icon {
+        width: 120px;
+        gap: 8px;
+    }
+
+    .card--icon .tech-icon-label {
+        font-size: 0.66rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .card--icon {
+        width: 96px;
+    }
+}

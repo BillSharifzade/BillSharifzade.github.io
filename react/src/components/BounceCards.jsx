@@ -5,6 +5,9 @@ import './BounceCards.css';
 export default function BounceCards({
     className = '',
     images = [],
+    // Monochrome icon cards: [{ title, path }] with 24x24 SVG path data.
+    // When provided, takes precedence over `images`.
+    items = [],
     containerWidth = 400,
     containerHeight = 400,
     animationDelay = 0.5,
@@ -17,9 +20,11 @@ export default function BounceCards({
         'rotate(-10deg) translate(85px)',
         'rotate(2deg) translate(170px)'
     ],
-    enableHover = true
+    enableHover = true,
+    pushOffset = 160
 }) {
     const containerRef = useRef(null);
+    const cards = items.length ? items : images;
     useEffect(() => {
         const ctx = gsap.context(() => {
             gsap.fromTo(
@@ -64,7 +69,7 @@ export default function BounceCards({
 
         const q = gsap.utils.selector(containerRef);
 
-        images.forEach((_, i) => {
+        cards.forEach((_, i) => {
             const target = q(`.card-${i}`);
             gsap.killTweensOf(target);
 
@@ -79,7 +84,7 @@ export default function BounceCards({
                     overwrite: 'auto'
                 });
             } else {
-                const offsetX = i < hoveredIdx ? -160 : 160;
+                const offsetX = i < hoveredIdx ? -pushOffset : pushOffset;
                 const pushedTransform = getPushedTransform(baseTransform, offsetX);
 
                 const distance = Math.abs(hoveredIdx - i);
@@ -101,7 +106,7 @@ export default function BounceCards({
 
         const q = gsap.utils.selector(containerRef);
 
-        images.forEach((_, i) => {
+        cards.forEach((_, i) => {
             const target = q(`.card-${i}`);
             gsap.killTweensOf(target);
             const baseTransform = transformStyles[i] || 'none';
@@ -124,17 +129,31 @@ export default function BounceCards({
                 height: containerHeight
             }}
         >
-            {images.map((src, idx) => (
+            {cards.map((card, idx) => (
                 <div
                     key={idx}
-                    className={`card card-${idx}`}
+                    className={`card card-${idx}${items.length ? ' card--icon' : ''}`}
                     style={{
                         transform: transformStyles[idx] ?? 'none'
                     }}
                     onMouseEnter={() => pushSiblings(idx)}
                     onMouseLeave={resetSiblings}
                 >
-                    <img className="image" src={src} alt={`card-${idx}`} />
+                    {items.length ? (
+                        <>
+                            <svg
+                                className="tech-icon"
+                                viewBox="0 0 24 24"
+                                role="img"
+                                aria-label={card.title}
+                            >
+                                <path d={card.path} fill="#ffffff" />
+                            </svg>
+                            <span className="tech-icon-label">{card.title}</span>
+                        </>
+                    ) : (
+                        <img className="image" src={card} alt={`card-${idx}`} />
+                    )}
                 </div>
             ))}
         </div>

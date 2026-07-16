@@ -1,0 +1,164 @@
+.cv-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    animation: cvOverlayIn 0.25s ease;
+}
+
+@keyframes cvOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.cv-dialog {
+    position: relative;
+    width: min(560px, 100%);
+    padding: 40px 36px 36px;
+    border-radius: 24px;
+    background: linear-gradient(160deg, rgba(22, 22, 22, 0.96), rgba(10, 10, 10, 0.96));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+    animation: cvDialogIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes cvDialogIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.cv-dialog-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cv-dialog-close:hover {
+    color: #000;
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: rotate(90deg);
+}
+
+.cv-dialog-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+}
+
+.cv-dialog-subtitle {
+    margin-top: 6px;
+    margin-bottom: 28px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.cv-dialog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.cv-format-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 10px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cv-format-btn i {
+    font-size: 1.9rem;
+    color: var(--primary);
+    transition: transform 0.25s ease;
+}
+
+.cv-format-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.cv-format-btn:hover:not(:disabled) i {
+    transform: scale(1.12);
+}
+
+.cv-format-btn:disabled {
+    opacity: 0.45;
+    cursor: progress;
+}
+
+.cv-format-btn.is-busy {
+    opacity: 1;
+    border-color: var(--primary);
+}
+
+.cv-format-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.cv-format-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 560px) {
+    .cv-dialog {
+        padding: 32px 20px 24px;
+    }
+
+    .cv-dialog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .cv-format-btn {
+        padding: 16px 8px 12px;
+    }
+
+    .cv-format-btn i {
+        font-size: 1.6rem;
+    }
+}
