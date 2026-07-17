@@ -46,7 +46,7 @@ export const experience = [
     bullets: [
       ['Leadership:', 'Grew as a leader — learning to communicate with people, business, and government, and to manage and divide work across the team.'],
       ['Team building:', 'Raised the level of everyone on the team while nurturing genuine friendship and lasting relationships.'],
-      ['Product breadth:', 'Delivered end-to-end software solutions spanning platforms, systems, and SaaS products.'],
+      ['Product breadth:', 'Delivered end-to-end software solutions spanning platforms, systems, and SaaS products for State-Owned Enterprise Smart City refactoring their software and improving performance up to 50-70 times.'],
     ],
   },
   {
@@ -55,16 +55,16 @@ export const experience = [
     date: 'October 2025 - Present',
     desc: 'Creating performant, secure, optimized, and scalable software with Rust and NextJS. Planning enormous, high-load architectures for modern systems.',
     bullets: [
-      ['Business automation:', 'Built 10+ large-scale systems that automate core business processes for major companies.'],
-      ['HR automation:', 'Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows.'],
-      ['Secure platforms:', 'Engineered a closed, security-first Linux distribution with a custom kernel tailored for enterprise partners.'],
+      ['Business automation:', 'Built 10+ large-scale systems that automate core business processes for major companies. That improved efficiency and reduced manual work up to 80%.'],
+      ['HR automation:', 'Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows that reduced hiring time from days to hours.'],
+      ['Secure platforms:', 'Engineered a closed, security-first Linux distribution with a custom kernel tailored for enterprise partners. Which grants unparalleled security and control.'],
       ['Team culture:', 'Thrived within a highly professional, collaborative engineering team focused on excellence and knowledge sharing.'],
     ],
   },
   {
     title: 'Software Engineer',
     company: 'Milli Eats',
-    date: 'June 2025 - Present',
+    date: 'June 2025 - January 2026',
     desc: 'Created cross-platform mobile delivery app with 3-sided architecture. Optimized performance and implemented scalable solutions.',
     bullets: [
       ['High-load design:', 'Delivered a secure, high-performance architecture that improved delivery speeds by over 70% versus the prior system.'],
@@ -74,7 +74,7 @@ export const experience = [
   {
     title: 'Technical Instructor',
     company: 'TechnoHub',
-    date: 'January 2025 - Present',
+    date: 'January 2025 - February 2025',
     desc: 'Teaching programming concepts, training corporate teams, and developing software projects for enterprise clients.',
     bullets: [
       ['Curriculum leadership:', 'Mentored cohorts across Python, JavaScript, C, Ruby, and Assembly for beginner through advanced levels.'],
@@ -85,17 +85,17 @@ export const experience = [
   {
     title: 'AI Specialist',
     company: 'TAG Marketeer Agency',
-    date: 'February - March 2025',
+    date: 'February 2025 - March 2025',
     desc: 'Implemented AI solutions and automated marketing workflows, optimizing business processes through intelligent automation.',
     bullets: [
-      ['Data intelligence:', 'Built an AI product that analyzes big data and surfaces statistical, analytical, and predictive dashboards.'],
+      ['Data intelligence:', 'Built an AI product that analyzes big data and surfaces statistical, analytical, and predictive dashboards. That optimized and speeded up decision-making processes by 100x.'],
       ['Throughput gains:', 'Reduced workflows that previously took months down to a single day with targeted automation.'],
     ],
   },
   {
     title: 'Founder',
     company: 'Founders School Bootcamp',
-    date: 'Autumn - Winter 2024',
+    date: 'Autumn 2024 - Winter 2024',
     desc: 'Developed startup concept, networked with industry experts, and gained entrepreneurial experience in tech innovation.',
     bullets: [
       ['Resilience:', 'Although the product never launched, transformed the journey into deep lessons across social engineering, marketing, and business management.'],
@@ -119,7 +119,7 @@ export const experience = [
     desc: 'Developed financial workflow automation systems, maintained existing infrastructure, and optimized operational processes.',
     bullets: [
       ['Scoring models:', 'Authored 15+ mathematical formulas powering a robust, secure microcredit evaluation engine.'],
-      ['Regulatory reporting:', 'Delivered automated reporting and analytics that satisfy stringent audit requirements.'],
+      ['Regulatory reporting:', 'Delivered automated reporting and analytics that satisfy stringent audit requirements. Reduced reporting time by 1000x.'],
     ],
   },
 ]
@@ -127,4 +127,4 @@ export const experience = [
 export const interests =
   'Astrophysics · Mathematics · Chess · Counter Strike 2 · Guitar · Knitting · Poems · Philosophy'
 
-export const certifications = 'NASA Certified · CISCO Instructor · TechnoHub Certified'
+export const certifications = 'NASA Certification · CISCO Instructor Certification · TechnoHub Instructor Certification'

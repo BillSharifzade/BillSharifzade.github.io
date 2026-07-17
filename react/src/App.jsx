@@ -31,6 +31,7 @@ function App() {
   const typingTexts = [
     'Backend Architect',
     'AI Architecture Specialist',
+    'Engineering Team Lead',
     'Full-Stack Developer',
     'Systems Engineer',
     'Tech Innovator'
@@ -216,7 +217,7 @@ function App() {
             <span className="typing-text">{typingTexts[textIndex].substring(0, charIndex)}</span>
           </div>
           <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '600px' }}>
-            I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details.
+            I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details. And making sure that my team does the same.
           </p>
         </div>
       </section>
@@ -228,7 +229,7 @@ function App() {
           </h2>
           <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
             <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '30px' }}>
-              <DecryptedText text="I'm a middle backend architect with deep expertise in wide areas of engineering all-range systems. Currently working on cutting-edge projects in fintech, high-load systems, AI creation and integration into systems." intervalMs={8} step={1} />
+              <DecryptedText text="I'm a middle backend architect with deep expertise in wide areas of engineering all-range systems. Currently working on cutting-edge projects in fintech, high-load systems, AI creation and integration into systems. Controlling and monitoring the quality of the code and the team's work." intervalMs={8} step={1} />
             </p>
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
               <DecryptedText
@@ -295,9 +296,9 @@ function App() {
               label="Rust"
               iconClass="fab fa-rust"
               items={[
-                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Advanced</span></div>,
-                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Advanced</span></div>,
-                <div className="skill-item" key="a3"><span>Tokio</span><span>Advanced</span></div>,
+                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Expert</span></div>,
+                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Expert</span></div>,
+                <div className="skill-item" key="a3"><span>Tokio</span><span>Expert</span></div>,
               ]}
             />
             <Folder
@@ -307,7 +308,7 @@ function App() {
               iconClass="fas fa-shield-alt"
               items={[
                 <div className="skill-item" key="c1"><span>Cybersecurity, AppSec</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="c2"><span>Cryptography</span><span>Advanced</span></div>,
+                <div className="skill-item" key="c2"><span>Cryptography</span><span>Intermediate</span></div>,
                 <div className="skill-item" key="c3"><span>Network Security</span><span>Intermediate</span></div>,
               ]}
             />
