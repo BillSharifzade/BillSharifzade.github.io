@@ -80,20 +80,20 @@
 /* Company logos forced to pure white regardless of brand colors */
 .journey-logo {
     flex: 0 0 auto;
-    width: 54px;
-    height: 54px;
+    width: 66px;
+    height: 66px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     overflow: hidden;
 }
 
 .journey-logo img {
-    max-width: 78%;
-    max-height: 78%;
+    max-width: 86%;
+    max-height: 86%;
     object-fit: contain;
     filter: brightness(0) invert(1);
 }
@@ -130,6 +130,7 @@
     display: block;
     color: var(--text-secondary);
     font-size: 0.85rem;
+    overflow-wrap: break-word;
 }
 
 .journey-expand {
@@ -224,7 +225,7 @@
 
 @media (max-width: 520px) {
     .journey-card {
-        width: calc(100% - 60px);
+        width: calc(100% - 56px);
         padding: 14px 14px;
     }
 
@@ -233,11 +234,30 @@
     }
 
     .journey-logo {
-        width: 44px;
-        height: 44px;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
     }
 
     .journey-title {
         font-size: 0.92rem;
+    }
+
+    .journey-date {
+        font-size: 0.72rem;
+    }
+
+    .journey-company {
+        font-size: 0.78rem;
+    }
+
+    .journey-expand {
+        width: 34px;
+        height: 34px;
+    }
+
+    .journey-achievements li {
+        padding: 10px 12px;
+        font-size: 0.82rem;
     }
 }

@@ -22,8 +22,11 @@ body {
     line-height: 1.6;
 }
 
-/* Hide the native scrollbar — the top progress bar is the scroll indicator */
+/* Hide the native scrollbar — the top progress bar is the scroll indicator.
+   overflow-x: clip stops transformed offscreen elements (mobile nav panel,
+   bounce-card fan) from widening the page on phones. */
 html {
+    overflow-x: clip;
     scrollbar-width: none;
     /* Firefox */
     -ms-overflow-style: none;

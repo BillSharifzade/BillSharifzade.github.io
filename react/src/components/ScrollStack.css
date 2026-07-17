@@ -106,7 +106,8 @@
   }
 
   .scroll-stack-card {
-    height: 19rem;
+    height: auto;
+    min-height: 19rem;
     padding: 2rem;
     border-radius: 28px;
   }
@@ -124,5 +125,19 @@
   .hobby-chip {
     padding: 8px 14px;
     font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .scroll-stack-card {
+    padding: 1.6rem 1.4rem 2.4rem;
+  }
+
+  .hobby-card-title {
+    font-size: 1.35rem;
+  }
+
+  .hobby-card-desc {
+    font-size: 0.9rem;
   }
 }

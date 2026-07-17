@@ -58,19 +58,43 @@
     letter-spacing: 0.05em;
 }
 
+/* Icon cards keep their 160px desktop proportions on phones — the whole fan
+   scales down instead (fan span: 2×245px translate + 160px card = 650px). */
 @media (max-width: 768px) {
     .card--icon {
-        width: 120px;
-        gap: 8px;
-    }
-
-    .card--icon .tech-icon-label {
-        font-size: 0.66rem;
+        width: 160px;
+        border-width: 5px;
+        border-radius: 25px;
     }
 }
 
-@media (max-width: 480px) {
-    .card--icon {
-        width: 96px;
+/* Stepped fan scale: keeps the full 650px-wide fan inside the viewport */
+@media (max-width: 700px) {
+    .bounceCardsContainer--fluid {
+        transform: scale(0.8);
+    }
+}
+
+@media (max-width: 560px) {
+    .bounceCardsContainer--fluid {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 470px) {
+    .bounceCardsContainer--fluid {
+        transform: scale(0.58);
+    }
+}
+
+@media (max-width: 390px) {
+    .bounceCardsContainer--fluid {
+        transform: scale(0.52);
+    }
+}
+
+@media (max-width: 340px) {
+    .bounceCardsContainer--fluid {
+        transform: scale(0.45);
     }
 }
