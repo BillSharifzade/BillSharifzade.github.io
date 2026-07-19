@@ -9,6 +9,7 @@ export const profile = {
     'and AI creation and integration. I build robust, high-quality, long-term, and efficient solutions, with a ' +
     'focus on low-level programming, ML, blockchain, and architecting enormous systems from scratch.',
   contacts: [
+    { label: 'CV in website format', value: 'https://billsharifzade.github.io/', href: 'https://billsharifzade.github.io/' },
     { label: 'Phone', value: '+992 985 447 072' },
     { label: 'Signal', value: 'qwantum.01' },
     { label: 'Telegram', value: '@knight_of_bonnie' },
