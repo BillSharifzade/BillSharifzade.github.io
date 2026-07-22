@@ -523,15 +523,16 @@ function App() {
             NASA Certified • CISCO Instructor • TechnoHub Certified
           </p>
           <div className="footer-tags">
-            <span
+            <a
               className="secret-job"
-              tabIndex={0}
-              role="note"
+              href="https://bonnnieeee.github.io/"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="I also work as solar knight for my Bonnie"
             >
               <i className="fas fa-heart"></i> Secret job
               <span className="secret-job-tooltip">I also work as solar knight for my Bonnie</span>
-            </span>
+            </a>
           </div>
         </div>
       </footer>

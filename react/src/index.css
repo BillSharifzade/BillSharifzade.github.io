@@ -495,8 +495,9 @@ nav.scrolled {
     color: var(--text-secondary);
     font-size: 0.85rem;
     letter-spacing: 0.03em;
-    cursor: default;
+    cursor: pointer;
     outline: none;
+    text-decoration: none;
     transition: all 0.3s ease;
 }
 
