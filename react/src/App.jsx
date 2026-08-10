@@ -15,9 +15,6 @@ import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import './index.css'
 
-// Route anchor navigation through Lenis when it's active (the hobbies stack
-// runs Lenis on the window), otherwise fall back to native smooth scroll.
-// Offset accounts for the fixed nav bar.
 function scrollToTarget(target) {
   if (!target) return
   const lenis = typeof window !== 'undefined' ? window.__appLenis : null
@@ -361,12 +358,12 @@ function App() {
                     </radialGradient>
                   </defs>
                   <circle cx="150" cy="150" r="36" fill="url(#galaxyCore)" />
-                  {/* Two logarithmic spiral arms (r = a·e^bθ), glow layer + core stroke */}
+                  {}
                   <path className="galaxy-arm-glow" d="M 157.4 154.7 L 156.9 155.9 L 156.1 157.1 L 155.1 158.2 L 153.9 159.2 L 152.5 160.1 L 150.8 160.8 L 149.0 161.3 L 147.1 161.5 L 145.0 161.5 L 142.9 161.2 L 140.7 160.5 L 138.6 159.6 L 136.6 158.3 L 134.8 156.6 L 133.1 154.7 L 131.7 152.4 L 130.7 149.9 L 130.1 147.1 L 129.9 144.1 L 130.2 141.0 L 131.0 137.9 L 132.5 134.7 L 134.5 131.7 L 137.0 128.8 L 140.2 126.2 L 143.9 124.0 L 148.1 122.2 L 152.8 121.0 L 157.8 120.4 L 163.1 120.5 L 168.6 121.4 L 174.1 123.1 L 179.5 125.6 L 184.6 129.0 L 189.4 133.2 L 193.6 138.3 L 197.0 144.2 L 199.6 150.8 L 201.2 157.9 L 201.6 165.6 L 200.7 173.5 L 198.5 181.6 L 194.8 189.7 L 189.6 197.5 L 182.9 204.8 L 174.7 211.4 L 165.1 217.1 L 154.2 221.5 L 142.2 224.6 L 129.3 226.0" />
                   <path className="galaxy-arm-line" d="M 157.4 154.7 L 156.9 155.9 L 156.1 157.1 L 155.1 158.2 L 153.9 159.2 L 152.5 160.1 L 150.8 160.8 L 149.0 161.3 L 147.1 161.5 L 145.0 161.5 L 142.9 161.2 L 140.7 160.5 L 138.6 159.6 L 136.6 158.3 L 134.8 156.6 L 133.1 154.7 L 131.7 152.4 L 130.7 149.9 L 130.1 147.1 L 129.9 144.1 L 130.2 141.0 L 131.0 137.9 L 132.5 134.7 L 134.5 131.7 L 137.0 128.8 L 140.2 126.2 L 143.9 124.0 L 148.1 122.2 L 152.8 121.0 L 157.8 120.4 L 163.1 120.5 L 168.6 121.4 L 174.1 123.1 L 179.5 125.6 L 184.6 129.0 L 189.4 133.2 L 193.6 138.3 L 197.0 144.2 L 199.6 150.8 L 201.2 157.9 L 201.6 165.6 L 200.7 173.5 L 198.5 181.6 L 194.8 189.7 L 189.6 197.5 L 182.9 204.8 L 174.7 211.4 L 165.1 217.1 L 154.2 221.5 L 142.2 224.6 L 129.3 226.0" />
                   <path className="galaxy-arm-glow" d="M 142.6 145.3 L 143.1 144.1 L 143.9 142.9 L 144.9 141.8 L 146.1 140.8 L 147.5 139.9 L 149.2 139.2 L 151.0 138.7 L 152.9 138.5 L 155.0 138.5 L 157.1 138.8 L 159.3 139.5 L 161.4 140.4 L 163.4 141.7 L 165.2 143.4 L 166.9 145.3 L 168.3 147.6 L 169.3 150.1 L 169.9 152.9 L 170.1 155.9 L 169.8 159.0 L 169.0 162.1 L 167.5 165.3 L 165.5 168.3 L 163.0 171.2 L 159.8 173.8 L 156.1 176.0 L 151.9 177.8 L 147.2 179.0 L 142.2 179.6 L 136.9 179.5 L 131.4 178.6 L 125.9 176.9 L 120.5 174.4 L 115.4 171.0 L 110.6 166.8 L 106.4 161.7 L 103.0 155.8 L 100.4 149.2 L 98.8 142.1 L 98.4 134.4 L 99.3 126.5 L 101.5 118.4 L 105.2 110.3 L 110.4 102.5 L 117.1 95.2 L 125.3 88.6 L 134.9 82.9 L 145.8 78.5 L 157.8 75.4 L 170.7 74.0" />
                   <path className="galaxy-arm-line" d="M 142.6 145.3 L 143.1 144.1 L 143.9 142.9 L 144.9 141.8 L 146.1 140.8 L 147.5 139.9 L 149.2 139.2 L 151.0 138.7 L 152.9 138.5 L 155.0 138.5 L 157.1 138.8 L 159.3 139.5 L 161.4 140.4 L 163.4 141.7 L 165.2 143.4 L 166.9 145.3 L 168.3 147.6 L 169.3 150.1 L 169.9 152.9 L 170.1 155.9 L 169.8 159.0 L 169.0 162.1 L 167.5 165.3 L 165.5 168.3 L 163.0 171.2 L 159.8 173.8 L 156.1 176.0 L 151.9 177.8 L 147.2 179.0 L 142.2 179.6 L 136.9 179.5 L 131.4 178.6 L 125.9 176.9 L 120.5 174.4 L 115.4 171.0 L 110.6 166.8 L 106.4 161.7 L 103.0 155.8 L 100.4 149.2 L 98.8 142.1 L 98.4 134.4 L 99.3 126.5 L 101.5 118.4 L 105.2 110.3 L 110.4 102.5 L 117.1 95.2 L 125.3 88.6 L 134.9 82.9 L 145.8 78.5 L 157.8 75.4 L 170.7 74.0" />
-                  {/* Stars scattered along the arms */}
+                  {}
                   <g className="galaxy-stars">
                     <circle cx="125.8" cy="143.0" r="1.8" />
                     <circle cx="138.2" cy="127.1" r="1.9" className="tw" />
@@ -470,7 +467,7 @@ function App() {
 
       <section id="contact" className="section fade-in-section">
         <div className="container">
-          <SectionTitle text="Let's Connect" />
+          <h2 className="section-title">Let's Connect</h2>
           <div className="contact-grid">
             <div className="contact-item">
               <div className="contact-icon"><i className="fas fa-phone"></i></div>
