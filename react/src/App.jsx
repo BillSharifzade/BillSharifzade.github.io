@@ -7,6 +7,7 @@ import mainAvatar from './assets/main_img.png'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import ExperienceJourney from './components/ExperienceJourney.jsx'
+import SectionTitle from './components/SectionTitle.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
 import './components/HobbyBackgrounds.css'
 import Beams from './components/Beams.jsx'
@@ -224,9 +225,7 @@ function App() {
 
       <section id="about" className="section fade-in-section">
         <div className="container">
-          <h2 className="section-title">
-            <DecryptedText text="About Me" intervalMs={8} step={1} />
-          </h2>
+          <SectionTitle text="About Me" />
           <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
             <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '30px' }}>
               <DecryptedText text="I'm a middle backend architect with deep expertise in wide areas of engineering all-range systems. Currently working on cutting-edge projects in fintech, high-load systems, AI creation and integration into systems. Controlling and monitoring the quality of the code and the team's work." intervalMs={8} step={1} />
@@ -244,7 +243,7 @@ function App() {
 
       <section id="skills" className="section fade-in-section" style={{ paddingTop: 40, paddingBottom: 40 }}>
         <div className="container">
-          <h2 className="section-title">Technical Arsenal</h2>
+          <SectionTitle text="Technical Arsenal" />
           <div className="folders-grid">
             <Folder
               size={1.35}
@@ -315,7 +314,7 @@ function App() {
           </div>
 
           <div className="current-stack-wrapper" style={{ marginTop: '40px', textAlign: 'center' }}>
-            <h2 className="section-title" style={{ marginBottom: '40px' }}>Current Stack</h2>
+            <SectionTitle text="Current Stack" style={{ marginBottom: '40px' }} />
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '60px' }}>
               <BounceCards
                 className="custom-bounceCards bounceCardsContainer--fluid"
@@ -342,14 +341,14 @@ function App() {
 
       <section id="experience" className="section fade-in-section">
         <div className="container">
-          <h2 className="section-title">Professional Journey</h2>
+          <SectionTitle text="Professional Journey" />
           <ExperienceJourney />
         </div>
       </section>
 
       <section id="hobbies" className="section">
         <div className="container">
-          <h2 className="section-title">Beyond the Code</h2>
+          <SectionTitle text="Beyond the Code" />
           <ScrollStack className="hobbies-stack" useWindowScroll={true}>
             <ScrollStackItem>
               <div className="hobby-bg hobby-bg--cosmos" aria-hidden="true">
@@ -471,7 +470,7 @@ function App() {
 
       <section id="contact" className="section fade-in-section">
         <div className="container">
-          <h2 className="section-title">Let's Connect</h2>
+          <SectionTitle text="Let's Connect" />
           <div className="contact-grid">
             <div className="contact-item">
               <div className="contact-icon"><i className="fas fa-phone"></i></div>

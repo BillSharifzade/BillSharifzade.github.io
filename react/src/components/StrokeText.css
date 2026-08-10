@@ -1,0 +1,26 @@
+.stroke-text {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.stroke-text--hover {
+  cursor: pointer;
+}
+
+/* The SVG is sized from the measured glyph box so the wordmark renders at its
+   true `fontSize` on wide containers and scales down proportionally on narrow
+   ones — no letterboxing, no oversized stretching to fill the container. */
+.stroke-text__svg {
+  display: block;
+  width: 100%;
+  max-width: var(--stroke-text-width);
+  aspect-ratio: var(--stroke-text-ratio);
+  margin-inline: auto;
+}
+
+.stroke-text__stroke,
+.stroke-text__fill {
+  user-select: none;
+  font-family: inherit;
+}
