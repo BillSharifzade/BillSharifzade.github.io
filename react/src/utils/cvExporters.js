@@ -1,10 +1,18 @@
-import { profile, skills, experience, interests, certifications } from '../data/cv.js'
+import {
+  profile,
+  skills,
+  experience,
+  education,
+  projects,
+  projectRepoLine,
+  interests,
+  certifications,
+  contactLine,
+  certLine,
+  dateLine,
+} from '../data/cv.js'
 
 const BASENAME = 'Sharifzoda_Bilol_CV'
-
-function contactLine(c) {
-  return c.label === 'Phone' ? c.value : `${c.label}: ${c.value}`
-}
 
 function triggerDownload(blob, filename) {
   const url = URL.createObjectURL(blob)
@@ -53,7 +61,7 @@ async function exportDocx() {
     }),
     heading('Summary'),
     new Paragraph({ children: [new TextRun(profile.summary)] }),
-    heading('Technical Arsenal'),
+    heading('Core Stack'),
     ...skills.map(
       (s) =>
         new Paragraph({
@@ -72,7 +80,7 @@ async function exportDocx() {
       }),
       new Paragraph({
         spacing: { after: 80 },
-        children: [new TextRun({ text: exp.date, italics: true, color: '777777', size: 18 })],
+        children: [new TextRun({ text: dateLine(exp), italics: true, color: '777777', size: 18 })],
       }),
       new Paragraph({ spacing: { after: 80 }, children: [new TextRun(exp.desc)] }),
       ...exp.bullets.map(
@@ -84,10 +92,46 @@ async function exportDocx() {
           })
       ),
     ]),
+    heading('Selected Projects'),
+    ...projects.flatMap((proj) => [
+      new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: proj.name, bold: true })] }),
+      new Paragraph({
+        spacing: { after: 40 },
+        children: [new TextRun({ text: proj.stack, color: '5b63c7', size: 18 })],
+      }),
+      new Paragraph({ spacing: { after: 40 }, children: [new TextRun(proj.desc)] }),
+      new Paragraph({
+        spacing: { after: 140 },
+        children: [new TextRun({ text: projectRepoLine(proj), italics: true, color: '777777', size: 18 })],
+      }),
+    ]),
+    heading('Education'),
+    ...education.flatMap((ed) => [
+      new Paragraph({
+        spacing: { after: 40 },
+        children: [
+          new TextRun({ text: ed.degree, bold: true }),
+          new TextRun({ text: ` · ${ed.school}`, bold: true, color: '5b63c7' }),
+        ],
+      }),
+      new Paragraph({
+        spacing: { after: 120 },
+        children: [
+          new TextRun({
+            text: ed.note ? `${ed.date} · ${ed.note}` : ed.date,
+            italics: true,
+            color: '777777',
+            size: 18,
+          }),
+        ],
+      }),
+    ]),
+    heading('Certifications'),
+    ...certifications.map(
+      (c) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 40 }, children: [new TextRun(certLine(c))] })
+    ),
     heading('Interests'),
     new Paragraph({ children: [new TextRun(interests)] }),
-    heading('Certifications'),
-    new Paragraph({ children: [new TextRun(certifications)] }),
   ]
 
   const doc = new Document({
@@ -110,7 +154,6 @@ async function exportXlsx() {
     ['Summary', profile.summary],
     ...profile.contacts.map((c) => [c.label, c.value]),
     ['Interests', interests],
-    ['Certifications', certifications],
   ]
   const wsProfile = XLSX.utils.aoa_to_sheet(profileRows)
   wsProfile['!cols'] = [{ wch: 16 }, { wch: 100 }]
@@ -121,10 +164,11 @@ async function exportXlsx() {
   wsSkills['!cols'] = [{ wch: 20 }, { wch: 70 }]
   XLSX.utils.book_append_sheet(wb, wsSkills, 'Skills')
 
-  const expRows = [['Period', 'Title', 'Company', 'Description', 'Achievements']]
+  const expRows = [['Period', 'Type', 'Title', 'Company', 'Description', 'Achievements']]
   experience.forEach((exp) => {
     expRows.push([
       exp.date,
+      exp.type ?? '',
       exp.title,
       exp.company,
       exp.desc,
@@ -132,8 +176,32 @@ async function exportXlsx() {
     ])
   })
   const wsExp = XLSX.utils.aoa_to_sheet(expRows)
-  wsExp['!cols'] = [{ wch: 24 }, { wch: 34 }, { wch: 26 }, { wch: 60 }, { wch: 80 }]
+  wsExp['!cols'] = [{ wch: 24 }, { wch: 14 }, { wch: 34 }, { wch: 26 }, { wch: 60 }, { wch: 80 }]
   XLSX.utils.book_append_sheet(wb, wsExp, 'Experience')
+
+  const projRows = [
+    ['Project', 'Stack', 'Description', 'Repository'],
+    ...projects.map((proj) => [proj.name, proj.stack, proj.desc, proj.href]),
+  ]
+  const wsProj = XLSX.utils.aoa_to_sheet(projRows)
+  wsProj['!cols'] = [{ wch: 34 }, { wch: 54 }, { wch: 90 }, { wch: 56 }]
+  XLSX.utils.book_append_sheet(wb, wsProj, 'Projects')
+
+  const eduRows = [
+    ['Period', 'Degree', 'Institution', 'Status'],
+    ...education.map((ed) => [ed.date, ed.degree, ed.school, ed.note ?? '']),
+  ]
+  const wsEdu = XLSX.utils.aoa_to_sheet(eduRows)
+  wsEdu['!cols'] = [{ wch: 16 }, { wch: 34 }, { wch: 44 }, { wch: 14 }]
+  XLSX.utils.book_append_sheet(wb, wsEdu, 'Education')
+
+  const certRows = [
+    ['Certification', 'Issuer', 'Year'],
+    ...certifications.map((c) => [c.name, c.issuer ?? '', c.year ?? '']),
+  ]
+  const wsCerts = XLSX.utils.aoa_to_sheet(certRows)
+  wsCerts['!cols'] = [{ wch: 46 }, { wch: 20 }, { wch: 10 }]
+  XLSX.utils.book_append_sheet(wb, wsCerts, 'Certifications')
 
   const out = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
   triggerDownload(
@@ -156,12 +224,22 @@ function exportCsv() {
     ...profile.contacts.map((c) => ['Contact', c.label, c.value]),
     ...skills.map((s) => ['Skills', s.cat, s.list]),
     ...experience.flatMap((exp) => [
-      ['Experience', `${exp.title} · ${exp.company}`, exp.date],
+      ['Experience', `${exp.title} · ${exp.company}`, dateLine(exp)],
       ['Experience', 'Description', exp.desc],
       ...exp.bullets.map(([label, text]) => ['Experience', label.replace(/:$/, ''), text]),
     ]),
+    ...projects.flatMap((proj) => [
+      ['Projects', proj.name, proj.stack],
+      ['Projects', 'Description', proj.desc],
+      ['Projects', 'Repository', proj.href],
+    ]),
+    ...education.map((ed) => [
+      'Education',
+      `${ed.degree} · ${ed.school}`,
+      ed.note ? `${ed.date} · ${ed.note}` : ed.date,
+    ]),
+    ...certifications.map((c) => ['Certifications', c.name, certLine(c)]),
     ['Extras', 'Interests', interests],
-    ['Extras', 'Certifications', certifications],
   ]
   const csv = rows.map((row) => row.map(csvEscape).join(',')).join('\r\n')
   triggerDownload(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }), `${BASENAME}.csv`)
@@ -179,7 +257,7 @@ function buildMarkdown() {
     '',
     profile.summary,
     '',
-    '## Technical Arsenal',
+    '## Core Stack',
     '',
     ...skills.map((s) => `- **${s.cat}:** ${s.list}`),
     '',
@@ -187,11 +265,28 @@ function buildMarkdown() {
     '',
   ]
   experience.forEach((exp) => {
-    lines.push(`### ${exp.title} · ${exp.company}`, '', `*${exp.date}*`, '', exp.desc, '')
+    lines.push(`### ${exp.title} · ${exp.company}`, '', `*${dateLine(exp)}*`, '', exp.desc, '')
     exp.bullets.forEach(([label, text]) => lines.push(`- **${label}** ${text}`))
     lines.push('')
   })
-  lines.push('## Interests', '', interests, '', '## Certifications', '', certifications, '')
+  lines.push('## Selected Projects', '')
+  projects.forEach((proj) => {
+    lines.push(`### [${proj.name}](${proj.href})`, '', `*${proj.stack}*`, '', proj.desc, '')
+  })
+  lines.push('## Education', '')
+  education.forEach((ed) => {
+    lines.push(`### ${ed.degree} · ${ed.school}`, '', `*${ed.note ? `${ed.date} · ${ed.note}` : ed.date}*`, '')
+  })
+  lines.push(
+    '## Certifications',
+    '',
+    ...certifications.map((c) => `- ${certLine(c)}`),
+    '',
+    '## Interests',
+    '',
+    interests,
+    ''
+  )
   return lines.join('\n')
 }
 
@@ -213,7 +308,7 @@ function buildTxt() {
     sub,
     profile.summary,
     '',
-    'TECHNICAL ARSENAL',
+    'CORE STACK',
     sub,
     ...skills.map((s) => `  * ${s.cat}: ${s.list}`),
     '',
@@ -221,10 +316,28 @@ function buildTxt() {
     sub,
   ]
   experience.forEach((exp) => {
-    lines.push('', `${exp.title} - ${exp.company}`, `(${exp.date})`, '', exp.desc)
+    lines.push('', `${exp.title} - ${exp.company}`, `(${dateLine(exp)})`, '', exp.desc)
     exp.bullets.forEach(([label, text]) => lines.push(`  > ${label} ${text}`))
   })
-  lines.push('', 'INTERESTS', sub, interests, '', 'CERTIFICATIONS', sub, certifications, '')
+  lines.push('', 'SELECTED PROJECTS', sub)
+  projects.forEach((proj) => {
+    lines.push('', proj.name, `(${proj.stack})`, '', proj.desc, `  ${proj.href}`)
+  })
+  lines.push('', 'EDUCATION', sub)
+  education.forEach((ed) => {
+    lines.push(`${ed.degree} - ${ed.school}`, `(${ed.note ? `${ed.date} · ${ed.note}` : ed.date})`)
+  })
+  lines.push(
+    '',
+    'CERTIFICATIONS',
+    sub,
+    ...certifications.map((c) => `  * ${certLine(c)}`),
+    '',
+    'INTERESTS',
+    sub,
+    interests,
+    ''
+  )
   return lines.join('\n')
 }
 

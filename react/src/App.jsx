@@ -6,6 +6,7 @@ import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.png'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
+import { projects } from './data/cv.js'
 import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
@@ -174,6 +175,7 @@ function App() {
             <a href="#home" className="nav-link">Profile</a>
             <a href="#about" className="nav-link">About</a>
             <a href="#skills" className="nav-link">Skills</a>
+            <a href="#projects" className="nav-link">Projects</a>
             <a href="#experience" className="nav-link">Experience</a>
             <a href="#hobbies" className="nav-link">Hobbies</a>
             <a href="#contact" className="nav-link">Contact</a>
@@ -187,6 +189,7 @@ function App() {
           <a href="#home" className="nav-link" onClick={closeMobileNav}>Profile</a>
           <a href="#about" className="nav-link" onClick={closeMobileNav}>About</a>
           <a href="#skills" className="nav-link" onClick={closeMobileNav}>Skills</a>
+          <a href="#projects" className="nav-link" onClick={closeMobileNav}>Projects</a>
           <a href="#experience" className="nav-link" onClick={closeMobileNav}>Experience</a>
           <a href="#hobbies" className="nav-link" onClick={closeMobileNav}>Hobbies</a>
           <a href="#contact" className="nav-link" onClick={closeMobileNav}>Contact</a>
@@ -240,7 +243,7 @@ function App() {
 
       <section id="skills" className="section fade-in-section" style={{ paddingTop: 40, paddingBottom: 40 }}>
         <div className="container">
-          <SectionTitle text="Technical Arsenal" />
+          <SectionTitle text="Core Stack" />
           <div className="folders-grid">
             <Folder
               size={1.35}
@@ -332,6 +335,33 @@ function App() {
                 ]}
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" className="section fade-in-section">
+        <div className="container">
+          <SectionTitle text="Selected Projects" />
+          <div className="projects-grid">
+            {projects.map((project) => (
+              <a
+                key={project.repo}
+                className="project-card"
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="project-card__head">
+                  <span className="project-card__icon"><i className={project.icon}></i></span>
+                  <h3>{project.name}</h3>
+                </div>
+                <p className="project-card__stack">{project.stack}</p>
+                <p className="project-card__desc">{project.desc}</p>
+                <span className="project-card__repo">
+                  <i className="fab fa-github"></i> {project.repo}
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -469,10 +499,18 @@ function App() {
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
           <div className="contact-grid">
+            <a href="mailto:sharifzadebilal@gmail.com">
+              <div className="contact-item">
+                <div className="contact-icon"><i className="fas fa-envelope"></i></div>
+                <h3>Email</h3>
+                <p>sharifzadebilal@gmail.com</p>
+              </div>
+            </a>
+
             <div className="contact-item">
               <div className="contact-icon"><i className="fas fa-phone"></i></div>
               <h3>Phone</h3>
-              <p>+992985447072</p>
+              <p>+992 985 447 072</p>
             </div>
 
             <a href="https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN" target="_blank" rel="noopener noreferrer">
@@ -493,11 +531,11 @@ function App() {
               </div>
             </a>
 
-            <a href="https://steamcommunity.com/id/QuaZZZar2005/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/in/bilal-sharifzade-555bba35a/" target="_blank" rel="noopener noreferrer">
               <div className="contact-item">
-                <div className="contact-icon"><i className="fab fa-steam"></i></div>
-                <h3>Steam</h3>
-                <p>QuaZZZar2005</p>
+                <div className="contact-icon"><i className="fab fa-linkedin"></i></div>
+                <h3>LinkedIn</h3>
+                <p>Bilal Sharifzade</p>
               </div>
             </a>
 
@@ -516,7 +554,7 @@ function App() {
         <div className="container">
           <p>&copy; 2026 Sharifzoda Bilol. Crafted with cutting-edge web technologies.</p>
           <p style={{ marginTop: '10px', color: 'var(--text-secondary)' }}>
-            NASA Certified • CISCO Instructor • TechnoHub Certified
+            Cisco CCNA • Cisco Certified Instructor • Microsoft AZ-900 / AI-900 • NASA Space Apps
           </p>
           <div className="footer-tags">
             <a

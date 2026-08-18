@@ -9,7 +9,6 @@ import {
   siGitlab,
 } from 'simple-icons'
 
-// Monochrome (white-on-dark) icon set for the Current Stack cards.
 export const techIcons = [
   { title: 'Rust', path: siRust.path },
   { title: 'React', path: siReact.path },
