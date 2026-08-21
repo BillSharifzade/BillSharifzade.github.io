@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" role="img">
+  <defs>
+    <radialGradient id="glow5" cx="50%" cy="32%" r="62%">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.24"/>
+      <stop offset="60%" stop-color="#c084fc" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid5" width="45" height="45" patternUnits="userSpaceOnUse">
+      <path d="M45 0H0V45" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="1200" fill="#05050a"/>
+  <rect width="900" height="1200" fill="url(#grid5)"/>
+  <rect width="900" height="1200" fill="url(#glow5)"/>
+  <g font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="60" y="140" width="780" height="920" rx="22" fill="#0a0a12" stroke="#ffffff" stroke-opacity="0.09"/>
+    <path d="M60 196h780" stroke="#ffffff" stroke-opacity="0.09"/>
+    <circle cx="96" cy="168" r="6" fill="#3a3a4a"/><circle cx="118" cy="168" r="6" fill="#3a3a4a"/><circle cx="140" cy="168" r="6" fill="#3a3a4a"/>
+    <text x="450" y="174" fill="#6b6b80" font-size="19" text-anchor="middle">mdis_crm · admissions funnel</text>
+    <text x="450" y="240" fill="#6b6b80" font-size="16" text-anchor="middle">intake: telegram bot · public site · excel import</text>
+    <path d="M140 268H760L710 360H190Z" fill="#c084fc" fill-opacity="0.72" stroke="#c084fc" stroke-opacity="0.35"/><path d="M190 374H710L660 466H240Z" fill="#c084fc" fill-opacity="0.63" stroke="#c084fc" stroke-opacity="0.35"/><path d="M240 480H660L610 572H290Z" fill="#c084fc" fill-opacity="0.54" stroke="#c084fc" stroke-opacity="0.35"/><path d="M290 586H610L560 678H340Z" fill="#c084fc" fill-opacity="0.45" stroke="#c084fc" stroke-opacity="0.35"/><path d="M340 692H560L525 784H375Z" fill="#c084fc" fill-opacity="0.36" stroke="#c084fc" stroke-opacity="0.35"/><text x="450" y="308" fill="#e3d3d3" font-size="21" text-anchor="middle">Leads</text><text x="450" y="336" fill="#05050a" font-size="20" font-weight="700" text-anchor="middle">1 284</text><text x="450" y="414" fill="#e3d3d3" font-size="21" text-anchor="middle">Contacted</text><text x="450" y="442" fill="#05050a" font-size="20" font-weight="700" text-anchor="middle">842</text><text x="450" y="520" fill="#e3d3d3" font-size="21" text-anchor="middle">Applied</text><text x="450" y="548" fill="#05050a" font-size="20" font-weight="700" text-anchor="middle">496</text><text x="450" y="626" fill="#e3d3d3" font-size="21" text-anchor="middle">Documents</text><text x="450" y="654" fill="#05050a" font-size="20" font-weight="700" text-anchor="middle">271</text><text x="450" y="732" fill="#e3d3d3" font-size="21" text-anchor="middle">Enrolled</text><text x="450" y="760" fill="#05050a" font-size="20" font-weight="700" text-anchor="middle">163</text>
+    <rect x="115" y="822" width="214" height="104" rx="12" fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.10"/><text x="139" y="856" fill="#6b6b80" font-size="15">conv</text><text x="139" y="898" fill="#c084fc" font-size="30">12.7%</text><rect x="343" y="822" width="214" height="104" rx="12" fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.10"/><text x="367" y="856" fill="#6b6b80" font-size="15">avg cycle</text><text x="367" y="898" fill="#c084fc" font-size="30">9d</text><rect x="571" y="822" width="214" height="104" rx="12" fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.10"/><text x="595" y="856" fill="#6b6b80" font-size="15">managers</text><text x="595" y="898" fill="#c084fc" font-size="30">14</text>
+    <rect x="115" y="965" width="670" height="52" rx="10" fill="#c084fc" fill-opacity="0.09" stroke="#c084fc" stroke-opacity="0.30"/>
+    <text x="450" y="998" fill="#c084fc" font-size="18" text-anchor="middle">Go (Chi, pgx) · React 19 · RBAC · Swagger</text>
+  </g>
+</svg>

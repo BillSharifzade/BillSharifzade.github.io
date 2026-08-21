@@ -7,6 +7,8 @@ import mainAvatar from './assets/main_img.png'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
+import { projectCovers } from './data/projectCovers.js'
+import AccordionGallery from './components/AccordionGallery.jsx'
 import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
@@ -15,6 +17,18 @@ import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import './index.css'
+
+// cv.js keeps the canonical copy; the gallery only needs the fields it renders.
+const projectPanels = projects.map((p) => ({
+  image: projectCovers[p.cover],
+  alt: `${p.name} — project cover`,
+  label: p.name,
+  stack: p.stack,
+  blurb: p.blurb,
+  repo: p.repo,
+  link: p.href,
+  accent: p.accent,
+}))
 
 function scrollToTarget(target) {
   if (!target) return
@@ -342,27 +356,11 @@ function App() {
       <section id="projects" className="section fade-in-section">
         <div className="container">
           <SectionTitle text="Selected Projects" />
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <a
-                key={project.repo}
-                className="project-card"
-                href={project.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="project-card__head">
-                  <span className="project-card__icon"><i className={project.icon}></i></span>
-                  <h3>{project.name}</h3>
-                </div>
-                <p className="project-card__stack">{project.stack}</p>
-                <p className="project-card__desc">{project.desc}</p>
-                <span className="project-card__repo">
-                  <i className="fab fa-github"></i> {project.repo}
-                </span>
-              </a>
-            ))}
-          </div>
+          <p className="projects-hint">
+            <span className="projects-hint--pointer">Hover a panel to open it · click to visit the repository</span>
+            <span className="projects-hint--touch">Tap a panel to open it · tap again to visit the repository</span>
+          </p>
+          <AccordionGallery items={projectPanels} defaultIndex={0} trigger="hover" />
         </div>
       </section>
 

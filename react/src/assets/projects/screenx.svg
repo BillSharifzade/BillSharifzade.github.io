@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" role="img">
+  <defs>
+    <radialGradient id="glow2" cx="50%" cy="30%" r="62%">
+      <stop offset="0%" stop-color="#e8a765" stop-opacity="0.26"/>
+      <stop offset="60%" stop-color="#e8a765" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#e8a765" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid2" width="45" height="45" patternUnits="userSpaceOnUse">
+      <path d="M45 0H0V45" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="900" height="1200" fill="#05050a"/>
+  <rect width="900" height="1200" fill="url(#grid2)"/>
+  <rect width="900" height="1200" fill="url(#glow2)"/>
+
+  <g font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="60" y="140" width="780" height="920" rx="22" fill="#0a0a12" stroke="#ffffff" stroke-opacity="0.09"/>
+    <path d="M60 196h780" stroke="#ffffff" stroke-opacity="0.09"/>
+    <circle cx="96" cy="168" r="6" fill="#3a3a4a"/>
+    <circle cx="118" cy="168" r="6" fill="#3a3a4a"/>
+    <circle cx="140" cy="168" r="6" fill="#3a3a4a"/>
+    <text x="450" y="174" fill="#6b6b80" font-size="19" text-anchor="middle">screenx · candidate lifecycle</text>
+
+    <path d="M160 292V752" stroke="#e8a765" stroke-opacity="0.40" stroke-width="2"/>
+
+    <g fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.12">
+      <rect x="210" y="252" width="590" height="80" rx="12"/>
+      <rect x="210" y="367" width="590" height="80" rx="12"/>
+      <rect x="210" y="482" width="590" height="80" rx="12"/>
+      <rect x="210" y="597" width="590" height="80" rx="12"/>
+      <rect x="210" y="712" width="590" height="80" rx="12"/>
+    </g>
+    <g fill="#05050a" stroke="#e8a765" stroke-width="2">
+      <circle cx="160" cy="292" r="13"/><circle cx="160" cy="407" r="13"/>
+      <circle cx="160" cy="522" r="13"/><circle cx="160" cy="637" r="13"/>
+      <circle cx="160" cy="752" r="13"/>
+    </g>
+    <g fill="#e8a765"><circle cx="160" cy="292" r="5"/><circle cx="160" cy="407" r="5"/><circle cx="160" cy="522" r="5"/></g>
+
+    <g font-size="23" fill="#e3d3d3">
+      <text x="240" y="288">Registration</text>
+      <text x="240" y="403">AI screening</text>
+      <text x="240" y="518">Generated test</text>
+      <text x="240" y="633">Review</text>
+      <text x="240" y="748">Hire</text>
+    </g>
+    <g font-size="15" fill="#6b6b80" text-anchor="end">
+      <text x="775" y="288">telegram mini app</text>
+      <text x="775" y="403">openai · queue</text>
+      <text x="775" y="518">deadline worker</text>
+      <text x="775" y="633">hr / erp sync</text>
+      <text x="775" y="748">webhook out</text>
+    </g>
+
+    <text x="115" y="855" fill="#6b6b80" font-size="17">background workers</text>
+    <g>
+      <rect x="115" y="875" width="670" height="14" rx="7" fill="#ffffff" fill-opacity="0.06"/>
+      <rect x="115" y="875" width="500" height="14" rx="7" fill="#e8a765" fill-opacity="0.75"/>
+      <rect x="115" y="905" width="670" height="14" rx="7" fill="#ffffff" fill-opacity="0.06"/>
+      <rect x="115" y="905" width="330" height="14" rx="7" fill="#e8a765" fill-opacity="0.55"/>
+      <rect x="115" y="935" width="670" height="14" rx="7" fill="#ffffff" fill-opacity="0.06"/>
+      <rect x="115" y="935" width="610" height="14" rx="7" fill="#e8a765" fill-opacity="0.35"/>
+    </g>
+
+    <rect x="115" y="985" width="670" height="52" rx="10" fill="#e8a765" fill-opacity="0.09" stroke="#e8a765" stroke-opacity="0.32"/>
+    <text x="450" y="1018" fill="#e8a765" font-size="18" text-anchor="middle">Axum · Tokio · SQLx · Argon2 + JWT</text>
+  </g>
+</svg>

@@ -140,52 +140,95 @@ export function dateLine(exp) {
 
 // Public repositories at github.com/BillSharifzade. Stack strings mirror each
 // project's actual dependency manifest, not aspiration.
+//
+// `desc` is the long form used by the PDF, the exporters and the no-JS
+// fallback; `blurb` is the short form the site gallery reveals on hover.
+// `cover` keys into src/data/projectCovers.js — cv.js stays import-free because
+// vite.config.js loads it in Node at build time, where asset imports fail.
 export const projects = [
+  {
+    name: 'Multi-Protocol API Framework',
+    icon: 'fab fa-rust',
+    href: 'https://github.com/BillSharifzade/rs-apilib',
+    repo: 'rs-apilib',
+    cover: 'apiweave',
+    accent: '#818cf8',
+    stack: 'Rust (hyper, Tokio, proc-macros) \u00b7 REST \u00b7 GraphQL \u00b7 RPC \u00b7 SOAP \u00b7 WS',
+    blurb:
+      'Declare an operation once; apiweave serves it as REST, GraphQL, JSON-RPC, SOAP, WebSocket and SSE '
+      + 'from one handler \u2014 one schema, one error taxonomy, no codegen step.',
+    desc:
+      'apiweave: a three-crate Rust workspace where a single #[operation] declaration is projected onto every '
+      + 'protocol a service needs \u2014 REST, JSON-RPC 2.0, GraphQL, SOAP 1.1/1.2, WebSocket and SSE \u2014 sharing one '
+      + 'schema IR, one validation pass and one error taxonomy. Ships a hand-written GraphQL parser with SDL and '
+      + 'introspection, WSDL and OpenAPI 3.1 generation, and derive macros, on a default build of 61 crates with '
+      + 'zero *-sys dependencies.',
+  },
   {
     name: 'Recruitment Automation Platform',
     icon: 'fab fa-rust',
     href: 'https://github.com/BillSharifzade/Rust-Screenx-HR-Automatization',
     repo: 'Rust-Screenx-HR-Automatization',
+    cover: 'screenx',
+    accent: '#e8a765',
     stack: 'Rust (Axum, Tokio, SQLx) \u00b7 PostgreSQL \u00b7 Next.js \u00b7 Telegram Mini App \u00b7 OpenAI',
+    blurb:
+      'Carries a candidate from registration through AI-generated testing to hire across an HR/ERP system, a '
+      + 'Telegram bot and a Mini App, with background workers driving the AI queue and deadlines.',
     desc:
-      'Recruitment platform bridging a corporate HR/ERP system, a Telegram bot, and a Telegram Mini App, ' +
-      'automating the candidate lifecycle from registration through AI-generated testing to hire. Background ' +
-      'workers drive the AI queue, webhook delivery, and deadline checks behind Argon2 + JWT auth and ' +
-      'per-route rate limiting.',
+      'Recruitment platform bridging a corporate HR/ERP system, a Telegram bot, and a Telegram Mini App, '
+      + 'automating the candidate lifecycle from registration through AI-generated testing to hire. Background '
+      + 'workers drive the AI queue, webhook delivery, and deadline checks behind Argon2 + JWT auth and '
+      + 'per-route rate limiting.',
   },
   {
     name: 'Competency Matrix Platform',
     icon: 'fab fa-golang',
     href: 'https://github.com/BillSharifzade/HR_Progress',
     repo: 'HR_Progress',
+    cover: 'hr-progress',
+    accent: '#64c8d8',
     stack: 'Go (chi) \u00b7 PostgreSQL \u00b7 React \u00b7 TypeScript',
+    blurb:
+      'Multi-assessor scoring against a per-grade competency matrix, turning the resulting gaps into Individual '
+      + 'Development Plans with preceptor matching and predicted-improvement tracking.',
     desc:
-      'Workforce development system for a large corporation: assessments scored by multiple assessors, a ' +
-      'competency matrix with per-grade and per-department minimum thresholds, and Individual Development ' +
-      'Plans generated from the resulting gaps \u2014 including preceptor matching and predicted-improvement ' +
-      'tracking. Built to stay extensible as competencies change.',
+      'Workforce development system for a large corporation: assessments scored by multiple assessors, a '
+      + 'competency matrix with per-grade and per-department minimum thresholds, and Individual Development '
+      + 'Plans generated from the resulting gaps \u2014 including preceptor matching and predicted-improvement '
+      + 'tracking. Built to stay extensible as competencies change.',
   },
   {
     name: 'AtS Booking System',
     icon: 'fab fa-python',
     href: 'https://github.com/BillSharifzade/AtS_booking',
     repo: 'AtS_booking',
+    cover: 'ats-booking',
+    accent: '#6ee7b7',
     stack: 'Python (FastAPI, SQLAlchemy 2 async, aiogram 3) \u00b7 PostgreSQL \u00b7 React \u00b7 Docker',
+    blurb:
+      'Staff book rooms from a Telegram bot, admins run them from a React panel. Auth is a Telegram ID plus a '
+      + 'one-time code; the whole four-service stack boots from one docker compose command.',
     desc:
-      'Room-booking platform where staff book through a Telegram bot and administrators manage rooms and ' +
-      'requests from a React panel. Auth is a Telegram ID plus a one-time code from the bot, APScheduler ' +
-      'sends D-1 and H-1 reminders, and the whole four-service stack boots from one docker compose command.',
+      'Room-booking platform where staff book through a Telegram bot and administrators manage rooms and '
+      + 'requests from a React panel. Auth is a Telegram ID plus a one-time code from the bot, APScheduler '
+      + 'sends D-1 and H-1 reminders, and the whole four-service stack boots from one docker compose command.',
   },
   {
     name: 'MDIS Admissions CRM',
     icon: 'fab fa-golang',
     href: 'https://github.com/BillSharifzade/mdis_crm',
     repo: 'mdis_crm',
+    cover: 'mdis-crm',
+    accent: '#c084fc',
     stack: 'Go (Chi, pgx) \u00b7 PostgreSQL \u00b7 React 19 \u00b7 Docker',
+    blurb:
+      'Lead pipeline and sales funnel with manager KPIs, fed by a Telegram bot, the public site and Excel '
+      + 'import, behind role-based access for admin, admissions and guest.',
     desc:
-      'Admissions CRM covering the lead pipeline and sales funnel, manager KPIs, Telegram-bot and public ' +
-      'website intake, Excel import, and role-based access across admin, admissions, and guest roles. ' +
-      'Migrations apply idempotently at startup and the API ships with Swagger docs.',
+      'Admissions CRM covering the lead pipeline and sales funnel, manager KPIs, Telegram-bot and public '
+      + 'website intake, Excel import, and role-based access across admin, admissions, and guest roles. '
+      + 'Migrations apply idempotently at startup and the API ships with Swagger docs.',
   },
 ]
 
