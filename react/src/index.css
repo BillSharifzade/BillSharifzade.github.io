@@ -314,36 +314,8 @@ nav.scrolled {
     display: inline-block;
 }
 
-/* Selected Projects — an AccordionGallery of project covers; panel styling
+/* Selected Projects — an AccordionGallery of project covers; all panel styling
    lives in components/AccordionGallery.css. */
-.projects-hint {
-    margin: -4px 0 22px;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(200, 185, 185, 0.5);
-}
-
-/* The gallery opens on hover with a mouse and on tap without one. */
-.projects-hint--touch {
-    display: none;
-}
-
-@media (hover: none) {
-    .projects-hint--pointer {
-        display: none;
-    }
-
-    .projects-hint--touch {
-        display: inline;
-    }
-}
-
-@media (max-width: 860px) {
-    .projects-hint {
-        font-size: 0.72rem;
-    }
-}
 
 .contact-grid {
     display: grid;

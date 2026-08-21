@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" role="img">
+  <defs>
+    <radialGradient id="g5" cx="50%" cy="32%" r="62%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.13"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="p5" width="45" height="45" patternUnits="userSpaceOnUse">
+      <path d="M45 0H0V45" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="1200" fill="#05050a"/>
+  <rect width="900" height="1200" fill="url(#p5)"/>
+  <rect width="900" height="1200" fill="url(#g5)"/>
+  <g font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="60" y="140" width="780" height="920" rx="22" fill="#0a0a12" stroke="#ffffff" stroke-opacity="0.09"/>
+    <path d="M60 196h780" stroke="#ffffff" stroke-opacity="0.09"/>
+    <circle cx="96" cy="168" r="6" fill="#3a3a4a"/><circle cx="118" cy="168" r="6" fill="#3a3a4a"/><circle cx="140" cy="168" r="6" fill="#3a3a4a"/>
+    <text x="450" y="174" fill="#6e6e78" font-size="19" text-anchor="middle">procs · process tree</text>
+    <text x="130" y="252" fill="#6e6e78" font-size="16">PID</text>
+    <text x="235" y="252" fill="#6e6e78" font-size="16">USER</text>
+    <text x="380" y="252" fill="#6e6e78" font-size="16">CPU</text>
+    <text x="520" y="252" fill="#6e6e78" font-size="16">MEM</text>
+    <text x="650" y="252" fill="#6e6e78" font-size="16">COMMAND</text>
+    <path d="M115 268h670" stroke="#ffffff" stroke-opacity="0.12"/>
+    <rect x="115" y="278" width="670" height="50" rx="7" fill="#ffffff" fill-opacity="0.028"/>
+    <text x="130" y="302" fill="#e3d3d3" font-size="18">1</text>
+    <text x="235" y="302" fill="#6e6e78" font-size="17">root</text>
+    <rect x="380" y="289" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="289" width="4" height="14" rx="7" fill="#ffffff" fill-opacity="0.30"/>
+    <rect x="520" y="289" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="289" width="11" height="14" rx="7" fill="#ffffff" fill-opacity="0.33"/>
+    <text x="650" y="302" fill="#e3d3d3" font-size="16">systemd</text>
+    <path d="M138 332 v18 h14" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+    <text x="152" y="364" fill="#e3d3d3" font-size="18">412</text>
+    <text x="235" y="364" fill="#6e6e78" font-size="17">root</text>
+    <rect x="380" y="351" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="351" width="2" height="14" rx="7" fill="#ffffff" fill-opacity="0.29"/>
+    <rect x="520" y="351" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="351" width="7" height="14" rx="7" fill="#ffffff" fill-opacity="0.31"/>
+    <text x="650" y="364" fill="#e3d3d3" font-size="16">systemd-journald</text>
+    <rect x="115" y="402" width="670" height="50" rx="7" fill="#ffffff" fill-opacity="0.028"/>
+    <path d="M138 394 v18 h14" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+    <text x="152" y="426" fill="#e3d3d3" font-size="18">731</text>
+    <text x="235" y="426" fill="#6e6e78" font-size="17">root</text>
+    <rect x="380" y="413" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="413" width="9" height="14" rx="7" fill="#ffffff" fill-opacity="0.32"/>
+    <rect x="520" y="413" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="413" width="14" height="14" rx="7" fill="#ffffff" fill-opacity="0.34"/>
+    <text x="650" y="426" fill="#e3d3d3" font-size="16">NetworkManager</text>
+    <text x="130" y="488" fill="#e3d3d3" font-size="18">1180</text>
+    <text x="235" y="488" fill="#6e6e78" font-size="17">qwantum</text>
+    <rect x="380" y="475" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="475" width="32" height="14" rx="7" fill="#ffffff" fill-opacity="0.41"/>
+    <rect x="520" y="475" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="475" width="43" height="14" rx="7" fill="#ffffff" fill-opacity="0.46"/>
+    <text x="650" y="488" fill="#e3d3d3" font-size="16">cargo build</text>
+    <rect x="115" y="526" width="670" height="50" rx="7" fill="#ffffff" fill-opacity="0.028"/>
+    <path d="M138 518 v18 h14" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+    <text x="152" y="550" fill="#e3d3d3" font-size="18">1207</text>
+    <text x="235" y="550" fill="#6e6e78" font-size="17">qwantum</text>
+    <rect x="380" y="537" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="537" width="91" height="14" rx="7" fill="#ffffff" fill-opacity="0.65"/>
+    <rect x="520" y="537" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="537" width="65" height="14" rx="7" fill="#ffffff" fill-opacity="0.54"/>
+    <text x="650" y="550" fill="#e3d3d3" font-size="16">rustc src/lib.rs</text>
+    <path d="M138 580 v18 h14" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+    <text x="152" y="612" fill="#e3d3d3" font-size="18">1244</text>
+    <text x="235" y="612" fill="#6e6e78" font-size="17">qwantum</text>
+    <rect x="380" y="599" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="599" width="56" height="14" rx="7" fill="#ffffff" fill-opacity="0.51"/>
+    <rect x="520" y="599" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="599" width="36" height="14" rx="7" fill="#ffffff" fill-opacity="0.43"/>
+    <text x="650" y="612" fill="#e3d3d3" font-size="16">rustc src/main.rs</text>
+    <rect x="115" y="650" width="670" height="50" rx="7" fill="#ffffff" fill-opacity="0.028"/>
+    <text x="130" y="674" fill="#e3d3d3" font-size="18">1902</text>
+    <text x="235" y="674" fill="#6e6e78" font-size="17">qwantum</text>
+    <rect x="380" y="661" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="661" width="17" height="14" rx="7" fill="#ffffff" fill-opacity="0.35"/>
+    <rect x="520" y="661" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="661" width="29" height="14" rx="7" fill="#ffffff" fill-opacity="0.40"/>
+    <text x="650" y="674" fill="#e3d3d3" font-size="16">docker-proxy</text>
+    <path d="M138 704 v18 h14" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+    <text x="152" y="736" fill="#e3d3d3" font-size="18">1955</text>
+    <text x="235" y="736" fill="#6e6e78" font-size="17">root</text>
+    <rect x="380" y="723" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="723" width="6" height="14" rx="7" fill="#ffffff" fill-opacity="0.31"/>
+    <rect x="520" y="723" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="723" width="19" height="14" rx="7" fill="#ffffff" fill-opacity="0.36"/>
+    <text x="650" y="736" fill="#e3d3d3" font-size="16">containerd-shim</text>
+    <rect x="115" y="774" width="670" height="50" rx="7" fill="#ffffff" fill-opacity="0.028"/>
+    <text x="130" y="798" fill="#e3d3d3" font-size="18">2310</text>
+    <text x="235" y="798" fill="#6e6e78" font-size="17">qwantum</text>
+    <rect x="380" y="785" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="380" y="785" width="22" height="14" rx="7" fill="#ffffff" fill-opacity="0.37"/>
+    <rect x="520" y="785" width="104" height="14" rx="7" fill="#ffffff" fill-opacity="0.07"/>
+    <rect x="520" y="785" width="9" height="14" rx="7" fill="#ffffff" fill-opacity="0.32"/>
+    <text x="650" y="798" fill="#e3d3d3" font-size="16">procs --tree</text>
+    <text x="115" y="900" fill="#6e6e78" font-size="16">tree · docker · tcp/udp ports · per-process i/o · toml column sets</text>
+    <rect x="115" y="965" width="670" height="52" rx="10" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.22"/>
+    <text x="450" y="998" fill="#e3d3d3" font-size="18" text-anchor="middle">vendored fork of dalance/procs</text>
+  </g>
+</svg>

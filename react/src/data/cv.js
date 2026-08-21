@@ -8,7 +8,6 @@ export const profile = {
   contacts: [
     { label: 'Location', value: 'Dushanbe, Tajikistan', bare: true },
     { label: 'Email', value: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com' },
-    { label: 'Phone', value: '+992 985 447 072', bare: true },
     { label: 'Telegram', value: '@knight_of_bonnie' },
     { label: 'Signal', value: 'qwantum.01' },
     { label: 'GitHub', value: 'github.com/BillSharifzade', href: 'https://github.com/BillSharifzade' },
@@ -143,8 +142,12 @@ export function dateLine(exp) {
 //
 // `desc` is the long form used by the PDF, the exporters and the no-JS
 // fallback; `blurb` is the short form the site gallery reveals on hover.
+// `stack` stays as text because those targets cannot render icons — the site
+// gallery uses `icons` (simple-icons slugs, resolved in data/projectIcons.js).
 // `cover` keys into src/data/projectCovers.js — cv.js stays import-free because
 // vite.config.js loads it in Node at build time, where asset imports fail.
+// `fork` names the upstream project for repositories vendored from elsewhere;
+// wherever it is set, the attribution renders alongside the project.
 export const projects = [
   {
     name: 'Multi-Protocol API Framework',
@@ -152,7 +155,7 @@ export const projects = [
     href: 'https://github.com/BillSharifzade/rs-apilib',
     repo: 'rs-apilib',
     cover: 'apiweave',
-    accent: '#818cf8',
+    icons: ['siRust', 'siGraphql', 'siJson', 'siOpenapiinitiative'],
     stack: 'Rust (hyper, Tokio, proc-macros) \u00b7 REST \u00b7 GraphQL \u00b7 RPC \u00b7 SOAP \u00b7 WS',
     blurb:
       'Declare an operation once; apiweave serves it as REST, GraphQL, JSON-RPC, SOAP, WebSocket and SSE '
@@ -170,7 +173,7 @@ export const projects = [
     href: 'https://github.com/BillSharifzade/Rust-Screenx-HR-Automatization',
     repo: 'Rust-Screenx-HR-Automatization',
     cover: 'screenx',
-    accent: '#e8a765',
+    icons: ['siRust', 'siPostgresql', 'siNextdotjs', 'siTelegram'],
     stack: 'Rust (Axum, Tokio, SQLx) \u00b7 PostgreSQL \u00b7 Next.js \u00b7 Telegram Mini App \u00b7 OpenAI',
     blurb:
       'Carries a candidate from registration through AI-generated testing to hire across an HR/ERP system, a '
@@ -187,7 +190,7 @@ export const projects = [
     href: 'https://github.com/BillSharifzade/HR_Progress',
     repo: 'HR_Progress',
     cover: 'hr-progress',
-    accent: '#64c8d8',
+    icons: ['siGo', 'siPostgresql', 'siReact', 'siTypescript'],
     stack: 'Go (chi) \u00b7 PostgreSQL \u00b7 React \u00b7 TypeScript',
     blurb:
       'Multi-assessor scoring against a per-grade competency matrix, turning the resulting gaps into Individual '
@@ -199,36 +202,39 @@ export const projects = [
       + 'tracking. Built to stay extensible as competencies change.',
   },
   {
-    name: 'AtS Booking System',
-    icon: 'fab fa-python',
-    href: 'https://github.com/BillSharifzade/AtS_booking',
-    repo: 'AtS_booking',
-    cover: 'ats-booking',
-    accent: '#6ee7b7',
-    stack: 'Python (FastAPI, SQLAlchemy 2 async, aiogram 3) \u00b7 PostgreSQL \u00b7 React \u00b7 Docker',
+    name: 'Async Kafka Client',
+    icon: 'fab fa-rust',
+    href: 'https://github.com/BillSharifzade/rs-rdkafka',
+    repo: 'rs-rdkafka',
+    cover: 'rdkafka',
+    fork: 'fede1024/rust-rdkafka',
+    icons: ['siRust', 'siApachekafka', 'siC'],
+    stack: 'Rust (Tokio, futures) \u00b7 librdkafka \u00b7 C bindings',
     blurb:
-      'Staff book rooms from a Telegram bot, admins run them from a React panel. Auth is a Telegram ID plus a '
-      + 'one-time code; the whole four-service stack boots from one docker compose command.',
+      'Vendored fork of fede1024/rust-rdkafka \u2014 the fully asynchronous Apache Kafka client for Rust, kept '
+      + 'in-tree with its rdkafka-sys binding layer.',
     desc:
-      'Room-booking platform where staff book through a Telegram bot and administrators manage rooms and '
-      + 'requests from a React panel. Auth is a Telegram ID plus a one-time code from the bot, APScheduler '
-      + 'sends D-1 and H-1 reminders, and the whole four-service stack boots from one docker compose command.',
+      'Vendored fork of fede1024/rust-rdkafka (MIT), the fully asynchronous, futures-enabled Apache Kafka client '
+      + 'for Rust built on librdkafka: futures-based producers and stream consumers, admin and transaction APIs, '
+      + 'consumer-group and metadata access, and a mocking layer \u2014 maintained in-tree alongside the rdkafka-sys '
+      + 'C bindings.',
   },
   {
-    name: 'MDIS Admissions CRM',
-    icon: 'fab fa-golang',
-    href: 'https://github.com/BillSharifzade/mdis_crm',
-    repo: 'mdis_crm',
-    cover: 'mdis-crm',
-    accent: '#c084fc',
-    stack: 'Go (Chi, pgx) \u00b7 PostgreSQL \u00b7 React 19 \u00b7 Docker',
+    name: 'Process Viewer CLI',
+    icon: 'fab fa-rust',
+    href: 'https://github.com/BillSharifzade/rs-procs',
+    repo: 'rs-procs',
+    cover: 'procs',
+    fork: 'dalance/procs',
+    icons: ['siRust', 'siLinux', 'siDocker'],
+    stack: 'Rust (clap) \u00b7 Linux / macOS / FreeBSD / Windows \u00b7 Docker',
     blurb:
-      'Lead pipeline and sales funnel with manager KPIs, fed by a Telegram bot, the public site and Excel '
-      + 'import, behind role-based access for admin, admissions and guest.',
+      'Vendored fork of dalance/procs \u2014 a modern ps replacement with tree views, Docker resolution and '
+      + 'TOML-configured columns across four OS backends.',
     desc:
-      'Admissions CRM covering the lead pipeline and sales funnel, manager KPIs, Telegram-bot and public '
-      + 'website intake, Excel import, and role-based access across admin, admissions, and guest roles. '
-      + 'Migrations apply idempotently at startup and the API ships with Swagger docs.',
+      'Vendored fork of dalance/procs (MIT), a modern replacement for ps written in Rust: tree and multi-column '
+      + 'process views, Docker container resolution, per-process I/O and TCP/UDP port columns, and a '
+      + 'TOML-configured column set with separate Linux, macOS, FreeBSD and Windows backends.',
   },
 ]
 

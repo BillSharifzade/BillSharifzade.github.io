@@ -8,13 +8,13 @@
 import apiweave from '../assets/projects/apiweave.svg'
 import screenx from '../assets/projects/screenx.svg'
 import hrProgress from '../assets/projects/hr-progress.svg'
-import atsBooking from '../assets/projects/ats-booking.svg'
-import mdisCrm from '../assets/projects/mdis-crm.svg'
+import rdkafka from '../assets/projects/rdkafka.svg'
+import procs from '../assets/projects/procs.svg'
 
 export const projectCovers = {
   apiweave,
   screenx,
   'hr-progress': hrProgress,
-  'ats-booking': atsBooking,
-  'mdis-crm': mdisCrm,
+  rdkafka,
+  procs,
 }

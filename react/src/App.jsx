@@ -8,6 +8,7 @@ import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
 import { projectCovers } from './data/projectCovers.js'
+import { resolveIcons } from './data/projectIcons.js'
 import AccordionGallery from './components/AccordionGallery.jsx'
 import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
@@ -23,11 +24,11 @@ const projectPanels = projects.map((p) => ({
   image: projectCovers[p.cover],
   alt: `${p.name} — project cover`,
   label: p.name,
-  stack: p.stack,
+  icons: resolveIcons(p.icons),
   blurb: p.blurb,
   repo: p.repo,
+  fork: p.fork,
   link: p.href,
-  accent: p.accent,
 }))
 
 function scrollToTarget(target) {
@@ -356,10 +357,6 @@ function App() {
       <section id="projects" className="section fade-in-section">
         <div className="container">
           <SectionTitle text="Selected Projects" />
-          <p className="projects-hint">
-            <span className="projects-hint--pointer">Hover a panel to open it · click to visit the repository</span>
-            <span className="projects-hint--touch">Tap a panel to open it · tap again to visit the repository</span>
-          </p>
           <AccordionGallery items={projectPanels} defaultIndex={0} trigger="hover" />
         </div>
       </section>
@@ -504,12 +501,6 @@ function App() {
                 <p>sharifzadebilal@gmail.com</p>
               </div>
             </a>
-
-            <div className="contact-item">
-              <div className="contact-icon"><i className="fas fa-phone"></i></div>
-              <h3>Phone</h3>
-              <p>+992 985 447 072</p>
-            </div>
 
             <a href="https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN" target="_blank" rel="noopener noreferrer">
               <div className="contact-item">

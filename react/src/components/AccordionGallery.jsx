@@ -19,7 +19,7 @@ import './AccordionGallery.css'
 const AccordionGallery = ({
   items = [],
   defaultIndex = 0,
-  accentColor = '#818cf8',
+  accentColor = '#ffffff',
   overlayColor = '#05050a',
   textColor = '#e3d3d3',
   height = 520,
@@ -54,6 +54,15 @@ const AccordionGallery = ({
 
   const count = items.length
   const [active, setActive] = useState(Math.min(Math.max(defaultIndex, 0), Math.max(count - 1, 0)))
+  // `active` is also mirrored in a ref: focus fires on pointerdown and re-renders
+  // before the click handler runs, so handlers cannot trust their captured copy.
+  const activeRef = useRef(active)
+  const pressOpenRef = useRef(null)
+
+  const openPanel = useCallback((i) => {
+    activeRef.current = i
+    setActive(i)
+  }, [])
   const [narrow, setNarrow] = useState(false)
   const [reduced, setReduced] = useState(false)
 
@@ -196,15 +205,26 @@ const AccordionGallery = ({
   )
 
   const handleEnter = (i) => {
-    if (trigger === 'hover' && !narrow) setActive(i)
+    if (trigger === 'hover' && !narrow) openPanel(i)
   }
 
   // First interaction with a collapsed panel opens it; the second follows the
   // link. Without this a tap on a sliver would navigate before it was readable.
+  //
+  // The decision must be made against the panel that was open when the press
+  // STARTED. Pressing the anchor focuses it, onFocus opens that panel, and React
+  // re-renders — so by the time click fires a naive `i !== active` test is
+  // already false, and every first tap on a touch device navigates away.
+  const handlePointerDown = () => {
+    pressOpenRef.current = activeRef.current
+  }
+
   const handleClick = (i, e) => {
-    if (i !== active) {
+    const openAtPress = pressOpenRef.current ?? activeRef.current
+    pressOpenRef.current = null
+    if (i !== openAtPress) {
       e.preventDefault()
-      setActive(i)
+      openPanel(i)
     }
   }
 
@@ -212,8 +232,8 @@ const AccordionGallery = ({
   // focus with it. Deriving the step from the focused index means a second
   // arrow press recomputes the same neighbour and the gallery stops moving.
   const step = (delta) => {
-    const idx = (active + delta + count) % count
-    setActive(idx)
+    const idx = (activeRef.current + delta + count) % count
+    openPanel(idx)
     hitRefs.current[idx]?.focus()
   }
 
@@ -253,7 +273,6 @@ const AccordionGallery = ({
             key={item.repo || item.label || i}
             ref={(el) => (panelRefs.current[i] = el)}
             className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
-            style={item.accent ? { '--ag-accent': item.accent } : undefined}
             role="listitem"
           >
             <span className="ag-panel__frame">
@@ -275,13 +294,26 @@ const AccordionGallery = ({
                     {item.label}
                   </h3>
                   <div className="ag-panel__meta" ref={(el) => (metaRefs.current[i] = el)}>
-                    {item.stack && <p className="ag-panel__stack">{item.stack}</p>}
-                    {item.blurb && <p className="ag-panel__blurb">{item.blurb}</p>}
-                    {item.repo && (
-                      <span className="ag-panel__repo">
-                        <i className="fab fa-github" aria-hidden="true"></i> {item.repo}
-                      </span>
+                    {item.icons?.length > 0 && (
+                      <ul className="ag-panel__tech">
+                        {item.icons.map((tech) => (
+                          <li key={tech.title} className="ag-panel__tech-item" title={tech.title}>
+                            <svg viewBox="0 0 24 24" role="img" aria-label={tech.title}>
+                              <path d={tech.path} />
+                            </svg>
+                          </li>
+                        ))}
+                      </ul>
                     )}
+                    {item.blurb && <p className="ag-panel__blurb">{item.blurb}</p>}
+                    <span className="ag-panel__links">
+                      {item.repo && (
+                        <span className="ag-panel__repo">
+                          <i className="fab fa-github" aria-hidden="true"></i> {item.repo}
+                        </span>
+                      )}
+                      {item.fork && <span className="ag-panel__fork">fork of {item.fork}</span>}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -295,9 +327,10 @@ const AccordionGallery = ({
               rel="noopener noreferrer"
               aria-labelledby={titleId}
               aria-current={isActive ? 'true' : undefined}
+              onPointerDown={handlePointerDown}
               onClick={(e) => handleClick(i, e)}
               onMouseEnter={() => handleEnter(i)}
-              onFocus={() => setActive(i)}
+              onFocus={() => openPanel(i)}
               onKeyDown={handleKeyDown}
             />
           </div>
