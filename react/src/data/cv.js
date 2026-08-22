@@ -137,17 +137,6 @@ export function dateLine(exp) {
   return exp.type ? `${exp.date} · ${exp.type}` : exp.date
 }
 
-// Public repositories at github.com/BillSharifzade. Stack strings mirror each
-// project's actual dependency manifest, not aspiration.
-//
-// `desc` is the long form used by the PDF, the exporters and the no-JS
-// fallback; `blurb` is the short form the site gallery reveals on hover.
-// `stack` stays as text because those targets cannot render icons — the site
-// gallery uses `icons` (simple-icons slugs, resolved in data/projectIcons.js).
-// `cover` keys into src/data/projectCovers.js — cv.js stays import-free because
-// vite.config.js loads it in Node at build time, where asset imports fail.
-// `fork` names the upstream project for repositories vendored from elsewhere;
-// wherever it is set, the attribution renders alongside the project.
 export const projects = [
   {
     name: 'Multi-Protocol API Framework',
@@ -207,14 +196,13 @@ export const projects = [
     href: 'https://github.com/BillSharifzade/rs-rdkafka',
     repo: 'rs-rdkafka',
     cover: 'rdkafka',
-    fork: 'fede1024/rust-rdkafka',
     icons: ['siRust', 'siApachekafka', 'siC'],
     stack: 'Rust (Tokio, futures) \u00b7 librdkafka \u00b7 C bindings',
     blurb:
-      'Vendored fork of fede1024/rust-rdkafka \u2014 the fully asynchronous Apache Kafka client for Rust, kept '
+      'The fully asynchronous Apache Kafka client for Rust, kept '
       + 'in-tree with its rdkafka-sys binding layer.',
     desc:
-      'Vendored fork of fede1024/rust-rdkafka (MIT), the fully asynchronous, futures-enabled Apache Kafka client '
+      'The fully asynchronous, futures-enabled Apache Kafka client '
       + 'for Rust built on librdkafka: futures-based producers and stream consumers, admin and transaction APIs, '
       + 'consumer-group and metadata access, and a mocking layer \u2014 maintained in-tree alongside the rdkafka-sys '
       + 'C bindings.',
@@ -225,14 +213,13 @@ export const projects = [
     href: 'https://github.com/BillSharifzade/rs-procs',
     repo: 'rs-procs',
     cover: 'procs',
-    fork: 'dalance/procs',
     icons: ['siRust', 'siLinux', 'siDocker'],
     stack: 'Rust (clap) \u00b7 Linux / macOS / FreeBSD / Windows \u00b7 Docker',
     blurb:
-      'Vendored fork of dalance/procs \u2014 a modern ps replacement with tree views, Docker resolution and '
+      'A modern ps replacement with tree views, Docker resolution and '
       + 'TOML-configured columns across four OS backends.',
     desc:
-      'Vendored fork of dalance/procs (MIT), a modern replacement for ps written in Rust: tree and multi-column '
+      'A modern replacement for ps written in Rust: tree and multi-column '
       + 'process views, Docker container resolution, per-process I/O and TCP/UDP port columns, and a '
       + 'TOML-configured column set with separate Linux, macOS, FreeBSD and Windows backends.',
   },

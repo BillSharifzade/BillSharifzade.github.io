@@ -184,18 +184,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.05);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .ag-panel__tech-item svg {
-    width: 15px;
-    height: 15px;
+    width: 21px;
+    height: 21px;
     display: block;
-    fill: rgba(227, 211, 211, 0.82);
+    fill: rgba(227, 211, 211, 0.92);
 }
 
 .ag-panel__blurb {
@@ -204,30 +204,6 @@
     font-size: 0.86rem;
     line-height: 1.6;
     text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
-}
-
-.ag-panel__links {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Attribution for vendored repositories. Sits next to the repo pill so the
-   upstream project is never separated from the entry that carries its code. */
-.ag-panel__fork {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px dashed rgba(255, 255, 255, 0.28);
-    color: rgba(200, 185, 185, 0.72);
-    font-size: 0.7rem;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .ag-panel__repo {
@@ -290,18 +266,19 @@
     }
 
     .ag-panel__tech {
-        gap: 7px;
-        margin-bottom: 11px;
+        gap: 8px;
+        margin-bottom: 12px;
     }
 
     .ag-panel__tech-item {
-        width: 27px;
-        height: 27px;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
     }
 
     .ag-panel__tech-item svg {
-        width: 14px;
-        height: 14px;
+        width: 19px;
+        height: 19px;
     }
 
     .ag-panel__blurb {

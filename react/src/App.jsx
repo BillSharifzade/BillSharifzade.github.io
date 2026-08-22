@@ -27,7 +27,6 @@ const projectPanels = projects.map((p) => ({
   icons: resolveIcons(p.icons),
   blurb: p.blurb,
   repo: p.repo,
-  fork: p.fork,
   link: p.href,
 }))
 

@@ -306,14 +306,11 @@ const AccordionGallery = ({
                       </ul>
                     )}
                     {item.blurb && <p className="ag-panel__blurb">{item.blurb}</p>}
-                    <span className="ag-panel__links">
-                      {item.repo && (
-                        <span className="ag-panel__repo">
-                          <i className="fab fa-github" aria-hidden="true"></i> {item.repo}
-                        </span>
-                      )}
-                      {item.fork && <span className="ag-panel__fork">fork of {item.fork}</span>}
-                    </span>
+                    {item.repo && (
+                      <span className="ag-panel__repo">
+                        <i className="fab fa-github" aria-hidden="true"></i> {item.repo}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
