@@ -17,6 +17,7 @@ import './components/HobbyBackgrounds.css'
 import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
+import WipTerminal from './components/WipTerminal.jsx'
 import './index.css'
 
 // cv.js keeps the canonical copy; the gallery only needs the fields it renders.
@@ -357,6 +358,13 @@ function App() {
         <div className="container">
           <SectionTitle text="Selected Projects" />
           <AccordionGallery items={projectPanels} defaultIndex={0} trigger="hover" height={600} mobileHeight={1120} />
+        </div>
+      </section>
+
+      <section id="in-progress" className="section fade-in-section">
+        <div className="container">
+          <SectionTitle text="Projects in Progress" />
+          <WipTerminal />
         </div>
       </section>
 
