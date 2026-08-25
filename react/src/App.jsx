@@ -21,7 +21,7 @@ import './index.css'
 
 // cv.js keeps the canonical copy; the gallery only needs the fields it renders.
 const projectPanels = projects.map((p) => ({
-  image: projectCovers[p.cover],
+  images: projectCovers[p.cover],
   alt: `${p.name} — project cover`,
   label: p.name,
   icons: resolveIcons(p.icons),
@@ -356,7 +356,7 @@ function App() {
       <section id="projects" className="section fade-in-section">
         <div className="container">
           <SectionTitle text="Selected Projects" />
-          <AccordionGallery items={projectPanels} defaultIndex={0} trigger="hover" />
+          <AccordionGallery items={projectPanels} defaultIndex={0} trigger="hover" height={600} mobileHeight={1120} />
         </div>
       </section>
 

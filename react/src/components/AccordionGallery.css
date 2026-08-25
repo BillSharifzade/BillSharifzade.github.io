@@ -6,6 +6,9 @@
     --ag-radius: 18px;
     --ag-media-size: 320px;
     --ag-open-size: 420px;
+    /* Measured from the open caption in JS; the artwork keeps clear of it. */
+    --ag-caption-h: 0px;
+    --ag-shot-pad: clamp(16px, 3.4%, 34px);
 
     display: flex;
     flex-direction: row;
@@ -45,6 +48,8 @@
     border-radius: inherit;
 }
 
+/* Plate the shots sit on: the same grid + centre glow the generated cover
+   artwork is drawn with, so a screenshot and an SVG plate share a backdrop. */
 .ag-panel__media {
     --ag-gray: 1;
     position: absolute;
@@ -52,7 +57,21 @@
     left: 50%;
     width: var(--ag-media-size);
     height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: var(--ag-shot-pad);
+    background-color: #05050a;
+    background-image:
+        radial-gradient(120% 82% at 50% 14%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 55%, transparent 76%),
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: auto, 45px 45px, 45px 45px;
     filter: grayscale(var(--ag-gray));
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1), height 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform, filter;
 }
 
@@ -61,11 +80,38 @@
     height: var(--ag-media-size);
 }
 
-.ag-panel__media img {
+/* Collapsed panels keep the oversized box the parallax drift slides around and
+   centre their slice in it; the open one shrinks to the panel so nothing is
+   cropped at its edges, and reserves the caption plate plus its 24px offset.
+   Reserving on every panel instead would strand the artwork off-centre in the
+   slivers, where the media box is taller than the panel. */
+.ag-panel--active .ag-panel__media {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    padding-bottom: calc(var(--ag-caption-h) + 36px);
+}
+
+.ag-panel__shot {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Intrinsic sizing rather than object-fit, so the border and radius wrap the
+   picture itself instead of a letterboxed box around it. */
+.ag-panel__shot img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     display: block;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 22px 46px -20px rgba(0, 0, 0, 0.95);
     user-select: none;
     -webkit-user-drag: none;
 }
@@ -77,9 +123,9 @@
     pointer-events: none;
     background:
         linear-gradient(180deg,
-            transparent 30%,
-            color-mix(in srgb, var(--ag-overlay) 55%, transparent) 62%,
-            color-mix(in srgb, var(--ag-overlay) 90%, transparent) 100%),
+            transparent 42%,
+            color-mix(in srgb, var(--ag-overlay) 40%, transparent) 70%,
+            color-mix(in srgb, var(--ag-overlay) 78%, transparent) 100%),
         color-mix(in srgb, var(--ag-overlay) calc(var(--ag-dim) * 100%), transparent);
 }
 
@@ -253,9 +299,17 @@
     .ag-panel__media {
         will-change: auto;
     }
+
+    .ag-panel__media {
+        transition: none;
+    }
 }
 
 @media (max-width: 560px) {
+    .ag-panel__media {
+        gap: 9px;
+    }
+
     .ag-panel__label {
         padding: 15px 16px;
         gap: 13px;

@@ -12,6 +12,12 @@ import './AccordionGallery.css'
 //     itself. Each caption carries a title, stack and description; making the
 //     whole thing one link would fold all of that into the link's accessible
 //     name. The anchor is labelled by the heading and the copy stays readable.
+//  3. Artwork is *contained*, not full-bleed. Covers here are UI screenshots and
+//     diagrams that only read if you can see all of them, so the media box is
+//     sized to the panel while it is open and its bottom padding is measured
+//     from the caption (`--ag-caption-h`) instead of being guessed — otherwise
+//     the caption plate blankets the lower half of every cover. A panel may
+//     carry several shots; they share the region side by side.
 //
 // Narrow viewports flip to a vertical accordion in JS rather than in a media
 // query, so the media-size measurement stays on the same axis as the layout.
@@ -45,6 +51,7 @@ const AccordionGallery = ({
   const barRefs = useRef([])
   const titleRefs = useRef([])
   const metaRefs = useRef([])
+  const labelRefs = useRef([])
   const spineRefs = useRef([])
   const hitRefs = useRef([])
   const tlRef = useRef(null)
@@ -183,6 +190,11 @@ const AccordionGallery = ({
       // Captions are laid out at the *expanded* width for the whole tween, so
       // the copy does not reflow line-by-line while the panel is still opening.
       el.style.setProperty('--ag-open-size', `${usable * Math.min(Math.max(expandRatio, 0.2), 0.9)}px`)
+      // Every caption is laid out at the open width, so the active one's height
+      // is the space the artwork has to stay clear of. Read it after the two
+      // properties above are set, or it reflects the previous open width.
+      const label = labelRefs.current[active]
+      el.style.setProperty('--ag-caption-h', `${label ? label.offsetHeight : 0}px`)
       applyLayout(!firstRunRef.current)
     }
 
@@ -190,7 +202,7 @@ const AccordionGallery = ({
     const ro = new ResizeObserver(measure)
     ro.observe(el)
     return () => ro.disconnect()
-  }, [applyLayout, gap, count, expandRatio, vertical])
+  }, [applyLayout, gap, count, expandRatio, vertical, active])
 
   useEffect(() => {
     applyLayout(!firstRunRef.current)
@@ -268,6 +280,7 @@ const AccordionGallery = ({
       {items.map((item, i) => {
         const isActive = i === active
         const titleId = `${uid}-ag-${i}`
+        const shots = item.images ?? (item.image ? [item.image] : [])
         return (
           <div
             key={item.repo || item.label || i}
@@ -276,8 +289,15 @@ const AccordionGallery = ({
             role="listitem"
           >
             <span className="ag-panel__frame">
-              <span className="ag-panel__media" ref={(el) => (mediaRefs.current[i] = el)}>
-                <img src={item.image} alt={item.alt || ''} loading="lazy" draggable="false" />
+              <span
+                className={`ag-panel__media${shots.length > 1 ? ' ag-panel__media--multi' : ''}`}
+                ref={(el) => (mediaRefs.current[i] = el)}
+              >
+                {shots.map((src, k) => (
+                  <span className="ag-panel__shot" key={src}>
+                    <img src={src} alt={k === 0 ? item.alt || '' : ''} loading="lazy" draggable="false" />
+                  </span>
+                ))}
               </span>
               <span className="ag-panel__overlay" aria-hidden="true" />
             </span>
@@ -287,7 +307,7 @@ const AccordionGallery = ({
             </span>
 
             {showLabels && (
-              <div className="ag-panel__label">
+              <div className="ag-panel__label" ref={(el) => (labelRefs.current[i] = el)}>
                 <span className="ag-panel__bar" ref={(el) => (barRefs.current[i] = el)} />
                 <div className="ag-panel__copy">
                   <h3 className="ag-panel__title" id={titleId} ref={(el) => (titleRefs.current[i] = el)}>

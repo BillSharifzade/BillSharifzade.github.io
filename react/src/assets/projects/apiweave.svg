@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 976 600" width="976" height="600" role="img">
+  <!-- Cover plate for projects without a screenshot. Drawn landscape at roughly
+       the aspect the gallery reserves for artwork, and kept sparse: the panel
+       renders it around 490px wide, so anything under ~20px here is unreadable. -->
   <defs>
-    <radialGradient id="g1" cx="50%" cy="32%" r="62%">
+    <radialGradient id="g1" cx="50%" cy="26%" r="66%">
       <stop offset="0%" stop-color="#ffffff" stop-opacity="0.13"/>
       <stop offset="60%" stop-color="#ffffff" stop-opacity="0.03"/>
       <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
@@ -9,41 +12,39 @@
       <path d="M45 0H0V45" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
     </pattern>
   </defs>
-  <rect width="900" height="1200" fill="#05050a"/>
-  <rect width="900" height="1200" fill="url(#p1)"/>
-  <rect width="900" height="1200" fill="url(#g1)"/>
+  <rect width="976" height="600" fill="#05050a"/>
+  <rect width="976" height="600" fill="url(#p1)"/>
+  <rect width="976" height="600" fill="url(#g1)"/>
   <g font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace">
-    <rect x="60" y="140" width="780" height="920" rx="22" fill="#0a0a12" stroke="#ffffff" stroke-opacity="0.09"/>
-    <path d="M60 196h780" stroke="#ffffff" stroke-opacity="0.09"/>
-    <circle cx="96" cy="168" r="6" fill="#3a3a4a"/><circle cx="118" cy="168" r="6" fill="#3a3a4a"/><circle cx="140" cy="168" r="6" fill="#3a3a4a"/>
-    <text x="450" y="174" fill="#6e6e78" font-size="19" text-anchor="middle">apiweave · one operation</text>
-    <rect x="240" y="245" width="420" height="110" rx="16" fill="#ffffff" fill-opacity="0.13" stroke="#ffffff" stroke-opacity="0.45"/>
-    <text x="450" y="288" fill="#ffffff" font-size="23" text-anchor="middle">#[operation(mutation)]</text>
-    <text x="450" y="322" fill="#e3d3d3" font-size="26" text-anchor="middle">users.create</text>
-    <path d="M450 355V880" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"/>
+    <path d="M0 48h976" stroke="#ffffff" stroke-opacity="0.09"/>
+    <circle cx="30" cy="24" r="5" fill="#3a3a4a"/><circle cx="50" cy="24" r="5" fill="#3a3a4a"/><circle cx="70" cy="24" r="5" fill="#3a3a4a"/>
+    <text x="488" y="31" fill="#6e6e78" font-size="20" text-anchor="middle">apiweave · one operation</text>
+
+    <rect x="338" y="78" width="300" height="76" rx="16" fill="#ffffff" fill-opacity="0.13" stroke="#ffffff" stroke-opacity="0.45"/>
+    <text x="488" y="108" fill="#ffffff" font-size="20" text-anchor="middle">#[operation(mutation)]</text>
+    <text x="488" y="138" fill="#e3d3d3" font-size="25" text-anchor="middle">users.create</text>
+
+    <path d="M488 154V470" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"/>
     <g stroke="#ffffff" stroke-opacity="0.26" stroke-width="2">
-      <path d="M450 490H150"/><path d="M450 490h300"/>
-      <path d="M450 650H150"/><path d="M450 650h300"/>
-      <path d="M450 810H150"/><path d="M450 810h300"/>
+      <path d="M488 214H270"/><path d="M488 214h218"/>
+      <path d="M488 320H270"/><path d="M488 320h218"/>
+      <path d="M488 426H270"/><path d="M488 426h218"/>
     </g>
-    <g fill="#ffffff"><circle cx="450" cy="490" r="5"/><circle cx="450" cy="650" r="5"/><circle cx="450" cy="810" r="5"/></g>
+    <g fill="#ffffff"><circle cx="488" cy="214" r="5"/><circle cx="488" cy="320" r="5"/><circle cx="488" cy="426" r="5"/></g>
+
     <g fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.14">
-      <rect x="90" y="442" width="200" height="96" rx="12"/><rect x="610" y="442" width="200" height="96" rx="12"/>
-      <rect x="90" y="602" width="200" height="96" rx="12"/><rect x="610" y="602" width="200" height="96" rx="12"/>
-      <rect x="90" y="762" width="200" height="96" rx="12"/><rect x="610" y="762" width="200" height="96" rx="12"/>
+      <rect x="70" y="178" width="200" height="72" rx="12"/><rect x="706" y="178" width="200" height="72" rx="12"/>
+      <rect x="70" y="284" width="200" height="72" rx="12"/><rect x="706" y="284" width="200" height="72" rx="12"/>
+      <rect x="70" y="390" width="200" height="72" rx="12"/><rect x="706" y="390" width="200" height="72" rx="12"/>
     </g>
-    <g font-size="22" text-anchor="middle" fill="#e3d3d3">
-      <text x="190" y="490">REST</text><text x="710" y="490">GraphQL</text>
-      <text x="190" y="650">JSON-RPC</text><text x="710" y="650">SOAP</text>
-      <text x="190" y="810">WebSocket</text><text x="710" y="810">SSE</text>
+    <g font-size="24" text-anchor="middle" fill="#e3d3d3">
+      <text x="170" y="223">REST</text><text x="806" y="223">GraphQL</text>
+      <text x="170" y="329">JSON-RPC</text><text x="806" y="329">SOAP</text>
+      <text x="170" y="435">WebSocket</text><text x="806" y="435">SSE</text>
     </g>
-    <g font-size="15" text-anchor="middle" fill="#6e6e78">
-      <text x="190" y="516">POST /v1/users</text><text x="710" y="516">usersCreate</text>
-      <text x="190" y="676">/rpc</text><text x="710" y="676">UsersCreate</text>
-      <text x="190" y="836">/ws</text><text x="710" y="836">/events</text>
-    </g>
-    <text x="450" y="930" fill="#6e6e78" font-size="18" text-anchor="middle">one schema · one error taxonomy · zero codegen</text>
-    <rect x="115" y="965" width="670" height="52" rx="10" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.22"/>
-    <text x="450" y="998" fill="#e3d3d3" font-size="18" text-anchor="middle">61 crates · no *-sys</text>
+
+    <text x="488" y="508" fill="#6e6e78" font-size="20" text-anchor="middle">one schema · one error taxonomy · zero codegen</text>
+    <rect x="288" y="530" width="400" height="46" rx="10" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.22"/>
+    <text x="488" y="561" fill="#e3d3d3" font-size="21" text-anchor="middle">61 crates · no *-sys</text>
   </g>
 </svg>

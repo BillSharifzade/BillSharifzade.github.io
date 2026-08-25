@@ -256,4 +256,4 @@ export function certLine(c) {
 }
 
 export const interests =
-  'Astrophysics · Mathematics · Chess · Counter Strike 2 · Guitar · Knitting · Poems · Philosophy'
+  'Astrophysics · Mathematics · Chess · Counter Strike 2 · Bodybuilding · Guitar · Knitting · Poems · Philosophy'

@@ -2,19 +2,21 @@
 // cv.js in Node to build the <noscript> fallback, where `import ... from '*.svg'`
 // has no loader and would break the build.
 //
-// These are generated cover plates, not screenshots. To use a real screenshot,
-// drop the file in src/assets/projects/ and repoint the matching key below —
-// the `cover` value in cv.js stays the same.
+// Every entry is an array so a project can show more than one shot in the same
+// card — the gallery lays them out side by side. Projects with a real screenshot
+// point at it; the rest keep a generated cover plate drawn at the same landscape
+// aspect the gallery reserves for artwork, so nothing is cropped away.
 import apiweave from '../assets/projects/apiweave.svg'
-import screenx from '../assets/projects/screenx.svg'
-import hrProgress from '../assets/projects/hr-progress.svg'
 import rdkafka from '../assets/projects/rdkafka.svg'
-import procs from '../assets/projects/procs.svg'
+import screenx1 from '../assets/projects/screenx1.jpg'
+import screenx2 from '../assets/projects/screenx2.jpg'
+import hrProgress from '../assets/projects/hr-progress.jpg'
+import procs from '../assets/projects/procs.png'
 
 export const projectCovers = {
-  apiweave,
-  screenx,
-  'hr-progress': hrProgress,
-  rdkafka,
-  procs,
+  apiweave: [apiweave],
+  screenx: [screenx1, screenx2],
+  'hr-progress': [hrProgress],
+  rdkafka: [rdkafka],
+  procs: [procs],
 }
