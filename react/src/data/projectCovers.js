@@ -11,7 +11,9 @@ import rdkafka from '../assets/projects/rdkafka.svg'
 import screenx1 from '../assets/projects/screenx1.jpg'
 import screenx2 from '../assets/projects/screenx2.jpg'
 import hrProgress from '../assets/projects/hr-progress.jpg'
-import procs from '../assets/projects/procs.png'
+// Cropped from procs.png: the full 1364px terminal shrinks to ~8px type in
+// the panel; the top-left region keeps the type legible at display size.
+import procs from '../assets/projects/procs-zoom.png'
 
 export const projectCovers = {
   apiweave: [apiweave],

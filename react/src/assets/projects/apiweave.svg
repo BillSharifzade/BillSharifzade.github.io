@@ -1,50 +1,138 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 976 600" width="976" height="600" role="img">
-  <!-- Cover plate for projects without a screenshot. Drawn landscape at roughly
-       the aspect the gallery reserves for artwork, and kept sparse: the panel
-       renders it around 490px wide, so anything under ~20px here is unreadable. -->
+  <!-- Landscape cover plate, drawn at the aspect the gallery reserves for
+       artwork. Full colour on purpose: the gallery greys covers out while idle
+       (grayscale via ~~ag-gray) and reveals the palette on hover, so hues are
+       chosen to keep distinct luminance when desaturated. -->
   <defs>
-    <radialGradient id="g1" cx="50%" cy="26%" r="66%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.13"/>
-      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.03"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    <radialGradient id="aw-glow" cx="38%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.10"/>
+      <stop offset="45%" stop-color="#f97316" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
     </radialGradient>
-    <pattern id="p1" width="45" height="45" patternUnits="userSpaceOnUse">
+    <pattern id="aw-grid" width="45" height="45" patternUnits="userSpaceOnUse">
       <path d="M45 0H0V45" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
     </pattern>
+    <filter id="aw-blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <linearGradient id="th-rest" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#4ade80"/>
+    </linearGradient>
+    <linearGradient id="th-gql" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#e10098"/>
+    </linearGradient>
+    <linearGradient id="th-rpc" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="th-soap" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="th-ws" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="th-sse" gradientUnits="userSpaceOnUse" x1="340" y1="0" x2="700" y2="0">
+      <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
   </defs>
+
   <rect width="976" height="600" fill="#05050a"/>
-  <rect width="976" height="600" fill="url(#p1)"/>
-  <rect width="976" height="600" fill="url(#g1)"/>
+  <rect width="976" height="600" fill="url(#aw-grid)"/>
+  <rect width="976" height="600" fill="url(#aw-glow)"/>
+
+  <!-- faint depth stars -->
+  <g fill="#ffffff">
+    <circle cx="120" cy="120" r="1.4" fill-opacity="0.18"/><circle cx="245" cy="82" r="1" fill-opacity="0.12"/>
+    <circle cx="520" cy="70" r="1.2" fill-opacity="0.15"/><circle cx="640" cy="120" r="1" fill-opacity="0.10"/>
+    <circle cx="930" cy="90" r="1.4" fill-opacity="0.16"/><circle cx="880" cy="540" r="1.1" fill-opacity="0.12"/>
+    <circle cx="90" cy="500" r="1.2" fill-opacity="0.14"/><circle cx="420" cy="560" r="1" fill-opacity="0.10"/>
+    <circle cx="60" cy="330" r="1" fill-opacity="0.12"/><circle cx="950" cy="300" r="1" fill-opacity="0.12"/>
+  </g>
+
   <g font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace">
+    <!-- window chrome -->
     <path d="M0 48h976" stroke="#ffffff" stroke-opacity="0.09"/>
     <circle cx="30" cy="24" r="5" fill="#3a3a4a"/><circle cx="50" cy="24" r="5" fill="#3a3a4a"/><circle cx="70" cy="24" r="5" fill="#3a3a4a"/>
-    <text x="488" y="31" fill="#6e6e78" font-size="20" text-anchor="middle">apiweave · one operation</text>
+    <text x="488" y="31" fill="#6e6e78" font-size="19" text-anchor="middle">apiweave · one operation, every protocol</text>
 
-    <rect x="338" y="78" width="300" height="76" rx="16" fill="#ffffff" fill-opacity="0.13" stroke="#ffffff" stroke-opacity="0.45"/>
-    <text x="488" y="108" fill="#ffffff" font-size="20" text-anchor="middle">#[operation(mutation)]</text>
-    <text x="488" y="138" fill="#e3d3d3" font-size="25" text-anchor="middle">users.create</text>
-
-    <path d="M488 154V470" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"/>
-    <g stroke="#ffffff" stroke-opacity="0.26" stroke-width="2">
-      <path d="M488 214H270"/><path d="M488 214h218"/>
-      <path d="M488 320H270"/><path d="M488 320h218"/>
-      <path d="M488 426H270"/><path d="M488 426h218"/>
-    </g>
-    <g fill="#ffffff"><circle cx="488" cy="214" r="5"/><circle cx="488" cy="320" r="5"/><circle cx="488" cy="426" r="5"/></g>
-
-    <g fill="#0e0e18" stroke="#ffffff" stroke-opacity="0.14">
-      <rect x="70" y="178" width="200" height="72" rx="12"/><rect x="706" y="178" width="200" height="72" rx="12"/>
-      <rect x="70" y="284" width="200" height="72" rx="12"/><rect x="706" y="284" width="200" height="72" rx="12"/>
-      <rect x="70" y="390" width="200" height="72" rx="12"/><rect x="706" y="390" width="200" height="72" rx="12"/>
-    </g>
-    <g font-size="24" text-anchor="middle" fill="#e3d3d3">
-      <text x="170" y="223">REST</text><text x="806" y="223">GraphQL</text>
-      <text x="170" y="329">JSON-RPC</text><text x="806" y="329">SOAP</text>
-      <text x="170" y="435">WebSocket</text><text x="806" y="435">SSE</text>
+    <!-- threads: glow pass then core pass; waists mirrored around the origin so
+         the strands cross once mid-flight and read as a weave -->
+    <g fill="none" stroke-linecap="round">
+      <g stroke-width="8" stroke-opacity="0.20" filter="url(#aw-blur)">
+        <path d="M340 285 C 430 361, 560 115, 700 115" stroke="url(#th-rest)"/>
+        <path d="M340 285 C 430 331, 560 183, 700 183" stroke="url(#th-gql)"/>
+        <path d="M340 285 C 430 300, 560 251, 700 251" stroke="url(#th-rpc)"/>
+        <path d="M340 285 C 430 270, 560 319, 700 319" stroke="url(#th-soap)"/>
+        <path d="M340 285 C 430 239, 560 387, 700 387" stroke="url(#th-ws)"/>
+        <path d="M340 285 C 430 208, 560 455, 700 455" stroke="url(#th-sse)"/>
+      </g>
+      <g stroke-width="2.4">
+        <path d="M340 285 C 430 361, 560 115, 700 115" stroke="url(#th-rest)"/>
+        <path d="M340 285 C 430 331, 560 183, 700 183" stroke="url(#th-gql)"/>
+        <path d="M340 285 C 430 300, 560 251, 700 251" stroke="url(#th-rpc)"/>
+        <path d="M340 285 C 430 270, 560 319, 700 319" stroke="url(#th-soap)"/>
+        <path d="M340 285 C 430 239, 560 387, 700 387" stroke="url(#th-ws)"/>
+        <path d="M340 285 C 430 208, 560 455, 700 455" stroke="url(#th-sse)"/>
+      </g>
     </g>
 
-    <text x="488" y="508" fill="#6e6e78" font-size="20" text-anchor="middle">one schema · one error taxonomy · zero codegen</text>
-    <rect x="288" y="530" width="400" height="46" rx="10" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.22"/>
-    <text x="488" y="561" fill="#e3d3d3" font-size="21" text-anchor="middle">61 crates · no *-sys</text>
+    <!-- origin: the single declaration -->
+    <rect x="60" y="228" width="240" height="114" rx="16" fill="#140b06" stroke="#f97316" stroke-opacity="0.55"/>
+    <rect x="60" y="228" width="240" height="114" rx="16" fill="none" stroke="#f97316" stroke-opacity="0.25" filter="url(#aw-blur)"/>
+    <text x="180" y="275" fill="#fdba74" font-size="16" text-anchor="middle">#[operation(mutation)]</text>
+    <text x="180" y="312" fill="#ffffff" font-size="23" font-weight="700" text-anchor="middle">users.create</text>
+    <path d="M300 285h40" stroke="#f97316" stroke-width="3"/>
+    <circle cx="340" cy="285" r="10" fill="#f97316" fill-opacity="0.35" filter="url(#aw-blur)"/>
+    <circle cx="340" cy="285" r="5.5" fill="#f97316"/>
+
+    <!-- protocol chips -->
+    <g>
+      <circle cx="700" cy="115" r="4" fill="#4ade80"/>
+      <rect x="700" y="87" width="210" height="56" rx="12" fill="#0b0f0c" stroke="#4ade80" stroke-opacity="0.5"/>
+      <text x="805" y="111" fill="#4ade80" font-size="19" font-weight="700" text-anchor="middle">REST</text>
+      <text x="805" y="132" fill="#6e6e78" font-size="13" text-anchor="middle">POST /v1/users</text>
+    </g>
+    <g>
+      <circle cx="700" cy="183" r="4" fill="#e10098"/>
+      <rect x="700" y="155" width="210" height="56" rx="12" fill="#120b10" stroke="#e10098" stroke-opacity="0.5"/>
+      <text x="805" y="179" fill="#ff5fc8" font-size="19" font-weight="700" text-anchor="middle">GraphQL</text>
+      <text x="805" y="200" fill="#6e6e78" font-size="13" text-anchor="middle">usersCreate</text>
+    </g>
+    <g>
+      <circle cx="700" cy="251" r="4" fill="#fbbf24"/>
+      <rect x="700" y="223" width="210" height="56" rx="12" fill="#12100a" stroke="#fbbf24" stroke-opacity="0.5"/>
+      <text x="805" y="247" fill="#fbbf24" font-size="19" font-weight="700" text-anchor="middle">JSON-RPC</text>
+      <text x="805" y="268" fill="#6e6e78" font-size="13" text-anchor="middle">"method": "users.create"</text>
+    </g>
+    <g>
+      <circle cx="700" cy="319" r="4" fill="#60a5fa"/>
+      <rect x="700" y="291" width="210" height="56" rx="12" fill="#0a0e14" stroke="#60a5fa" stroke-opacity="0.5"/>
+      <text x="805" y="315" fill="#60a5fa" font-size="19" font-weight="700" text-anchor="middle">SOAP</text>
+      <text x="805" y="336" fill="#6e6e78" font-size="13" text-anchor="middle">UsersCreateRequest</text>
+    </g>
+    <g>
+      <circle cx="700" cy="387" r="4" fill="#a78bfa"/>
+      <rect x="700" y="359" width="210" height="56" rx="12" fill="#0e0c14" stroke="#a78bfa" stroke-opacity="0.5"/>
+      <text x="805" y="383" fill="#a78bfa" font-size="19" font-weight="700" text-anchor="middle">WebSocket</text>
+      <text x="805" y="404" fill="#6e6e78" font-size="13" text-anchor="middle">/ws · frames</text>
+    </g>
+    <g>
+      <circle cx="700" cy="455" r="4" fill="#2dd4bf"/>
+      <rect x="700" y="427" width="210" height="56" rx="12" fill="#0a1211" stroke="#2dd4bf" stroke-opacity="0.5"/>
+      <text x="805" y="451" fill="#2dd4bf" font-size="19" font-weight="700" text-anchor="middle">SSE</text>
+      <text x="805" y="472" fill="#6e6e78" font-size="13" text-anchor="middle">/events · stream</text>
+    </g>
+
+    <!-- shared plumbing under the origin -->
+    <g fill="#6e6e78" font-size="14">
+      <text x="60" y="392">one schema IR</text>
+      <text x="60" y="416">one validation pass</text>
+      <text x="60" y="440">one error taxonomy</text>
+    </g>
+    <path d="M60 372h240" stroke="#f97316" stroke-opacity="0.25"/>
+
+    <!-- footer -->
+    <text x="488" y="553" fill="#6e6e78" font-size="16" text-anchor="middle">hand-written GraphQL parser · WSDL + OpenAPI 3.1 generation · zero codegen</text>
+    <rect x="360" y="565" width="256" height="0" fill="none"/>
+    <text x="488" y="578" fill="#8a8a96" font-size="15" text-anchor="middle">61 crates · no *-sys · pure Rust</text>
   </g>
 </svg>
