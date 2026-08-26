@@ -18,6 +18,7 @@ import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import WipTerminal from './components/WipTerminal.jsx'
+import VisitorCounter from './components/VisitorCounter.jsx'
 import './index.css'
 
 // cv.js keeps the canonical copy; the gallery only needs the fields it renders.
@@ -564,6 +565,7 @@ function App() {
               <span className="secret-job-tooltip">I also work as solar knight for my Bonnie</span>
             </a>
           </div>
+          <VisitorCounter />
         </div>
       </footer>
     </>

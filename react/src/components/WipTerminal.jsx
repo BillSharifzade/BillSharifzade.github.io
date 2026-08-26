@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { wipProjects } from '../data/wip.js'
+import { CV_FORMATS } from '../utils/cvExporters.js'
 import './WipTerminal.css'
 
 // A working shell, not a screenshot of one. Everything routes through one
@@ -8,6 +9,8 @@ import './WipTerminal.css'
 // sync. `cd <section>` drives the page's own Lenis instance, which is the whole
 // joke: the site really is the filesystem.
 //
+// Output streams line by line through one queue (stream/abortStream); the
+// prompt row hides while a stream is live and Ctrl+C drops whatever is left.
 // Input is a real <input> laid transparently over the prompt line (mobile
 // keyboards, IME, native selection all keep working); what you see is a mirror
 // of its value with a block cursor drawn at selectionStart.
@@ -18,10 +21,13 @@ const FILES = ['README.md', 'wip.toml']
 // Write-y verbs all fail the same way; sudo has its own answer.
 const DENIED = ['rm', 'touch', 'mkdir', 'rmdir', 'mv', 'cp', 'chmod', 'chown', 'dd']
 const COMMANDS = [
-  'help', 'pwd', 'ls', 'cd', 'cat', 'wip', 'ps', 'neofetch', 'fastfetch', 'echo',
+  'help', 'pwd', 'ls', 'cd', 'cat', 'wip', 'ps', 'neofetch', 'fastfetch', 'echo', 'download',
   'date', 'whoami', 'uname', 'history', 'clear', 'sudo', 'reboot', 'poweroff', 'shutdown', 'exit',
   ...DENIED,
 ]
+const FORMAT_IDS = CV_FORMATS.map((f) => f.id)
+const CV_BASENAME = 'Sharifzoda_Bilol_CV'
+const POWER_STAGE_H = 230
 
 const ARCH_ART = [
   '                   -`',
@@ -69,6 +75,10 @@ function promptSpans(cmd) {
   return [s('bill', 'ok'), s('@', 'dim'), s('coolest_website', 'ok'), s(':', 'dim'), s('~', 'dir'), s('$ '), s(cmd)]
 }
 
+function askPromptSpans(ans) {
+  return [s('select format ', 'accent'), s('❯ ', 'ok'), s(ans)]
+}
+
 function motdLines() {
   return [
     line(s('Welcome to '), s('coolest_website', 'accent'), s(' 2.0 LTS'), s(' (tty1)', 'dim')),
@@ -81,6 +91,24 @@ function wipLines() {
   const dots = ['ok', 'accent', 'cyan']
   const out = [line(s('current work, closest to shipping first:', 'dim')), blank()]
   wipProjects.forEach((p, i) => {
+    // One project is not like the others.
+    if (p.special) {
+      const filled = Math.round(p.progress * 18)
+      out.push(
+        line(s('❤ ', 'love'), s(p.name, 'love-name'), s('  @ ' + p.company, 'love-dim')),
+        pre(
+          s('  [', 'love-dim'),
+          s('♥'.repeat(filled), 'love'),
+          s('♡'.repeat(18 - filled), 'love-dim'),
+          s(`] ${Math.round(p.progress * 100)}%`, 'love'),
+          s(` · ${p.spent} in · ${p.left} left · then ∞ together`, 'love-dim')
+        ),
+        line(s('  stack: ', 'love-dim'), s(p.stack.join(' · '), 'love')),
+        line(s('  ' + p.desc, 'love-dim')),
+        blank()
+      )
+      return
+    }
     const filled = Math.round(p.progress * 22)
     out.push(
       line(s('● ', dots[i % dots.length]), s(p.name, 'accent'), s('  @ ' + p.company, 'dim')),
@@ -169,10 +197,12 @@ function helpLines() {
     ['cd <section>', 'actually scrolls you there'],
     ['pwd', 'where you are in the universe'],
     ['cat <file>', 'README.md, wip.toml'],
+    ['download', 'grab my CV — pick a format'],
     ['ps aux', 'what is running here'],
     ['neofetch', 'you already know'],
     ['echo · date · whoami · uname · history · clear', ''],
     ['reboot', 'the real one'],
+    ['poweroff', 'same as the red button'],
   ]
   return rows.map(([cmd, desc]) =>
     pre(s(cmd.padEnd(16), 'ok'), s(desc, 'dim'))
@@ -192,11 +222,11 @@ function catLines(file) {
     wipProjects.forEach((p) => {
       out.push(
         line(s('[[project]]', 'accent')),
-        line(s('name    = ', 'dim'), s(`"${p.name}"`, 'ok')),
-        line(s('company = ', 'dim'), s(`"${p.company}"`, 'ok')),
-        line(s('spent   = ', 'dim'), s(`"${p.spent}"`, 'ok')),
-        line(s('left    = ', 'dim'), s(`"${p.left}"`, 'ok')),
-        line(s('stack   = ', 'dim'), s(`[${p.stack.map((x) => `"${x}"`).join(', ')}]`, 'ok')),
+        line(s('name    = ', 'dim'), s(`"${p.name}"`, p.special ? 'love' : 'ok')),
+        line(s('company = ', 'dim'), s(`"${p.company}"`, p.special ? 'love' : 'ok')),
+        line(s('spent   = ', 'dim'), s(`"${p.spent}"`, p.special ? 'love' : 'ok')),
+        line(s('left    = ', 'dim'), s(`"${p.left}"`, p.special ? 'love' : 'ok')),
+        line(s('stack   = ', 'dim'), s(`[${p.stack.map((x) => `"${x}"`).join(', ')}]`, p.special ? 'love' : 'ok')),
         blank()
       )
     })
@@ -206,6 +236,55 @@ function catLines(file) {
   return [line(s(`cat: ${file}: no such file`, 'err'))]
 }
 
+function downloadListLines() {
+  return [
+    line(s('select a format to download my CV:', 'dim')),
+    blank(),
+    ...CV_FORMATS.map((f) => pre(s('  ' + f.id.padEnd(6), 'ok'), s(f.hint, 'dim'))),
+    blank(),
+    line(s("type a format — or 'cancel'", 'dim')),
+  ]
+}
+
+function shutdownLines() {
+  return [
+    line(s('[  OK  ] ', 'ok'), s('Stopped target Multi-User System.')),
+    line(s('[  OK  ] ', 'ok'), s('Stopped wip-term.service — terminal emulator.')),
+    line(s('[  OK  ] ', 'ok'), s('Reached target Power-Off.')),
+  ]
+}
+
+// systemd cosplay for the power button. Delays are the pause AFTER each line:
+// fast bursts with a few thinking-pauses, like a machine that actually boots.
+function bootEntries() {
+  const ok = (txt) => line(s('[  OK  ] ', 'ok'), s(txt))
+  const krn = (stamp, txt) => pre(s(`[${stamp}] `, 'dim'), s(txt))
+  return [
+    { line: krn('    0.000000', 'Linux version 7.1.8-zen1-3-zen (bill@coolest_website) (rustc 1.89.0) #1 SMP PREEMPT_DYNAMIC'), delay: 120 },
+    { line: krn('    0.041225', 'Command line: BOOT_IMAGE=/boot/vmlinuz-linux-zen root=/dev/rust0 rw quiet'), delay: 30 },
+    { line: krn('    0.183940', 'memory: 512MiB available (the rest belongs to ferris)'), delay: 35 },
+    { line: krn('    0.312448', 'clocksource: tsc: mask 0xffffffffffffffff, 3.9 GHz'), delay: 260 },
+    { line: line(s(':: running early hook [udev]', 'dim')), delay: 60 },
+    { line: line(s(':: running hook [udev]', 'dim')), delay: 40 },
+    { line: line(s(':: Triggering uevents…', 'dim')), delay: 300 },
+    { line: ok('Mounted /boot.'), delay: 30 },
+    { line: ok('Reached target Local File Systems.'), delay: 45 },
+    { line: ok('Started Journal Service.'), delay: 25 },
+    { line: ok('Started D-Bus System Message Bus.'), delay: 30 },
+    { line: ok('Started Network Manager.'), delay: 180 },
+    { line: ok('Started borrow-checker.service — memory safety daemon.'), delay: 40 },
+    { line: ok('Reached target Multi-User System.'), delay: 35 },
+    { line: ok('Reached target Graphical Interface.'), delay: 320 },
+    { line: blank(), delay: 40 },
+    { line: line(s('Arch Linux 7.1.8-zen1-3-zen', 'cyan'), s(' (tty1)', 'dim')), delay: 150 },
+    { line: blank(), delay: 60 },
+    { line: line(s('coolest_website login: '), s('bill', 'ok'), s(' (automatic login)', 'dim')), delay: 240 },
+    { line: line(s(`Last login: ${new Date().toString().slice(0, 24)} on tty1`, 'dim')), delay: 200 },
+  ]
+}
+
+const prefersReduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
 // --------------------------------------------------------------------------
 
 export default function WipTerminal() {
@@ -213,14 +292,237 @@ export default function WipTerminal() {
   const [input, setInput] = useState('')
   const [sel, setSel] = useState(0)
   const [focused, setFocused] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [power, setPower] = useState('on')
+  const [compact, setCompact] = useState(false)
+  const [ask, setAsk] = useState(false)
+  const [hintStage, setHintStage] = useState('hidden') // hidden | shown | leaving
+  // Mirror of download-flow outcomes for screen readers (role="status" below).
+  const [srStatus, setSrStatus] = useState('')
+  const stageRef = useRef(null)
   const rootRef = useRef(null)
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
+  const powerBtnRef = useRef(null)
+  const closeBtnRef = useRef(null)
+  const poweringRef = useRef(false)
   const histRef = useRef([])
   const histIdxRef = useRef(-1)
   const bootedRef = useRef(false)
+  const streamRef = useRef(null)
+  const busyRef = useRef(false)
+  const powerRef = useRef('on')
+  const stickRef = useRef(true)
+  const askRef = useRef(false)
+  const exportingRef = useRef(false)
+  const hintDoneRef = useRef(false)
+  const miscTimersRef = useRef([])
 
   const append = (extra) => setLines((prev) => [...prev, ...extra])
+
+  const later = (fn, ms) => {
+    const id = window.setTimeout(fn, ms)
+    miscTimersRef.current.push(id)
+    return id
+  }
+
+  // Announce a status message to screen readers, then clear it so a later
+  // re-render can't re-announce stale text.
+  function announce(msg) {
+    setSrStatus(msg)
+    later(() => setSrStatus((cur) => (cur === msg ? '' : cur)), 5000)
+  }
+
+  // --- output streaming ----------------------------------------------------
+
+  function abortStream() {
+    const st = streamRef.current
+    if (!st) return false
+    clearTimeout(st.timer)
+    streamRef.current = null
+    busyRef.current = false
+    // An aborted shutdown stream never reaches collapseToPower — ^C saves the
+    // machine — so the red button must become pressable again.
+    poweringRef.current = false
+    setBusy(false)
+    return true
+  }
+
+  // entries: [{ line, delay }] where delay is the pause after the line.
+  function stream(entries, { onDone } = {}) {
+    if (!entries.length) {
+      onDone?.()
+      return
+    }
+    if (prefersReduced()) {
+      append(entries.map((e) => e.line))
+      onDone?.()
+      return
+    }
+    abortStream()
+    busyRef.current = true
+    setBusy(true)
+    const st = { i: 0, timer: 0 }
+    streamRef.current = st
+    const tick = () => {
+      if (streamRef.current !== st) return
+      const e = entries[st.i++]
+      append([e.line])
+      if (st.i >= entries.length) {
+        streamRef.current = null
+        busyRef.current = false
+        setBusy(false)
+        onDone?.()
+        return
+      }
+      st.timer = setTimeout(tick, e.delay)
+    }
+    st.timer = setTimeout(tick, 40)
+  }
+
+  // --- power ---------------------------------------------------------------
+
+  function collapseToPower() {
+    const stage = stageRef.current
+    const term = rootRef.current
+    if (!stage || !term || powerRef.current === 'off') return
+    askRef.current = false
+    setAsk(false)
+    // Hiding the terminal would silently drop focus to <body>; hand it to the
+    // power button instead — but only once its visibility transition allows
+    // focusing (it turns visible 0.28s into the collapse), and only if focus
+    // was actually inside the terminal.
+    const hadFocus = stage.contains(document.activeElement)
+    // Pin the current height so the CSS transition has a number to leave from.
+    stage.style.height = term.offsetHeight + 'px'
+    void stage.offsetHeight
+    powerRef.current = 'off'
+    poweringRef.current = false
+    setPower('off')
+    requestAnimationFrame(() => {
+      stage.style.height = POWER_STAGE_H + 'px'
+    })
+    // The button only becomes focusable 0.28s into its visibility transition
+    // and the browser drops focus to <body> when the terminal hides at 0.55s,
+    // so keep grabbing until the focus actually sticks.
+    if (hadFocus) {
+      let tries = 0
+      const grab = () => {
+        if (powerRef.current !== 'off') return
+        const b = powerBtnRef.current
+        if (!b) return
+        b.focus({ preventScroll: true })
+        if (document.activeElement !== b && tries++ < 6) later(grab, 150)
+      }
+      later(grab, 300)
+    }
+  }
+
+  function powerOn() {
+    if (powerRef.current !== 'off') return
+    powerRef.current = 'on'
+    poweringRef.current = false
+    setPower('on')
+    setLines([])
+    stickRef.current = true
+    // The power button hides itself; park focus on the red dot (not the input,
+    // which would pop the keyboard on touch) so keyboard users aren't dropped
+    // to <body>.
+    const hadFocus = document.activeElement === powerBtnRef.current
+    if (hadFocus) {
+      let tries = 0
+      const grab = () => {
+        if (powerRef.current !== 'on') return
+        const b = closeBtnRef.current
+        if (!b) return
+        b.focus({ preventScroll: true })
+        if (document.activeElement !== b && tries++ < 6) later(grab, 150)
+      }
+      later(grab, 60)
+    }
+    requestAnimationFrame(() => {
+      const stage = stageRef.current
+      const term = rootRef.current
+      if (stage && term) stage.style.height = term.offsetHeight + 'px'
+    })
+    later(() => {
+      if (stageRef.current) stageRef.current.style.height = ''
+    }, 700)
+    later(() => {
+      stream(bootEntries(), { onDone: () => append([blank(), ...motdLines()]) })
+    }, 380)
+  }
+
+  function onPowerOff() {
+    if (powerRef.current !== 'on' || poweringRef.current) return
+    abortStream()
+    poweringRef.current = true
+    stream(shutdownLines().map((l) => ({ line: l, delay: 150 })), { onDone: collapseToPower })
+  }
+
+  function toggleCompact() {
+    setCompact((c) => !c)
+    later(() => {
+      const b = bodyRef.current
+      if (b && stickRef.current) b.scrollTop = b.scrollHeight
+    }, 500)
+  }
+
+  // --- hint pill -----------------------------------------------------------
+
+  function dismissHint() {
+    if (hintDoneRef.current) return
+    hintDoneRef.current = true
+    setHintStage((st) => (st === 'shown' ? 'leaving' : 'hidden'))
+    later(() => setHintStage('hidden'), 450)
+  }
+
+  // --- cv download ---------------------------------------------------------
+
+  async function runExport(fmt) {
+    if (exportingRef.current) {
+      append([line(s('an export is already running…', 'dim'))])
+      announce('An export is already running.')
+      return
+    }
+    exportingRef.current = true
+    try {
+      await fmt.run()
+      append([line(s('✓ ', 'ok'), s(`download started — ${CV_BASENAME}.${fmt.id}`))])
+      announce(`Download started — ${CV_BASENAME}.${fmt.id}`)
+    } catch {
+      append([line(s(`export failed: ${fmt.label} — try again`, 'err'))])
+      announce(`Export failed: ${fmt.label} — try again.`)
+    } finally {
+      exportingRef.current = false
+    }
+  }
+
+  function answerFormat(raw) {
+    const ans = raw.trim().toLowerCase()
+    const echo = [line(...askPromptSpans(raw))]
+    setInput('')
+    setSel(0)
+    if (!ans || ans === 'cancel' || ans === 'q') {
+      askRef.current = false
+      setAsk(false)
+      append([...echo, line(s('cancelled', 'dim'))])
+      announce('Download cancelled.')
+      return
+    }
+    const fmt = CV_FORMATS.find((f) => f.id === ans)
+    if (!fmt) {
+      append([...echo, line(s(`no such format: ${ans}`, 'err'), s(' — pdf · docx · xlsx · csv · md · txt', 'dim'))])
+      announce(`No such format: ${ans}. Choose pdf, docx, xlsx, csv, md or txt, or type cancel.`)
+      return
+    }
+    askRef.current = false
+    setAsk(false)
+    append(echo)
+    stream([{ line: line(s(`generating ${fmt.label} …`, 'dim')), delay: 80 }], { onDone: () => runExport(fmt) })
+  }
+
+  // --- the shell -----------------------------------------------------------
 
   function warpTo(id) {
     const el = document.getElementById(id)
@@ -282,18 +584,33 @@ export default function WipTerminal() {
           line(s('guest is not in the sudoers file.', 'err')),
           line(s('This incident will be reported to nobody.', 'dim')),
         ]
+      case 'download': {
+        const want = arg.toLowerCase()
+        if (!want) {
+          askRef.current = true
+          setAsk(true)
+          announce('Select a CV format: pdf, docx, xlsx, csv, md or txt — or type cancel.')
+          return downloadListLines()
+        }
+        const fmt = CV_FORMATS.find((f) => f.id === want)
+        if (!fmt)
+          return [line(s(`download: no such format: ${arg}`, 'err'), s(' — pdf · docx · xlsx · csv · md · txt', 'dim'))]
+        return { lines: [line(s(`generating ${fmt.label} …`, 'dim'))], onDone: () => runExport(fmt) }
+      }
       case 'exit':
         return [line(s('there is no escape — scroll instead', 'dim'))]
       case 'clear':
         return null // handled by caller
       case 'reboot':
-      case 'poweroff':
-      case 'shutdown':
-        setTimeout(() => window.location.reload(), 900)
+        later(() => window.location.reload(), 900)
         return [
           line(s('[  OK  ] ', 'ok'), s('Reached target Reboot.')),
           line(s('rebooting the universe…', 'dim')),
         ]
+      case 'poweroff':
+      case 'shutdown':
+        poweringRef.current = true
+        return { lines: shutdownLines(), pace: 150, onDone: collapseToPower }
       default:
         if (DENIED.includes(cmd)) {
           const out = [line(s(`${cmd}: not enough permissions (read-only universe)`, 'err'))]
@@ -305,6 +622,11 @@ export default function WipTerminal() {
   }
 
   function submit(raw) {
+    if (busyRef.current) return
+    if (askRef.current) {
+      answerFormat(raw)
+      return
+    }
     const trimmed = raw.trim()
     const echoed = [line(...promptSpans(raw))]
     if (trimmed) {
@@ -312,25 +634,46 @@ export default function WipTerminal() {
       histIdxRef.current = histRef.current.length
     }
     const out = exec(raw)
-    if (out === null) setLines([])
-    else append([...echoed, ...out])
     setInput('')
     setSel(0)
+    if (out === null) {
+      abortStream()
+      setLines([])
+      return
+    }
+    append(echoed)
+    const cmd0 = trimmed.split(/\s+/)[0]
+    const slow = cmd0 === 'wip' || cmd0 === 'status' || cmd0 === 'projects'
+    let entries
+    let onDone
+    if (Array.isArray(out)) {
+      entries = out.map((l) => ({ line: l, delay: slow ? 46 : 26 }))
+    } else {
+      const pace = out.pace ?? 26
+      entries = out.entries ?? out.lines.map((l) => ({ line: l, delay: pace }))
+      onDone = out.onDone
+    }
+    stream(entries, { onDone })
   }
 
   // Boot: auto-type `wip` the first time the terminal scrolls into view, through
-  // the same submit() a visitor uses.
+  // the same submit() a visitor uses. The hint pill follows once the output has
+  // had a moment on screen.
   useEffect(() => {
     const root = rootRef.current
     if (!root || bootedRef.current) return
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    const reduced = prefersReduced()
     let timers = []
     const boot = () => {
       if (bootedRef.current) return
       bootedRef.current = true
       const cmd = 'wip'
+      const hint = () => {
+        if (!hintDoneRef.current && powerRef.current === 'on') setHintStage('shown')
+      }
       if (reduced) {
         submit(cmd)
+        timers.push(setTimeout(hint, 1400))
         return
       }
       cmd.split('').forEach((ch, i) => {
@@ -339,7 +682,9 @@ export default function WipTerminal() {
           setSel(i + 1)
         }, 260 + i * 150))
       })
-      timers.push(setTimeout(() => submit(cmd), 260 + cmd.length * 150 + 420))
+      const submitAt = 260 + cmd.length * 150 + 420
+      timers.push(setTimeout(() => submit(cmd), submitAt))
+      timers.push(setTimeout(hint, submitAt + 2600))
     }
     const io = new IntersectionObserver(
       (entries) => {
@@ -357,18 +702,51 @@ export default function WipTerminal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Keep the newest line in view.
-  useEffect(() => {
+  // Keep the newest line in view — before paint (useEffect scrolled after it,
+  // which read as flicker) and only while the reader is actually at the bottom.
+  useLayoutEffect(() => {
     const body = bodyRef.current
-    if (body) body.scrollTop = body.scrollHeight
-  }, [lines, input])
+    if (body && stickRef.current) body.scrollTop = body.scrollHeight
+  }, [lines, input, busy])
+
+  useEffect(() => {
+    const timers = miscTimersRef.current
+    return () => {
+      abortStream()
+      timers.forEach(clearTimeout)
+    }
+  }, [])
+
+  function onBodyScroll() {
+    const b = bodyRef.current
+    if (!b) return
+    stickRef.current = b.scrollHeight - b.scrollTop - b.clientHeight < 48
+  }
 
   function completeInput() {
+    if (askRef.current) {
+      const hits = FORMAT_IDS.filter((id) => id.startsWith(input.trim().toLowerCase()))
+      if (hits.length === 1) {
+        setInput(hits[0])
+        setSel(hits[0].length)
+      } else if (hits.length > 1) {
+        append([line(...askPromptSpans(input)), line(...hits.flatMap((h) => [s(h, 'ok'), s('  ')]))])
+      }
+      return
+    }
     const parts = input.split(/\s+/)
     const last = parts[parts.length - 1]
     if (last === '') return
     const pool =
-      parts.length === 1 ? COMMANDS : parts[0] === 'cd' ? SECTIONS : parts[0] === 'cat' ? FILES : []
+      parts.length === 1
+        ? COMMANDS
+        : parts[0] === 'cd'
+          ? SECTIONS
+          : parts[0] === 'cat'
+            ? FILES
+            : parts[0] === 'download'
+              ? FORMAT_IDS
+              : []
     const hits = pool.filter((c) => c.startsWith(last))
     if (hits.length === 1) {
       parts[parts.length - 1] = hits[0]
@@ -381,6 +759,8 @@ export default function WipTerminal() {
   }
 
   function onKeyDown(e) {
+    // Mid-IME-composition Enter/Tab commits the composition, not the command.
+    if ((e.isComposing || e.keyCode === 229) && (e.key === 'Enter' || e.key === 'Tab')) return
     if (e.key === 'Enter') {
       e.preventDefault()
       submit(input)
@@ -409,11 +789,24 @@ export default function WipTerminal() {
       completeInput()
     } else if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
       e.preventDefault()
+      if (abortStream()) {
+        append([line(s('^C', 'dim'))])
+        return
+      }
+      if (askRef.current) {
+        askRef.current = false
+        setAsk(false)
+        append([line(...askPromptSpans(input + '^C'))])
+        setInput('')
+        setSel(0)
+        return
+      }
       append([line(...promptSpans(input + '^C'))])
       setInput('')
       setSel(0)
     } else if (e.ctrlKey && (e.key === 'l' || e.key === 'L')) {
       e.preventDefault()
+      abortStream()
       setLines([])
     }
   }
@@ -425,50 +818,105 @@ export default function WipTerminal() {
 
   const syncSel = (e) => setSel(e.target.selectionStart ?? e.target.value.length)
 
+  const headSpans = ask ? askPromptSpans('').slice(0, -1) : promptSpans('')
+
   return (
-    <div className="wip-terminal" ref={rootRef}>
-      <div className="wt-chrome">
-        <span className="wt-dot" /><span className="wt-dot" /><span className="wt-dot" />
-        <span className="wt-title">bill@coolest_website: ~</span>
-        <span className={`wt-hint${focused ? ' wt-hint--off' : ''}`}>click · try 'help'</span>
-      </div>
-      <div
-        className="wt-body"
-        ref={bodyRef}
-        onClick={onBodyClick}
-        data-lenis-prevent=""
-      >
-        {lines.map((l, i) => (
-          <div key={i} className={`wt-line${l.pre ? ' wt-line--pre' : ''}`}>
-            {l.spans.map((sp, j) => (
-              <span key={j} className={`wt-${sp.c}`}>{sp.t}</span>
-            ))}
-          </div>
-        ))}
-        <div className="wt-line wt-line--prompt">
-          {promptSpans('').map((sp, j) => (
-            <span key={j} className={`wt-${sp.c}`}>{sp.t}</span>
+    <div className={`wt-stage${power === 'off' ? ' wt-stage--off' : ''}`} ref={stageRef}>
+      {power === 'on' && hintStage !== 'hidden' && (
+        <button
+          type="button"
+          className={`wt-hint-pill${hintStage === 'leaving' ? ' wt-hint-pill--leaving' : ''}`}
+          onClick={() => inputRef.current?.focus({ preventScroll: true })}
+          tabIndex={-1}
+        >
+          <i className="fas fa-keyboard" aria-hidden="true"></i> this terminal is real — click &amp; type
+        </button>
+      )}
+      <div className={`wip-terminal${compact ? ' wip-terminal--compact' : ''}`} ref={rootRef}>
+        <div className="wt-chrome">
+          <button
+            type="button"
+            ref={closeBtnRef}
+            className="wt-dot wt-dot--close"
+            onClick={onPowerOff}
+            aria-label="Power off the terminal"
+            title="power off"
+          >
+            <span className="wt-dot-glyph" aria-hidden="true">×</span>
+          </button>
+          <span className="wt-dot" aria-hidden="true" />
+          <button
+            type="button"
+            className="wt-dot wt-dot--zoom"
+            onClick={toggleCompact}
+            aria-label={compact ? 'Restore terminal size' : 'Shrink the terminal a bit'}
+            title={compact ? 'maximize' : 'minimize'}
+          >
+            <span className="wt-dot-glyph" aria-hidden="true">{compact ? '+' : '−'}</span>
+          </button>
+          <span className="wt-title">bill@coolest_website: ~</span>
+          <span className={`wt-hint${focused ? ' wt-hint--off' : ''}`}>click · try 'help'</span>
+        </div>
+        <div
+          className="wt-body"
+          ref={bodyRef}
+          onClick={onBodyClick}
+          onScroll={onBodyScroll}
+          data-lenis-prevent=""
+        >
+          {lines.map((l, i) => (
+            <div key={i} className={`wt-line${l.pre ? ' wt-line--pre' : ''}`}>
+              {l.spans.map((sp, j) => (
+                <span key={j} className={`wt-${sp.c}`}>{sp.t}</span>
+              ))}
+            </div>
           ))}
-          <span className="wt-txt">{input.slice(0, sel)}</span>
-          <span className={`wt-cursor${focused ? '' : ' wt-cursor--idle'}`}>{input[sel] ?? ' '}</span>
-          <span className="wt-txt">{input.slice(sel + 1)}</span>
-          <input
-            ref={inputRef}
-            className="wt-input"
-            value={input}
-            onChange={(e) => { setInput(e.target.value); syncSel(e) }}
-            onSelect={syncSel}
-            onKeyDown={onKeyDown}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            aria-label="Terminal command input — type 'help' for commands"
-            autoCapitalize="off"
-            autoCorrect="off"
-            autoComplete="off"
-            spellCheck="false"
-          />
+          <div className="wt-line wt-line--prompt">
+            {!busy && (
+              <>
+                {headSpans.map((sp, j) => (
+                  <span key={j} className={`wt-${sp.c}`}>{sp.t}</span>
+                ))}
+                <span className="wt-txt">{input.slice(0, sel)}</span>
+                <span className={`wt-cursor${focused ? '' : ' wt-cursor--idle'}`}>{input[sel] ?? ' '}</span>
+                <span className="wt-txt">{input.slice(sel + 1)}</span>
+              </>
+            )}
+            <input
+              ref={inputRef}
+              className="wt-input"
+              value={input}
+              onChange={(e) => { setInput(e.target.value); syncSel(e) }}
+              onSelect={syncSel}
+              onKeyDown={onKeyDown}
+              onFocus={() => { setFocused(true); dismissHint() }}
+              onBlur={() => setFocused(false)}
+              aria-label={ask
+                ? 'CV format — type pdf, docx, xlsx, csv, md or txt, or cancel'
+                : "Terminal command input — type 'help' for commands"}
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+              spellCheck="false"
+            />
+          </div>
         </div>
       </div>
+      <div className="wt-sr-status" role="status">{srStatus}</div>
+      <button
+        type="button"
+        ref={powerBtnRef}
+        className="wt-power"
+        onClick={powerOn}
+        aria-label="Power the terminal back on"
+        title="power on"
+        tabIndex={power === 'off' ? 0 : -1}
+      >
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <path d="M12 3v8" />
+          <path d="M6.3 6.5a8 8 0 1 0 11.4 0" />
+        </svg>
+      </button>
     </div>
   )
 }

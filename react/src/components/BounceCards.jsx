@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import AnimatedTechIcon from './AnimatedTechIcon.jsx';
 import './BounceCards.css';
 
 export default function BounceCards({
@@ -141,14 +142,18 @@ export default function BounceCards({
                 >
                     {items.length ? (
                         <>
-                            <svg
-                                className="tech-icon"
-                                viewBox="0 0 24 24"
-                                role="img"
-                                aria-label={card.title}
-                            >
-                                <path d={card.path} fill="#ffffff" />
-                            </svg>
+                            {card.slug ? (
+                                <AnimatedTechIcon title={card.title} slug={card.slug} path={card.path} />
+                            ) : (
+                                <svg
+                                    className="tech-icon"
+                                    viewBox="0 0 24 24"
+                                    role="img"
+                                    aria-label={card.title}
+                                >
+                                    <path d={card.path} fill="#ffffff" />
+                                </svg>
+                            )}
                             <span className="tech-icon-label">{card.title}</span>
                         </>
                     ) : (

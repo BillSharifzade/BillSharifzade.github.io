@@ -58,11 +58,21 @@
 
 .journey-card {
     width: calc(50% - 96px);
-    background: linear-gradient(160deg, rgba(20, 20, 20, 0.92), rgba(9, 9, 9, 0.92));
+    background: linear-gradient(160deg, rgba(24, 24, 24, 0.55), rgba(10, 10, 10, 0.45));
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 18px;
     padding: 18px 20px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* No backdrop blur support → the translucent card over the animated beams
+   would hurt legibility; fall back to the old near-opaque gradient. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .journey-card {
+        background: linear-gradient(160deg, rgba(20, 20, 20, 0.92), rgba(9, 9, 9, 0.92));
+    }
 }
 
 .journey-card:hover,
