@@ -13,7 +13,7 @@ import screenx2 from '../assets/projects/screenx2.jpg'
 import hrProgress from '../assets/projects/hr-progress.jpg'
 // Cropped from procs.png: the full 1364px terminal shrinks to ~8px type in
 // the panel; the top-left region keeps the type legible at display size.
-import procs from '../assets/projects/procs-zoom.png'
+import procs from '../assets/projects/procs-zoom.webp'
 
 export const projectCovers = {
   apiweave: [apiweave],

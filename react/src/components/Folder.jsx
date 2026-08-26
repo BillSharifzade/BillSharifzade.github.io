@@ -76,7 +76,23 @@ export default function Folder({
 
   return (
     <div style={scaleStyle} className={className}>
-      <div className={folderClassName} style={folderStyle} onClick={handleClick}>
+      <div
+        className={folderClassName}
+        style={folderStyle}
+        onClick={handleClick}
+        // A <button> can't wrap this flow content, so the div carries the
+        // button semantics itself — Space must not scroll the page.
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        aria-label={label ? `${label} skills` : 'skills folder'}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleClick()
+          }
+        }}
+      >
         <div className="folder__back">
           {papers.map((item, i) => (
             <div

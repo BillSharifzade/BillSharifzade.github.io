@@ -162,3 +162,19 @@
         font-size: 1.6rem;
     }
 }
+
+.cv-dialog-error {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    border-radius: 10px;
+    background: rgba(248, 113, 113, 0.08);
+    color: #f8a5a5;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.cv-dialog:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+}

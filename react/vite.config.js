@@ -94,11 +94,34 @@ function renderFallback() {
 </noscript>`
 }
 
+// Person schema for rich results, generated from the same cv.js data as the
+// page. JSON.stringify escapes quotes; '<' is escaped below so the payload
+// can never close its own <script> tag.
+function renderJsonLd() {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: profile.name,
+    jobTitle: profile.role,
+    url: SITE,
+    email: 'mailto:sharifzadebilal@gmail.com',
+    address: { '@type': 'PostalAddress', addressLocality: 'Dushanbe', addressCountry: 'TJ' },
+    sameAs: profile.contacts
+      .filter((c) => c.href && c.href.startsWith('http'))
+      .map((c) => c.href),
+    alumniOf: education.map((ed) => ({ '@type': 'CollegeOrUniversity', name: ed.school })),
+  }
+  const json = JSON.stringify(data).replace(/</g, '\\u003c')
+  return `<script type="application/ld+json">${json}</script>`
+}
+
 function seoFallback() {
   return {
     name: 'cv-seo-fallback',
     transformIndexHtml(html) {
-      return html.replace('<!--CV_FALLBACK-->', renderFallback())
+      return html
+        .replace('<!--CV_FALLBACK-->', renderFallback())
+        .replace('<!--JSONLD-->', renderJsonLd())
     },
   }
 }

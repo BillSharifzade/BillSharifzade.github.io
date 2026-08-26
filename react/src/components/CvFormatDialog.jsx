@@ -5,12 +5,35 @@ import './CvFormatDialog.css'
 
 function CvFormatDialog({ open, onClose, onDownloaded }) {
   const [busyFormat, setBusyFormat] = useState(null)
+  const [error, setError] = useState(null)
   const panelRef = useRef(null)
 
   useEffect(() => {
     if (!open) return
+    setError(null)
+    // The opener keeps focus when the portal mounts — move it into the dialog
+    // and trap Tab inside until close, then hand it back.
+    const prevFocus = document.activeElement
+    panelRef.current?.focus()
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
+      if (e.key === 'Tab') {
+        const items = panelRef.current?.querySelectorAll('button:not(:disabled)')
+        if (!items?.length) return
+        const first = items[0]
+        const last = items[items.length - 1]
+        const inside = panelRef.current.contains(document.activeElement)
+        if (!inside) {
+          e.preventDefault()
+          first.focus()
+        } else if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.addEventListener('keydown', onKey)
     // Freeze both native scroll and Lenis while the dialog is open.
@@ -21,6 +44,7 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
       document.removeEventListener('keydown', onKey)
       lenis?.start()
       document.body.style.overflow = ''
+      prevFocus?.focus?.()
     }
   }, [open, onClose])
 
@@ -29,12 +53,14 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
   async function handlePick(format) {
     if (busyFormat) return
     setBusyFormat(format.id)
+    setError(null)
     try {
       await format.run()
       onDownloaded?.()
       onClose()
     } catch (err) {
       console.error(`Failed to generate CV as ${format.id}`, err)
+      setError(`Couldn't generate the ${format.label} file — check your connection and try again, or reload the page.`)
     } finally {
       setBusyFormat(null)
     }
@@ -53,6 +79,7 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
         aria-modal="true"
         aria-label="Choose CV format"
         ref={panelRef}
+        tabIndex={-1}
       >
         <button type="button" className="cv-dialog-close" aria-label="Close" onClick={onClose}>
           <i className="fas fa-times"></i>
@@ -75,6 +102,9 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
             </button>
           ))}
         </div>
+        {error && (
+          <p className="cv-dialog-error" role="alert">{error}</p>
+        )}
       </div>
     </div>,
     document.body

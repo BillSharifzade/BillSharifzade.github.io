@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import DecryptedText from './components/DecryptedText.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import signalLogo from './assets/signal_logo.svg'
-import mainAvatar from './assets/main_img.png'
+import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
@@ -14,12 +14,16 @@ import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
 import './components/HobbyBackgrounds.css'
-import Beams from './components/Beams.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import WipTerminal from './components/WipTerminal.jsx'
 import VisitorCounter from './components/VisitorCounter.jsx'
 import './index.css'
+
+// The three.js background is pure decoration — lazy-loading it keeps ~900KB of
+// WebGL machinery out of the critical chunk; the page is fully usable before it
+// fades in.
+const Beams = lazy(() => import('./components/Beams.jsx'))
 
 // cv.js keeps the canonical copy; the gallery only needs the fields it renders.
 const projectPanels = projects.map((p) => ({
@@ -38,29 +42,30 @@ function scrollToTarget(target) {
   if (lenis) {
     lenis.scrollTo(target, { offset: -90, duration: 1.2 })
   } else {
-    target.scrollIntoView({ behavior: 'smooth' })
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
   }
 }
 
-function App() {
-  const typingTexts = [
-    'Backend Architect',
-    'AI Architecture Specialist',
-    'Engineering Team Lead',
-    'Full-Stack Developer',
-    'Systems Engineer',
-    'Tech Innovator'
-  ]
+// The typewriter owns its 10–20Hz state here so the rest of the app tree never
+// re-renders for it — before extraction every keystroke of the animation
+// re-rendered <App/> (and defeated ProfileCard's memo) forever.
+const TYPING_TEXTS = [
+  'Backend Architect',
+  'AI Architecture Specialist',
+  'Engineering Team Lead',
+  'Full-Stack Developer',
+  'Systems Engineer',
+  'Tech Innovator',
+]
+
+function TypingSubtitle() {
   const [textIndex, setTextIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  const heroContentRef = useRef(null)
-  const hamburgerRef = useRef(null)
-  const mobileNavRef = useRef(null)
-  const navContainerRef = useRef(null)
 
   useEffect(() => {
-    const currentText = typingTexts[textIndex]
+    const currentText = TYPING_TEXTS[textIndex]
     let timeoutId
 
     if (!isDeleting && charIndex === currentText.length) {
@@ -68,7 +73,7 @@ function App() {
     } else if (isDeleting && charIndex === 0) {
       timeoutId = setTimeout(() => {
         setIsDeleting(false)
-        setTextIndex((idx) => (idx + 1) % typingTexts.length)
+        setTextIndex((idx) => (idx + 1) % TYPING_TEXTS.length)
       }, 300)
     } else {
       const delay = isDeleting ? 50 : 100
@@ -79,6 +84,15 @@ function App() {
 
     return () => clearTimeout(timeoutId)
   }, [charIndex, isDeleting, textIndex])
+
+  return <span className="typing-text">{TYPING_TEXTS[textIndex].substring(0, charIndex)}</span>
+}
+
+function App() {
+  const heroContentRef = useRef(null)
+  const hamburgerRef = useRef(null)
+  const mobileNavRef = useRef(null)
+  const navContainerRef = useRef(null)
 
   useEffect(() => {
     const nav = document.querySelector('nav')
@@ -162,16 +176,17 @@ function App() {
   return (
     <>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
-        <Beams
-          beamWidth={2}
-          beamHeight={20}
-          beamNumber={20}
-          lightColor="#000000ff"
-          speed={1.5}
-          noiseIntensity={1.5}
-          scale={0.2}
-          rotation={30}
-        />
+        <Suspense fallback={null}>
+          <Beams
+            beamWidth={2}
+            beamHeight={20}
+            beamNumber={20}
+            speed={1.5}
+            noiseIntensity={1.5}
+            scale={0.2}
+            rotation={30}
+          />
+        </Suspense>
       </div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
@@ -231,7 +246,7 @@ function App() {
             />
           </div>
           <div className="hero-subtitle">
-            <span className="typing-text">{typingTexts[textIndex].substring(0, charIndex)}</span>
+            <TypingSubtitle />
           </div>
           <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '600px' }}>
             I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details. And making sure that my team does the same.

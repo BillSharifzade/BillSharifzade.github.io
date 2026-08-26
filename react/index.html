@@ -3,7 +3,14 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- GitHub Pages can't set response headers, so defense-in-depth CSP ships as a
+       meta tag. 'wasm-unsafe-eval' is for react-pdf's embedded WASM (yoga-layout);
+       worker-src blob: covers library-spawned workers; Google Fonts is the only
+       remaining third-party origin. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' data: https://abacus.jasoncameron.dev; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
   <link rel="icon" type="image/png" href="/src/assets/arch.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Sharifzoda Bilol — Backend Architect | Rust, High-Load Systems</title>
@@ -29,14 +36,16 @@
   <meta name="twitter:image" content="https://billsharifzade.github.io/og.png" />
 
   <meta name="theme-color" content="#0b0b12" />
+  <!--JSONLD-->
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    referrerpolicy="no-referrer" />
+  <!-- Font Awesome is self-hosted (imported in main.jsx) — no CDN single point
+       of failure, no render-blocking third-party stylesheet. -->
+  <!-- LCP: the hero avatar — fetch it alongside the JS instead of after it. -->
+  <link rel="preload" as="image" href="/src/assets/main_img.webp" fetchpriority="high" />
 </head>
 
 <body>

@@ -1,4 +1,5 @@
 import { forwardRef, useMemo, useRef, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars -- used as <motion.span>; this config has no jsx-uses-vars
 import { motion } from 'motion/react';
 import './VariableProximity.css';
 

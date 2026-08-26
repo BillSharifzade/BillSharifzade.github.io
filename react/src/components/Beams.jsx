@@ -1,5 +1,4 @@
-/* eslint-disable react/no-unknown-property */
-import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo, useState } from 'react';
 
 import * as THREE from 'three';
 
@@ -50,8 +49,26 @@ function extendMaterial(BaseMaterial, cfg) {
   return mat;
 }
 
-const CanvasWrapper = ({ children }) => (
-  <Canvas dpr={[1, 2]} frameloop="always" className="beams-container">
+// Live prefers-reduced-motion flag: switching the OS setting takes effect
+// without a reload.
+const useReducedMotion = () => {
+  const [reduced, setReduced] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = e => setReduced(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return reduced;
+};
+
+// dpr caps at 1.5: on 2x displays that is ~44% less fragment work, invisible on
+// this dark noise-dithered background. Under reduced motion, "demand" renders
+// the mount frame and then holds it still ("never" would leave a blank canvas).
+const CanvasWrapper = ({ children, reduced }) => (
+  <Canvas dpr={reduced ? 1 : [1, 1.5]} frameloop={reduced ? 'demand' : 'always'} className="beams-container">
     {children}
   </Canvas>
 );
@@ -151,6 +168,7 @@ const Beams = ({
   scale = 0.2,
   rotation = 0
 }) => {
+  const reduced = useReducedMotion();
   const meshRef = useRef(null);
   const beamMaterial = useMemo(
     () =>
@@ -210,7 +228,7 @@ const Beams = ({
   );
 
   return (
-    <CanvasWrapper>
+    <CanvasWrapper reduced={reduced}>
       <group rotation={[0, 0, degToRad(rotation)]}>
         <PlaneNoise ref={meshRef} material={beamMaterial} count={beamNumber} width={beamWidth} height={beamHeight} />
         <DirLight color={lightColor} position={[0, 3, 10]} />

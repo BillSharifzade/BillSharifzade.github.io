@@ -260,6 +260,11 @@ const ScrollStack = ({
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
+    // Reduced motion: no Lenis easing, no scroll-linked pin/scale — the cards
+    // render as a plain static list. Binding the transforms to native scroll
+    // instead would reintroduce the compositor desync AND still be motion.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const cards = Array.from(
       useWindowScroll
         ? document.querySelectorAll('.scroll-stack-card')

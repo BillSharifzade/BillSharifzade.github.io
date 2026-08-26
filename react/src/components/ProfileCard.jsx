@@ -193,8 +193,12 @@ const ProfileCardComponent = ({
 
     const handleClick = () => {
       if (!enableMobileTilt || location.protocol !== 'https:') return;
-      if (typeof window.DeviceMotionEvent.requestPermission === 'function') {
-        window.DeviceMotionEvent.requestPermission()
+      // Feature-detect the interface the handler actually consumes; desktop
+      // browsers without DeviceOrientationEvent must not throw here.
+      const OrientationEvent = window.DeviceOrientationEvent;
+      if (!OrientationEvent) return;
+      if (typeof OrientationEvent.requestPermission === 'function') {
+        OrientationEvent.requestPermission()
           .then(state => {
             if (state === 'granted') {
               window.addEventListener('deviceorientation', deviceOrientationHandler);
@@ -262,7 +266,9 @@ const ProfileCardComponent = ({
               className="avatar"
               src={avatarUrl}
               alt={`${name || 'User'} avatar`}
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               onError={e => {
                 const target = e.target;
                 target.style.display = 'none';

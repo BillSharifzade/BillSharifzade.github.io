@@ -5,10 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# The build job runs the whole npm dependency tree, so it gets read-only
+# credentials; only the deploy job (which runs no npm code) may write Pages
+# or mint OIDC tokens.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -19,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
+        with:
+          persist-credentials: false
       - name: Use Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: react/.nvmrc
           cache: npm
           cache-dependency-path: react/package-lock.json
       - name: Install deps
@@ -41,6 +42,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
     needs: build
     runs-on: ubuntu-latest
     steps:
