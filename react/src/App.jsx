@@ -192,31 +192,42 @@ function App() {
       </div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
-      {/* Custom crosshair cursor; corner brackets lock onto .cursor-target
-          elements. Renders nothing on touch devices. */}
-      <TargetCursor spinDuration={2} hideDefaultCursor={true} parallaxOn={true} />
+      {/* Crosshair cursor scoped to the header: it fades in over the nav
+          (where a CSS rule hides the native cursor) and brackets lock onto
+          the .cursor-target links. Renders nothing on touch devices. */}
+      <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
 
       <nav ref={navContainerRef}>
         <div className="nav-content">
           <div className="logo">
-            {/* JetBrains Mono variable: wght is its only axis (100–800). */}
+            {/* JetBrains Mono variable: wght is its only axis (100–800), so
+                the punch comes from sweeping nearly all of it — thin at rest,
+                heavy under the pointer. */}
             <VariableProximity
               label={'qwantum'}
-              fromFontVariationSettings="'wght' 400"
+              fromFontVariationSettings="'wght' 150"
               toFontVariationSettings="'wght' 800"
               containerRef={navContainerRef}
-              radius={100}
+              radius={110}
               falloff='linear'
             />
           </div>
           <div className="nav-links">
-            <a href="#home" className="nav-link cursor-target">Profile</a>
-            <a href="#about" className="nav-link cursor-target">About</a>
-            <a href="#skills" className="nav-link cursor-target">Skills</a>
-            <a href="#projects" className="nav-link cursor-target">Projects</a>
-            <a href="#experience" className="nav-link cursor-target">Experience</a>
-            <a href="#hobbies" className="nav-link cursor-target">Hobbies</a>
-            <a href="#contact" className="nav-link cursor-target">Contact</a>
+            {/* Rolling labels: the muted copy rolls out, a white duplicate
+                (the ::after, fed by data-text) rolls in from below. */}
+            {[
+              ['#home', 'Profile'],
+              ['#about', 'About'],
+              ['#skills', 'Skills'],
+              ['#projects', 'Projects'],
+              ['#experience', 'Experience'],
+              ['#hobbies', 'Hobbies'],
+              ['#contact', 'Contact'],
+            ].map(([href, label]) => (
+              <a key={href} href={href} className="nav-link cursor-target">
+                <span className="nav-link-roll" data-text={label}>{label}</span>
+              </a>
+            ))}
             <DownloadCvButton />
           </div>
           <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>
@@ -580,7 +591,7 @@ function App() {
           </p>
           <div className="footer-tags">
             <a
-              className="secret-job cursor-target"
+              className="secret-job"
               href="https://bonnnieeee.github.io/"
               target="_blank"
               rel="noopener noreferrer"

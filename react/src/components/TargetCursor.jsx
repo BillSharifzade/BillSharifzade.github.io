@@ -1,4 +1,9 @@
-// Vendored verbatim from https://reactbits.dev/r/TargetCursor-JS-CSS.json
+// Vendored from https://reactbits.dev/r/TargetCursor-JS-CSS.json with one
+// local change: a `scopeSelector` prop. When set, the crosshair fades in only
+// while the pointer is inside a matching element (this site scopes it to the
+// header nav) — pair it with hideDefaultCursor={false} plus a CSS
+// `cursor: none` rule on the same scope so the native cursor only vanishes
+// where the crosshair takes over.
 
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
@@ -41,13 +46,15 @@ const TargetCursor = ({
   hoverDuration = 0.2,
   parallaxOn = true,
   cursorColor = '#ffffff',
-  cursorColorOnTarget
+  cursorColorOnTarget,
+  scopeSelector = null
 }) => {
   const cursorRef = useRef(null);
   const cornersRef = useRef(null);
   const spinTl = useRef(null);
   const dotRef = useRef(null);
   const containingBlockRef = useRef(null);
+  const scopeVisibleRef = useRef(false);
 
   const isActiveRef = useRef(false);
   const targetCornerPositionsRef = useRef(null);
@@ -116,6 +123,12 @@ const TargetCursor = ({
       y: window.innerHeight / 2 - initialOffset.y
     });
 
+    // Scoped mode starts hidden until the pointer enters the scope.
+    if (scopeSelector) {
+      scopeVisibleRef.current = false;
+      gsap.set(cursor, { autoAlpha: 0 });
+    }
+
     const createSpinTimeline = () => {
       if (spinTl.current) {
         spinTl.current.kill();
@@ -163,7 +176,16 @@ const TargetCursor = ({
 
     tickerFnRef.current = tickerFn;
 
-    const moveHandler = e => moveCursor(e.clientX, e.clientY);
+    const moveHandler = e => {
+      moveCursor(e.clientX, e.clientY);
+      if (scopeSelector) {
+        const inScope = e.target instanceof Element && !!e.target.closest(scopeSelector);
+        if (inScope !== scopeVisibleRef.current) {
+          scopeVisibleRef.current = inScope;
+          gsap.to(cursor, { autoAlpha: inScope ? 1 : 0, duration: 0.2, overwrite: 'auto' });
+        }
+      }
+    };
     window.addEventListener('mousemove', moveHandler);
 
     const scrollHandler = () => {
@@ -388,7 +410,8 @@ const TargetCursor = ({
     hoverDuration,
     parallaxOn,
     cursorColor,
-    cursorColorOnTarget
+    cursorColorOnTarget,
+    scopeSelector
   ]);
 
   useEffect(() => {

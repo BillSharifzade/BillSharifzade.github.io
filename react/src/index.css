@@ -95,9 +95,9 @@ nav.scrolled {
 
 .logo {
     font-size: 24px;
-    /* Matches the proximity effect's resting 'wght' 400 so the first
+    /* Matches the proximity effect's resting 'wght' 150 so the first
        mousemove doesn't snap the weight. */
-    font-weight: 400;
+    font-weight: 150;
     color: var(--primary);
 }
 
@@ -121,11 +121,11 @@ nav.scrolled {
     position: relative;
 }
 
-/* TargetCursor owns the pointer on precise-pointer devices: without this,
-   elements with their own cursor rules (links, buttons, the terminal's
-   I-beam) would show the native cursor on top of the crosshair. */
+/* TargetCursor is scoped to the header: hide the native cursor only there
+   (the crosshair fades in over the nav and out everywhere else). */
 @media (pointer: fine) {
-    body * {
+    nav,
+    nav * {
         cursor: none !important;
     }
 }
@@ -134,19 +134,39 @@ nav.scrolled {
     color: var(--primary);
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary);
-    transition: width 0.3s ease;
+/* Desktop nav hover (underline retired): the muted label rolls up and out
+   while a white copy (::after on the inner span, fed by data-text) rolls in
+   from below. The anchor clips the roll. */
+.nav-links .nav-link {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1.4;
 }
 
-.nav-link:hover::after {
-    width: 100%;
+.nav-link-roll {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.nav-link-roll::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    color: var(--primary);
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+}
+
+.nav-links .nav-link:hover .nav-link-roll,
+.nav-links .nav-link:focus-visible .nav-link-roll {
+    transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-link-roll {
+        transition: none;
+    }
 }
 
 .container {
