@@ -3,14 +3,15 @@
 //
 //   node scripts/make-og.mjs
 //
-// Needs Chrome/Chromium and network access (Google Fonts). The avatar is
-// embedded from src/assets/main_img.webp, so the card follows the site photo.
+// Needs Chrome/Chromium and network access (Google Fonts). The side column is
+// a chromed Arch Linux mark built from the simple-icons path.
 
-import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { siArchlinux } from 'simple-icons'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'public', 'og.png')
@@ -26,7 +27,9 @@ function chrome() {
   throw new Error('no Chrome/Chromium binary found')
 }
 
-const avatar = `data:image/webp;base64,${readFileSync(join(ROOT, 'src/assets/main_img.webp')).toString('base64')}`
+// The simple-icons path carries a tiny ™ glyph in later subpaths — keep only
+// the mountain.
+const arch = siArchlinux.path.slice(0, siArchlinux.path.indexOf('M', 1))
 
 const prompt = (cmd) =>
   `<span class="ok">bill</span><span class="dim">@</span><span class="ok">coolest_website</span>` +
@@ -43,8 +46,8 @@ html, body { width: 1200px; height: 630px; overflow: hidden; }
 body { font-family: 'JetBrains Mono', monospace; background: #07070c; position: relative; }
 
 .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
-.glow--green { width: 540px; height: 540px; right: -80px; top: -160px; background: rgba(74, 222, 128, 0.13); }
-.glow--blue { width: 500px; height: 500px; left: -140px; bottom: -200px; background: rgba(96, 165, 250, 0.10); }
+.glow--hi { width: 540px; height: 540px; right: -80px; top: -160px; background: rgba(255, 255, 255, 0.10); }
+.glow--lo { width: 500px; height: 500px; left: -140px; bottom: -200px; background: rgba(255, 255, 255, 0.06); }
 .grid { position: absolute; inset: 0;
   background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 26px 26px; }
@@ -73,22 +76,20 @@ body { font-family: 'JetBrains Mono', monospace; background: #07070c; position: 
 .side { position: absolute; right: 40px; top: 0; width: 340px; height: 630px; }
 .halo { position: absolute; left: 50%; top: 168px; transform: translateX(-50%);
   width: 280px; height: 280px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.20), rgba(74, 222, 128, 0.05) 55%, transparent 72%); }
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04) 55%, transparent 72%); }
 .ring { position: absolute; left: 50%; top: 176px; transform: translateX(-50%);
   width: 264px; height: 264px; border-radius: 50%;
-  border: 2px solid rgba(74, 222, 128, 0.45);
-  box-shadow: 0 0 34px rgba(74, 222, 128, 0.25), inset 0 0 26px rgba(74, 222, 128, 0.12); }
-.avatar { position: absolute; left: 50%; bottom: 140px; transform: translateX(-50%);
-  width: 300px; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.6));
-  -webkit-mask-image: linear-gradient(#000 84%, transparent 99%);
-  mask-image: linear-gradient(#000 84%, transparent 99%); }
+  border: 2px solid rgba(255, 255, 255, 0.30);
+  box-shadow: 0 0 34px rgba(255, 255, 255, 0.14), inset 0 0 26px rgba(255, 255, 255, 0.08); }
+.arch { position: absolute; left: 50%; top: 158px; transform: translateX(-50%);
+  filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 24px rgba(255, 255, 255, 0.10)); }
 .url { position: absolute; left: 0; right: 0; bottom: 92px; text-align: center;
   color: #6e6e78; font-size: 18px; }
-.url b { color: #4ade80; font-weight: 500; }
+.url b { color: #e8ebf0; font-weight: 500; }
 </style></head>
 <body>
-  <div class="glow glow--green"></div>
-  <div class="glow glow--blue"></div>
+  <div class="glow glow--hi"></div>
+  <div class="glow glow--lo"></div>
   <div class="grid"></div>
 
   <div class="term">
@@ -111,7 +112,33 @@ body { font-family: 'JetBrains Mono', monospace; background: #07070c; position: 
   <div class="side">
     <div class="halo"></div>
     <div class="ring"></div>
-    <img class="avatar" src="${avatar}" alt="">
+    <!-- Chromed Arch mark: dark extrusion stack under a mirror-break steel
+         gradient, finished with a diagonal specular sweep. -->
+    <svg class="arch" viewBox="0 0 24 24" width="266" height="266">
+      <defs>
+        <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fbfcfe"/>
+          <stop offset="0.30" stop-color="#cdd3dc"/>
+          <stop offset="0.49" stop-color="#8e949e"/>
+          <stop offset="0.51" stop-color="#565b64"/>
+          <stop offset="0.74" stop-color="#8f959f"/>
+          <stop offset="1" stop-color="#c6ccd5"/>
+        </linearGradient>
+        <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#43474e"/>
+          <stop offset="1" stop-color="#101216"/>
+        </linearGradient>
+        <linearGradient id="spec" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0.34" stop-color="#fff" stop-opacity="0"/>
+          <stop offset="0.48" stop-color="#fff" stop-opacity="0.45"/>
+          <stop offset="0.60" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g transform="translate(0 0.42)"><path d="${arch}" fill="#0a0b0e"/></g>
+      <g transform="translate(0 0.24)"><path d="${arch}" fill="url(#edge)"/></g>
+      <path d="${arch}" fill="url(#steel)"/>
+      <path d="${arch}" fill="url(#spec)"/>
+    </svg>
     <div class="url">→ <b>billsharifzade.github.io</b></div>
   </div>
 </body></html>`

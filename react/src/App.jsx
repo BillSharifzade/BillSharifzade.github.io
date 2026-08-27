@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import DecryptedText from './components/DecryptedText.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
+import ContactOrbit from './components/ContactOrbit.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
@@ -516,6 +517,9 @@ function App() {
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
+          {/* Desktop: channels orbit the mail CTA. The grid below takes over
+              on narrow screens (swap lives in ContactOrbit.css). */}
+          <ContactOrbit />
           <div className="contact-grid">
             <a href="mailto:sharifzadebilal@gmail.com">
               <div className="contact-item">

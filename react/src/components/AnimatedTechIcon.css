@@ -8,12 +8,13 @@
     overflow: visible;
 }
 
-/* --- Rust: the toothed rim spins non-stop; the R holds still ------------ */
-/* Deliberately not hover-gated — the gear is always turning. One small
-   composited transform, so the idle cost is negligible. */
+/* --- Rust: the toothed rim spins fast on hover; the R holds still ------- */
 
 .ati--rust .ati-rust-gear {
     transform-origin: 12px 12px;
+}
+
+.card--icon:hover .ati--rust .ati-rust-gear {
     animation: ati-rust-spin 3s linear infinite;
 }
 
@@ -197,29 +198,32 @@
     100% { transform: translate(var(--ati-w2, 0)); opacity: 0; }
 }
 
-/* --- GitLab: the tanuki's ears twitch in turn -------------------------- */
+/* --- GitLab: both ears perk and wiggle together ------------------------- */
+/* Mirrored keyframes in the same phase: the ears flick outward at once,
+   spring back past centre, and settle — a double-wiggle, then a rest beat. */
 
 .card--icon:hover .ati--gitlab .ati-ear--left {
-    animation: ati-ear-left 2.4s ease-in-out infinite;
+    animation: ati-ear-left 2.6s ease-in-out infinite;
 }
 
 .card--icon:hover .ati--gitlab .ati-ear--right {
-    animation: ati-ear-right 2.4s ease-in-out infinite;
-    animation-delay: -1.2s;
+    animation: ati-ear-right 2.6s ease-in-out infinite;
 }
 
 @keyframes ati-ear-left {
-    0%, 30%, 100% { transform: rotate(0deg); }
-    8% { transform: rotate(-10deg); }
-    16% { transform: rotate(4deg); }
-    23% { transform: rotate(-2deg); }
+    0%, 34%, 100% { transform: rotate(0deg); }
+    6% { transform: rotate(-14deg); }
+    13% { transform: rotate(5deg); }
+    19% { transform: rotate(-8deg); }
+    26% { transform: rotate(2.5deg); }
 }
 
 @keyframes ati-ear-right {
-    0%, 30%, 100% { transform: rotate(0deg); }
-    8% { transform: rotate(10deg); }
-    16% { transform: rotate(-4deg); }
-    23% { transform: rotate(2deg); }
+    0%, 34%, 100% { transform: rotate(0deg); }
+    6% { transform: rotate(14deg); }
+    13% { transform: rotate(-5deg); }
+    19% { transform: rotate(8deg); }
+    26% { transform: rotate(-2.5deg); }
 }
 
 /* ----------------------------------------------------------------------- */
