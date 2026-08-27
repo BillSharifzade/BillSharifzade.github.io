@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import OrbitImages from './OrbitImages.jsx'
+import { burst } from '../utils/burst.js'
 import signalLogo from '../assets/signal_logo.svg'
 import './ContactOrbit.css'
 
-// The contact channels as chips orbiting a compact mail pill on a visible
-// dashed path (desktop only — the plain .contact-grid stays for narrow
-// screens, see ContactOrbit.css). Hovering a chip fires a monochrome
-// particle burst (GooeyNav's click-burst mechanic, re-tuned); a plain click
-// just follows the link.
+// The contact channels as chips orbiting a rotating call-to-action pill on a
+// visible dashed path (desktop only — the plain .contact-grid stays for
+// narrow screens, see ContactOrbit.css). Hovering a chip fires a monochrome
+// particle burst; the centre pill cycles through one ask per channel and
+// links to whichever it is currently showing.
 
 const CHANNELS = [
   { label: 'Email', handle: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com', icon: 'fas fa-envelope' },
@@ -23,53 +24,20 @@ const CHANNELS = [
   { label: 'GitHub', handle: 'BillSharifzade', href: 'https://github.com/BillSharifzade', icon: 'fab fa-github', external: true },
 ]
 
-// GooeyNav's burst, scaled to a chip: N points scatter from the click target
-// on randomized spokes and pull back in. Colors are the site's grey ramp.
-const BURST = {
-  count: 12,
-  distances: [82, 14],
-  r: 90,
-  time: 500,
-  variance: 250,
-  colors: ['#ffffff', '#cfd4dc', '#9aa1ac', '#6e737d'],
-}
-
-const noise = (n = 1) => n / 2 - Math.random() * n
-
-function burst(chip) {
-  const old = chip.querySelector('.co-burst')
-  if (old) old.remove()
-  const holder = document.createElement('span')
-  holder.className = 'co-burst'
-  const total = BURST.count
-  for (let i = 0; i < total; i++) {
-    const t = BURST.time * 2 + noise(BURST.variance * 2)
-    const angle = ((360 + noise(8)) / total) * i * (Math.PI / 180)
-    const rot = noise(BURST.r / 10)
-    const particle = document.createElement('span')
-    particle.className = 'co-particle'
-    particle.style.setProperty('--start-x', `${BURST.distances[0] * Math.cos(angle)}px`)
-    particle.style.setProperty('--start-y', `${BURST.distances[0] * Math.sin(angle)}px`)
-    particle.style.setProperty('--end-x', `${(BURST.distances[1] + noise(7)) * Math.cos(angle)}px`)
-    particle.style.setProperty('--end-y', `${(BURST.distances[1] + noise(7)) * Math.sin(angle)}px`)
-    particle.style.setProperty('--time', `${t}ms`)
-    particle.style.setProperty('--scale', `${1 + noise(0.2)}`)
-    particle.style.setProperty('--color', BURST.colors[Math.floor(Math.random() * BURST.colors.length)])
-    particle.style.setProperty('--rotate', `${rot > 0 ? (rot + BURST.r / 20) * 10 : (rot - BURST.r / 20) * 10}deg`)
-    const point = document.createElement('span')
-    point.className = 'co-point'
-    particle.appendChild(point)
-    holder.appendChild(particle)
-  }
-  chip.appendChild(holder)
-  chip.classList.remove('orbit-chip--pop')
-  void chip.offsetWidth
-  chip.classList.add('orbit-chip--pop')
-  window.setTimeout(() => holder.remove(), BURST.time * 2 + BURST.variance + 100)
-}
+const href = (label) => CHANNELS.find((c) => c.label === label)
+// One ask per channel; the pill links to the channel it is showing.
+const CENTER_CTAS = [
+  { text: 'text me on Telegram!', ...href('Telegram') },
+  { text: 'follow & drop a ★ on GitHub', ...href('GitHub') },
+  { text: 'send a network request on LinkedIn', ...href('LinkedIn') },
+  { text: 'ping me on Signal', ...href('Signal') },
+  { text: 'or old-school: email me', ...href('Email') },
+]
+const CTA_INTERVAL = 3400
 
 export default function ContactOrbit() {
   const [reduced, setReduced] = useState(false)
+  const [ctaIndex, setCtaIndex] = useState(0)
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -78,6 +46,12 @@ export default function ContactOrbit() {
     mq.addEventListener('change', sync)
     return () => mq.removeEventListener('change', sync)
   }, [])
+
+  useEffect(() => {
+    if (reduced) return
+    const id = window.setInterval(() => setCtaIndex((i) => (i + 1) % CENTER_CTAS.length), CTA_INTERVAL)
+    return () => window.clearInterval(id)
+  }, [reduced])
 
   const chips = CHANNELS.map((c) => (
     <a
@@ -94,6 +68,9 @@ export default function ContactOrbit() {
         : <i className={c.icon} aria-hidden="true"></i>}
     </a>
   ))
+
+  // Under reduced motion the pill holds still on the email ask.
+  const cta = reduced ? CENTER_CTAS[CENTER_CTAS.length - 1] : CENTER_CTAS[ctaIndex]
 
   return (
     <div className="contact-orbit">
@@ -112,8 +89,14 @@ export default function ContactOrbit() {
         pathColor="rgba(255, 255, 255, 0.16)"
         pathWidth={2}
         centerContent={
-          <a className="orbit-center-mail" href="mailto:sharifzadebilal@gmail.com">
-            sharifzadebilal@gmail.com
+          // key remounts the pill per message, replaying the entrance.
+          <a
+            key={cta.text}
+            className="orbit-center-cta"
+            href={cta.href}
+            {...(cta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {cta.text}
           </a>
         }
       />

@@ -119,6 +119,25 @@ nav.scrolled {
     position: relative;
 }
 
+/* Desktop links render as ParticleText canvases: the anchor provides the
+   box (width set inline in ch units), the vendored .particle-text fills it.
+   Its stock min-height is meant for hero-sized text — flattened here. */
+.nav-link--particles {
+    display: inline-block;
+    height: 38px;
+    vertical-align: middle;
+}
+
+.nav-link--particles .particle-text {
+    min-height: 0;
+}
+
+/* The underline would float 10px under the canvas box; the hover feedback
+   here is the particle re-scatter instead. */
+.nav-link--particles::after {
+    display: none;
+}
+
 .nav-link:hover {
     color: var(--primary);
 }
@@ -181,7 +200,7 @@ nav.scrolled {
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.65rem;
     color: var(--text-secondary);
     margin-bottom: 30px;
 }
@@ -461,6 +480,8 @@ nav.scrolled {
 
 /* Download CV button */
 .download-cv-btn {
+    /* Positioning context for the hover burst particles. */
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;

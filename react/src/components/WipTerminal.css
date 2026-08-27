@@ -3,7 +3,10 @@
 .wt-stage {
     position: relative;
     max-width: 940px;
-    margin: 0 auto;
+    /* Extra top gap so the hint callout clears the section title's glyphs
+       (measured: title SVG bottom sits 192px into the section; the callout
+       needs its own 92px above the terminal). */
+    margin: 88px auto 0;
     transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -139,30 +142,29 @@
 }
 
 /* --- "this terminal is real" note + arrow -------------------------------- */
-/* Fade (opacity) and float (transform) are separate animations on the same
-   element but different properties, so the handoff glitch the old pill had
-   (two keyframe sets both writing `transform`) can't happen. */
+/* Static (no float) — it only fades in, draws its arrow, and fades away on
+   dismissal. */
 
 .wt-hint-callout {
     position: absolute;
-    top: -78px;
+    top: -92px;
     right: 4px;
     z-index: 3;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 1px;
+    gap: 3px;
     padding: 0;
     border: 0;
     background: none;
     color: #4ade80;
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     cursor: pointer;
-    animation: wtHintFadeIn 0.5s ease both, wtHintFloat 3.6s ease-in-out 0.5s infinite;
+    animation: wtHintFadeIn 0.5s ease both;
 }
 
 .wt-hint-note {
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     letter-spacing: 0.02em;
     white-space: nowrap;
     transform: rotate(-2deg);
@@ -170,9 +172,9 @@
 }
 
 .wt-hint-arrow {
-    width: 40px;
-    height: 51px;
-    margin-right: 44px;
+    width: 47px;
+    height: 60px;
+    margin-right: 56px;
     overflow: visible;
     filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.3));
 }
@@ -191,7 +193,7 @@
 }
 
 .wt-hint-callout--leaving {
-    animation: wtHintFadeOut 0.4s ease both, wtHintFloat 3.6s ease-in-out 0.5s infinite;
+    animation: wtHintFadeOut 0.4s ease both;
 }
 
 @keyframes wtHintFadeIn {
@@ -202,11 +204,6 @@
 @keyframes wtHintFadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
-}
-
-@keyframes wtHintFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
 }
 
 @keyframes wtArrowDraw {
@@ -572,18 +569,22 @@
     }
 
     .wt-hint-callout {
-        top: -66px;
+        top: -78px;
         right: 8px;
     }
 
+    .wt-stage {
+        margin-top: 56px;
+    }
+
     .wt-hint-note {
-        font-size: 0.64rem;
+        font-size: 0.74rem;
     }
 
     .wt-hint-arrow {
-        width: 32px;
-        height: 41px;
-        margin-right: 34px;
+        width: 40px;
+        height: 51px;
+        margin-right: 42px;
     }
 
     .wt-power {

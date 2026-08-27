@@ -3,6 +3,7 @@ import DecryptedText from './components/DecryptedText.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import ContactOrbit from './components/ContactOrbit.jsx'
+import ParticleText from './components/ParticleText.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
@@ -204,13 +205,40 @@ function App() {
             />
           </div>
           <div className="nav-links">
-            <a href="#home" className="nav-link">Profile</a>
-            <a href="#about" className="nav-link">About</a>
-            <a href="#skills" className="nav-link">Skills</a>
-            <a href="#projects" className="nav-link">Projects</a>
-            <a href="#experience" className="nav-link">Experience</a>
-            <a href="#hobbies" className="nav-link">Hobbies</a>
-            <a href="#contact" className="nav-link">Contact</a>
+            {/* Each label renders as gatherable particles in the same nav
+                font/size (fontFamily inherits JetBrains Mono); hover
+                re-scatters it, the pointer nudges dots within a small
+                radius. The anchor is sized in ch so layout stays put. */}
+            {[
+              ['#home', 'Profile'],
+              ['#about', 'About'],
+              ['#skills', 'Skills'],
+              ['#projects', 'Projects'],
+              ['#experience', 'Experience'],
+              ['#hobbies', 'Hobbies'],
+              ['#contact', 'Contact'],
+            ].map(([href, label]) => (
+              <a key={href} href={href} className="nav-link nav-link--particles" style={{ width: `${label.length + 1.6}ch` }}>
+                <ParticleText
+                  text={label}
+                  particleSize={1.5}
+                  density={2}
+                  color="#c8b9b9"
+                  highlightColor="#ffffff"
+                  scatter={40}
+                  gatherDuration={900}
+                  stagger={220}
+                  pointerRepel={8}
+                  repelRadius={26}
+                  idleDrift={0.35}
+                  trigger="hover"
+                  fontSize={16}
+                  fontWeight={400}
+                  fontFamily="inherit"
+                  glow={false}
+                />
+              </a>
+            ))}
             <DownloadCvButton />
           </div>
           <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>
@@ -249,7 +277,7 @@ function App() {
           <div className="hero-subtitle">
             <TypingSubtitle />
           </div>
-          <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '600px' }}>
+          <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '660px', fontSize: '1.18rem', lineHeight: 1.75 }}>
             I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details. And making sure that my team does the same.
           </p>
         </div>
@@ -259,10 +287,10 @@ function App() {
         <div className="container">
           <SectionTitle text="About Me" />
           <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
-            <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '30px' }}>
+            <p style={{ fontSize: '1.35rem', lineHeight: 1.75, color: 'var(--text-secondary)', marginBottom: '30px' }}>
               <DecryptedText text="I'm a middle backend architect with deep expertise in wide areas of engineering all-range systems. Currently working on cutting-edge projects in fintech, high-load systems, AI creation and integration into systems. Controlling and monitoring the quality of the code and the team's work." intervalMs={8} step={1} />
             </p>
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+            <p style={{ fontSize: '1.25rem', lineHeight: 1.75, color: 'var(--text-secondary)' }}>
               <DecryptedText
                 text="My passion lies in creating robust, high-quality, long-term, efficient solutions. I'm particularly interested in low-level programming, ML, blockchain, architecturing enourmous systems from scratch. Also have passion in maths, non-euclidean geometry, astrophysics and philosophy."
                 intervalMs={8}

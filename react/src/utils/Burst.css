@@ -1,0 +1,105 @@
+/* Particle burst spawned by utils/burst.js — monochrome GooeyNav mechanic.
+   The host element needs position: relative (or any positioning context). */
+
+.co-pop {
+    animation: co-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes co-pop {
+    35% { transform: scale(0.92); }
+    70% { transform: scale(1.06); }
+}
+
+.co-burst {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.co-particle,
+.co-point {
+    display: block;
+    opacity: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    transform-origin: center;
+}
+
+.co-particle {
+    position: absolute;
+    top: calc(50% - 7px);
+    left: calc(50% - 7px);
+    animation: co-burst-particle var(--time, 1s) ease 1 -350ms;
+}
+
+.co-point {
+    background: var(--color, #fff);
+    opacity: 1;
+    animation: co-burst-point var(--time, 1s) ease 1 -350ms;
+}
+
+@keyframes co-burst-particle {
+    0% {
+        transform: rotate(0deg) translate(var(--start-x), var(--start-y));
+        opacity: 1;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    70% {
+        transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: rotate(calc(var(--rotate) * 0.66)) translate(var(--end-x), var(--end-y));
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * 0.5), calc(var(--end-y) * 0.5));
+        opacity: 1;
+    }
+}
+
+@keyframes co-burst-point {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    25% { transform: scale(calc(var(--scale) * 0.25)); }
+
+    38% { opacity: 1; }
+
+    65% {
+        transform: scale(var(--scale));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: scale(var(--scale));
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .co-pop,
+    .co-particle,
+    .co-point {
+        animation: none;
+    }
+
+    .co-particle {
+        display: none;
+    }
+}
