@@ -5,9 +5,9 @@ import './ContactOrbit.css'
 
 // The contact channels as chips orbiting a compact mail pill on a visible
 // dashed path (desktop only — the plain .contact-grid stays for narrow
-// screens, see ContactOrbit.css). No hover tricks: clicking a chip fires a
-// monochrome particle burst (GooeyNav's burst mechanic, re-tuned) while the
-// link opens.
+// screens, see ContactOrbit.css). Hovering a chip fires a monochrome
+// particle burst (GooeyNav's click-burst mechanic, re-tuned); a plain click
+// just follows the link.
 
 const CHANNELS = [
   { label: 'Email', handle: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com', icon: 'fas fa-envelope' },
@@ -85,7 +85,8 @@ export default function ContactOrbit() {
       className="orbit-chip"
       href={c.href}
       aria-label={`${c.label} — ${c.handle}`}
-      onClick={(e) => burst(e.currentTarget)}
+      onMouseEnter={(e) => burst(e.currentTarget)}
+      onFocus={(e) => burst(e.currentTarget)}
       {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       {c.img

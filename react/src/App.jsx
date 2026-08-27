@@ -3,7 +3,6 @@ import DecryptedText from './components/DecryptedText.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import ContactOrbit from './components/ContactOrbit.jsx'
-import GooeyNav from './components/GooeyNav.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
@@ -205,27 +204,13 @@ function App() {
             />
           </div>
           <div className="nav-links">
-            {/* linkClassName="nav-link" keeps these anchors on the Lenis
-                smooth-scroll wiring below; GooeyNav adds the pill + burst. */}
-            <GooeyNav
-              items={[
-                { label: 'Profile', href: '#home' },
-                { label: 'About', href: '#about' },
-                { label: 'Skills', href: '#skills' },
-                { label: 'Projects', href: '#projects' },
-                { label: 'Experience', href: '#experience' },
-                { label: 'Hobbies', href: '#hobbies' },
-                { label: 'Contact', href: '#contact' },
-              ]}
-              particleCount={15}
-              particleDistances={[90, 10]}
-              particleR={100}
-              initialActiveIndex={0}
-              animationTime={600}
-              timeVariance={300}
-              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-              linkClassName="nav-link"
-            />
+            <a href="#home" className="nav-link">Profile</a>
+            <a href="#about" className="nav-link">About</a>
+            <a href="#skills" className="nav-link">Skills</a>
+            <a href="#projects" className="nav-link">Projects</a>
+            <a href="#experience" className="nav-link">Experience</a>
+            <a href="#hobbies" className="nav-link">Hobbies</a>
+            <a href="#contact" className="nav-link">Contact</a>
             <DownloadCvButton />
           </div>
           <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>

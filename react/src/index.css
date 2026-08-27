@@ -112,62 +112,6 @@ nav.scrolled {
     margin-left: clamp(2px, 1vw, 14px);
 }
 
-/* --- GooeyNav in the header: monochrome tuning ------------------------- */
-/* The goo particles read var(--color-N); the site is black & white, so the
-   palette is four whites/greys. Pill sizing is tightened for a 60px bar. */
-
-.nav-links .gooey-nav-container {
-    --color-1: #ffffff;
-    --color-2: #cfd4dc;
-    --color-3: #9aa1ac;
-    --color-4: #6e737d;
-}
-
-.nav-links .gooey-nav-container nav ul {
-    gap: clamp(2px, 0.6vw, 10px);
-    padding: 0;
-}
-
-.nav-links .gooey-nav-container nav ul li {
-    color: var(--text-secondary);
-    transition: color 0.25s ease;
-}
-
-.nav-links .gooey-nav-container nav ul li:hover {
-    color: #ffffff;
-}
-
-.nav-links .gooey-nav-container nav ul li.active {
-    color: black;
-}
-
-.nav-links .gooey-nav-container nav ul li a {
-    padding: 0.5em 0.9em;
-    color: inherit;
-    text-decoration: none;
-}
-
-/* The plain nav-link underline animation fights the pill — off in here. */
-.nav-links .gooey-nav-container a.nav-link::after {
-    content: none;
-}
-
-/* The goo blend trick (black box + contrast(100) + mix-blend lighten) only
-   composites invisibly over a SOLID background; on this translucent blurred
-   navbar it renders as a gray panel. Neutralised: the effect layer stays as
-   the particle host, the li::after pill carries the morph, and the burst
-   dots render crisp — same look as the contact-orbit burst. */
-.nav-links .gooey-nav-container .effect.filter {
-    filter: none;
-    mix-blend-mode: normal;
-}
-
-.nav-links .gooey-nav-container .effect.filter::before,
-.nav-links .gooey-nav-container .effect.filter::after,
-.nav-links .gooey-nav-container .effect.text {
-    display: none;
-}
-
 .nav-link {
     color: var(--text-secondary);
     text-decoration: none;
