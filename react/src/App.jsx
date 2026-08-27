@@ -297,12 +297,12 @@ function App() {
             <Folder
               size={1.35}
               color="#2d2d2d"
-              label="Python"
-              iconClass="fab fa-python"
+              label="Rust"
+              iconClass="fab fa-rust"
               items={[
-                <div className="skill-item" key="p1"><span>NumPy/Pandas</span><span>Advanced</span></div>,
-                <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
-                <div className="skill-item" key="p3"><span>TensorFlow</span><span>Advanced</span></div>,
+                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Expert</span></div>,
+                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Expert</span></div>,
+                <div className="skill-item" key="a3"><span>Tokio</span><span>Expert</span></div>,
               ]}
             />
             <Folder
@@ -319,17 +319,6 @@ function App() {
             <Folder
               size={1.35}
               color="#2d2d2d"
-              label="Low-level"
-              iconClass="fas fa-microchip"
-              items={[
-                <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
-                <div className="skill-item" key="s2"><span>Zig</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="s3"><span>Assembly</span><span>Basic</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
               label="Linux"
               iconClass="fab fa-linux"
               items={[
@@ -341,12 +330,12 @@ function App() {
             <Folder
               size={1.35}
               color="#2d2d2d"
-              label="Rust"
-              iconClass="fab fa-rust"
+              label="Python"
+              iconClass="fab fa-python"
               items={[
-                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Expert</span></div>,
-                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Expert</span></div>,
-                <div className="skill-item" key="a3"><span>Tokio</span><span>Expert</span></div>,
+                <div className="skill-item" key="p1"><span>NumPy/Pandas</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
+                <div className="skill-item" key="p3"><span>TensorFlow</span><span>Advanced</span></div>,
               ]}
             />
             <Folder
@@ -358,6 +347,17 @@ function App() {
                 <div className="skill-item" key="c1"><span>Cybersecurity, AppSec</span><span>Intermediate</span></div>,
                 <div className="skill-item" key="c2"><span>Cryptography</span><span>Intermediate</span></div>,
                 <div className="skill-item" key="c3"><span>Network Security</span><span>Intermediate</span></div>,
+              ]}
+            />
+            <Folder
+              size={1.35}
+              color="#2d2d2d"
+              label="Low-level"
+              iconClass="fas fa-microchip"
+              items={[
+                <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
+                <div className="skill-item" key="s2"><span>Zig</span><span>Intermediate</span></div>,
+                <div className="skill-item" key="s3"><span>Assembly</span><span>Basic</span></div>,
               ]}
             />
           </div>

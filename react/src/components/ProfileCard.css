@@ -67,6 +67,10 @@
   max-height: 540px;
   display: grid;
   aspect-ratio: 0.718;
+  /* Width comes from height × aspect-ratio, so the block must self-centre —
+     without this the card hugs the left edge on phones, where the media
+     queries shrink it well below the wrapper's width. */
+  margin-inline: auto;
   border-radius: var(--card-radius);
   position: relative;
   background-blend-mode: soft-light, normal, normal, normal;

@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import {
@@ -115,6 +119,16 @@ function renderJsonLd() {
   return `<script type="application/ld+json">${json}</script>`
 }
 
+// Messenger scrapers (Telegram, WhatsApp, Discord…) cache the preview image
+// by its URL. Stamping og.png's content hash into the ?v= makes every
+// redesigned card a brand-new URL automatically — no manual bumping, and an
+// unchanged card keeps its URL (and caches) stable.
+function ogImageVersion() {
+  const here = dirname(fileURLToPath(import.meta.url))
+  const png = readFileSync(join(here, 'public/og.png'))
+  return createHash('md5').update(png).digest('hex').slice(0, 8)
+}
+
 function seoFallback() {
   return {
     name: 'cv-seo-fallback',
@@ -122,6 +136,7 @@ function seoFallback() {
       return html
         .replace('<!--CV_FALLBACK-->', renderFallback())
         .replace('<!--JSONLD-->', renderJsonLd())
+        .replace(/og\.png\?v=[^"]*/g, `og.png?v=${ogImageVersion()}`)
     },
   }
 }
