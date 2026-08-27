@@ -21,8 +21,13 @@
     height: 100%;
 }
 
-/* Chips passing near the centre must stay clickable — only the mail CTA
-   itself may swallow the pointer, not the full-size overlay around it. */
+/* The orbit path line: faint and dashed. */
+.contact-orbit .orbit-path-svg path {
+    stroke-dasharray: 7 11;
+}
+
+/* Chips near the centre must stay clickable — only the mail pill itself may
+   swallow the pointer, not the full-size overlay around it. */
 .contact-orbit .orbit-center-content {
     pointer-events: none;
 }
@@ -40,116 +45,140 @@
     background: linear-gradient(160deg, #18181c, #0a0a0d);
     border: 1px solid rgba(255, 255, 255, 0.16);
     color: #fff;
-    font-size: 30px;
+    font-size: 44px;
     text-decoration: none;
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-        background 0.25s ease, color 0.25s ease,
-        border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
 }
 
 .orbit-chip-img {
-    width: 36px;
-    height: 36px;
-    transition: filter 0.25s ease;
+    width: 52px;
+    height: 52px;
 }
 
-.orbit-chip:hover,
-.orbit-chip:focus-visible {
-    transform: scale(1.16) translateY(-4px);
-    background: var(--primary, #ffffff);
-    color: #0a0a0a;
-    border-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 255, 255, 0.22);
+/* --- click burst (GooeyNav's particle mechanic, monochrome) --------------- */
+
+.orbit-chip--pop {
+    animation: co-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* The Signal mark is white — flip it dark on the inverted chip. */
-.orbit-chip:hover .orbit-chip-img,
-.orbit-chip:focus-visible .orbit-chip-img {
-    filter: invert(1);
+@keyframes co-pop {
+    35% { transform: scale(0.92); }
+    70% { transform: scale(1.06); }
 }
 
-/* Lift the hovered chip's orbit slot above its passing siblings. */
-.contact-orbit .orbit-item:has(.orbit-chip:hover),
-.contact-orbit .orbit-item:has(.orbit-chip:focus-visible) {
-    z-index: 6;
-}
-
-/* Spotlight: while one chip is hovered, the rest step back. */
-.contact-orbit:has(.orbit-chip:hover) .orbit-chip:not(:hover) {
-    opacity: 0.45;
-}
-
-/* --- tooltip -------------------------------------------------------------- */
-
-.orbit-chip-tip {
+.co-burst {
     position: absolute;
-    top: calc(100% + 12px);
-    left: 50%;
-    transform: translate(-50%, -6px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 8px 14px;
-    border-radius: 10px;
-    background: rgba(8, 8, 10, 0.94);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    color: #fff;
-    font-size: 0.8rem;
-    line-height: 1.35;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
+    inset: 0;
     pointer-events: none;
-    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
 }
 
-.orbit-chip:hover .orbit-chip-tip,
-.orbit-chip:focus-visible .orbit-chip-tip {
+.co-particle,
+.co-point {
+    display: block;
+    opacity: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    transform-origin: center;
+}
+
+.co-particle {
+    position: absolute;
+    top: calc(50% - 7px);
+    left: calc(50% - 7px);
+    animation: co-burst-particle var(--time, 1s) ease 1 -350ms;
+}
+
+.co-point {
+    background: var(--color, #fff);
     opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-    transition: opacity 0.22s ease, transform 0.22s ease;
+    animation: co-burst-point var(--time, 1s) ease 1 -350ms;
 }
 
-.orbit-chip-tip span {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 0.72rem;
+@keyframes co-burst-particle {
+    0% {
+        transform: rotate(0deg) translate(var(--start-x), var(--start-y));
+        opacity: 1;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    70% {
+        transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: rotate(calc(var(--rotate) * 0.66)) translate(var(--end-x), var(--end-y));
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * 0.5), calc(var(--end-y) * 0.5));
+        opacity: 1;
+    }
 }
 
-/* --- centre CTA ----------------------------------------------------------- */
+@keyframes co-burst-point {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
 
-.orbit-center {
-    text-align: center;
-    padding: 18px 32px;
-    border-radius: 16px;
-    background: rgba(9, 9, 12, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    25% { transform: scale(calc(var(--scale) * 0.25)); }
+
+    38% { opacity: 1; }
+
+    65% {
+        transform: scale(var(--scale));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: scale(var(--scale));
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
 }
 
-.orbit-center-kicker {
-    margin: 0 0 6px;
-    color: var(--text-secondary, #9a9aa4);
-    font-size: 0.85rem;
-    letter-spacing: 0.06em;
+@media (prefers-reduced-motion: reduce) {
+
+    .orbit-chip--pop,
+    .co-particle,
+    .co-point {
+        animation: none;
+    }
+
+    .co-particle {
+        display: none;
+    }
 }
+
+/* --- centre mail pill ------------------------------------------------------ */
 
 .orbit-center-mail {
     pointer-events: auto;
-    color: #ffffff;
-    font-size: 1.15rem;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(9, 9, 12, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 0.9rem;
     font-weight: 600;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
     transition: border-color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .orbit-center-mail:hover,
 .orbit-center-mail:focus-visible {
-    border-color: #ffffff;
-    text-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
 }
