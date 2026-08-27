@@ -87,7 +87,9 @@ nav.scrolled {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    /* Wider than the page's 1200px container: the bar spans the viewport
+       anyway, so pushing logo and links further apart lets them breathe. */
+    max-width: 1360px;
     margin: 0 auto;
 }
 
@@ -100,7 +102,14 @@ nav.scrolled {
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 24px;
+    /* Fluid: ~40px of air on wide screens, tightening as the bar narrows
+       toward the 768px hamburger breakpoint. */
+    gap: clamp(20px, 2.8vw, 40px);
+}
+
+/* Set the CV button a touch apart from the plain links. */
+.nav-links .download-cv-btn {
+    margin-left: clamp(2px, 1vw, 14px);
 }
 
 .nav-link {

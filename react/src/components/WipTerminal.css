@@ -138,75 +138,79 @@
     opacity: 0;
 }
 
-/* --- "this terminal is real" pill --------------------------------------- */
+/* --- "this terminal is real" note + arrow -------------------------------- */
+/* Fade (opacity) and float (transform) are separate animations on the same
+   element but different properties, so the handoff glitch the old pill had
+   (two keyframe sets both writing `transform`) can't happen. */
 
-.wt-hint-pill {
+.wt-hint-callout {
     position: absolute;
-    top: -16px;
-    left: 50%;
-    /* Base centering — the keyframes override this while they run, but with
-       animations off (reduced motion) this is what keeps the pill centered. */
-    transform: translate(-50%, 0);
+    top: -78px;
+    right: 4px;
     z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(74, 222, 128, 0.35);
-    background: #050508;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    padding: 0;
+    border: 0;
+    background: none;
     color: #4ade80;
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    cursor: pointer;
+    animation: wtHintFadeIn 0.5s ease both, wtHintFloat 3.6s ease-in-out 0.5s infinite;
+}
+
+.wt-hint-note {
     font-size: 0.72rem;
     letter-spacing: 0.02em;
     white-space: nowrap;
-    cursor: pointer;
-    box-shadow: 0 0 18px rgba(74, 222, 128, 0.18), 0 8px 24px rgba(0, 0, 0, 0.6);
-    animation: wtHintIn 0.5s ease both, wtHintBob 3s ease-in-out 0.5s infinite;
+    transform: rotate(-2deg);
+    text-shadow: 0 0 14px rgba(74, 222, 128, 0.35);
 }
 
-.wt-hint-pill i {
-    font-size: 0.85rem;
+.wt-hint-arrow {
+    width: 40px;
+    height: 51px;
+    margin-right: 44px;
+    overflow: visible;
+    filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.3));
 }
 
-.wt-hint-pill--leaving {
-    animation: wtHintOut 0.4s ease both;
+/* pathLength=1 normalises both paths, so one dash unit draws each fully. */
+.wt-hint-arrow-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: wtArrowDraw 0.65s ease-out 0.35s forwards;
 }
 
-@keyframes wtHintIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, 8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
+.wt-hint-arrow-head {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: wtArrowDraw 0.3s ease-out 0.95s forwards;
 }
 
-@keyframes wtHintBob {
-
-    0%,
-    100% {
-        transform: translate(-50%, 0);
-    }
-
-    50% {
-        transform: translate(-50%, -5px);
-    }
+.wt-hint-callout--leaving {
+    animation: wtHintFadeOut 0.4s ease both, wtHintFloat 3.6s ease-in-out 0.5s infinite;
 }
 
-@keyframes wtHintOut {
-    from {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
+@keyframes wtHintFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-    to {
-        opacity: 0;
-        transform: translate(-50%, -10px);
-    }
+@keyframes wtHintFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes wtHintFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes wtArrowDraw {
+    to { stroke-dashoffset: 0; }
 }
 
 /* Visually hidden live region for download-flow announcements. */
@@ -223,30 +227,71 @@
 }
 
 /* --- power button -------------------------------------------------------- */
+/* Three layers of one machined button: the element is the brushed-steel bezel
+   (conic gradient), ::before is the domed cap that physically depresses on
+   :active, ::after carries the idle pulse ring so the keyframes never fight
+   the bezel's own layered shadows. Everything animated is transform/opacity/
+   box-shadow on a tiny element — nothing here touches layout. */
 
 .wt-power {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 74px;
-    height: 74px;
-    margin: -37px 0 0 -37px;
+    width: 84px;
+    height: 84px;
+    margin: -42px 0 0 -42px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    border: 1px solid rgba(74, 222, 128, 0.3);
-    background: radial-gradient(circle at 50% 35%, #101014, #050508);
-    color: #4ade80;
+    border: 0;
+    padding: 0;
+    background:
+        conic-gradient(from 210deg,
+            #41444c, #70757e 11%, #24262b 23%, #5a5f68 34%, #2b2d33 46%,
+            #7b818b 57%, #26282e 69%, #61666f 81%, #303239 92%, #41444c);
+    box-shadow:
+        0 20px 38px -14px rgba(0, 0, 0, 0.9),
+        0 5px 12px rgba(0, 0, 0, 0.55),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.65);
+    color: #59d98c;
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
     transform: scale(0.3);
     transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
         opacity 0.3s ease,
-        visibility 0s 0.45s,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+        visibility 0s 0.45s;
+}
+
+/* The cap: a slightly domed inset face that takes the actual press. */
+.wt-power::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 28%, #3e4149, #26282d 52%, #131418 100%);
+    box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.16),
+        inset 0 -4px 7px rgba(0, 0, 0, 0.72),
+        0 3px 6px rgba(0, 0, 0, 0.55);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+/* Pulse ring lives on its own layer. */
+.wt-power::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.wt-power svg {
+    position: relative;
+    filter: drop-shadow(0 0 5px rgba(74, 222, 128, 0.35));
+    transition: transform 0.12s ease, filter 0.2s ease, color 0.2s ease;
 }
 
 .wt-stage--off .wt-power {
@@ -255,22 +300,47 @@
     transform: scale(1);
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s,
         opacity 0.35s ease 0.28s,
-        visibility 0s 0.28s,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+        visibility 0s 0.28s;
+}
+
+.wt-stage--off .wt-power::after {
     animation: wtPowerPulse 2.6s ease-out 0.9s infinite;
 }
 
 .wt-stage--off .wt-power:hover,
 .wt-stage--off .wt-power:focus-visible {
-    animation: none;
-    border-color: rgba(74, 222, 128, 0.8);
-    box-shadow: 0 0 30px rgba(74, 222, 128, 0.35);
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
+.wt-stage--off .wt-power:hover::after,
+.wt-stage--off .wt-power:focus-visible::after {
+    animation: none;
+    box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
+}
+
+.wt-stage--off .wt-power:hover svg,
+.wt-stage--off .wt-power:focus-visible svg {
+    color: #4ade80;
+    filter: drop-shadow(0 0 9px rgba(74, 222, 128, 0.75));
+}
+
+/* Press: the cap sinks into the bezel, the glyph rides it down and flares. */
 .wt-stage--off .wt-power:active {
-    transform: scale(0.94);
+    transform: scale(1.02);
+}
+
+.wt-stage--off .wt-power:active::before {
+    transform: translateY(2px) scale(0.965);
+    box-shadow:
+        inset 0 3px 6px rgba(0, 0, 0, 0.8),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.06),
+        0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.wt-stage--off .wt-power:active svg {
+    transform: translateY(2px) scale(0.96);
+    color: #6ef2a4;
+    filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.95));
 }
 
 @keyframes wtPowerPulse {
@@ -434,11 +504,25 @@
 @media (prefers-reduced-motion: reduce) {
 
     .wt-cursor,
-    .wt-hint-pill,
+    .wt-hint-callout,
+    .wt-hint-callout--leaving,
+    .wt-hint-arrow-line,
+    .wt-hint-arrow-head,
     .wt-power,
     .wt-stage--off .wt-power,
+    .wt-stage--off .wt-power::after,
     .wt-love-name {
         animation: none;
+    }
+
+    /* No draw-in: show the arrow fully. */
+    .wt-hint-arrow-line,
+    .wt-hint-arrow-head {
+        stroke-dashoffset: 0;
+    }
+
+    .wt-hint-callout--leaving {
+        opacity: 0;
     }
 
     .wt-stage,
@@ -479,16 +563,28 @@
         font-size: 16px;
     }
 
-    .wt-hint-pill {
-        font-size: 0.66rem;
-        padding: 6px 11px;
-        top: -14px;
-        max-width: calc(100vw - 32px);
+    .wt-hint-callout {
+        top: -66px;
+        right: 8px;
+    }
+
+    .wt-hint-note {
+        font-size: 0.64rem;
+    }
+
+    .wt-hint-arrow {
+        width: 32px;
+        height: 41px;
+        margin-right: 34px;
     }
 
     .wt-power {
-        width: 64px;
-        height: 64px;
-        margin: -32px 0 0 -32px;
+        width: 72px;
+        height: 72px;
+        margin: -36px 0 0 -36px;
+    }
+
+    .wt-power::before {
+        inset: 7px;
     }
 }

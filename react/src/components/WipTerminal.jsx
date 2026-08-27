@@ -823,13 +823,22 @@ export default function WipTerminal() {
   return (
     <div className={`wt-stage${power === 'off' ? ' wt-stage--off' : ''}`} ref={stageRef}>
       {power === 'on' && hintStage !== 'hidden' && (
+        // Decorative nudge (the header already carries "click · try 'help'"
+        // for AT): a note with a hand-drawn arrow pointing into the terminal.
+        // Opacity and float live on different properties/elements so the
+        // animations can't fight over `transform` like the old pill's did.
         <button
           type="button"
-          className={`wt-hint-pill${hintStage === 'leaving' ? ' wt-hint-pill--leaving' : ''}`}
+          className={`wt-hint-callout${hintStage === 'leaving' ? ' wt-hint-callout--leaving' : ''}`}
           onClick={() => inputRef.current?.focus({ preventScroll: true })}
           tabIndex={-1}
+          aria-hidden="true"
         >
-          <i className="fas fa-keyboard" aria-hidden="true"></i> this terminal is real — click &amp; type
+          <span className="wt-hint-note">this terminal is real — click &amp; type</span>
+          <svg className="wt-hint-arrow" viewBox="0 0 44 56" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path className="wt-hint-arrow-line" d="M36 4 C 40 20, 30 34, 15 45.4" pathLength="1" />
+            <path className="wt-hint-arrow-head" d="M23.2 44.6 L14 46 L18.3 37.6" pathLength="1" />
+          </svg>
         </button>
       )}
       <div className={`wip-terminal${compact ? ' wip-terminal--compact' : ''}`} ref={rootRef}>

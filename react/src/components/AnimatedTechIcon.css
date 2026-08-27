@@ -8,23 +8,17 @@
     overflow: visible;
 }
 
-/* --- Rust: the cog meshes and recoils; the R rides the wiggle ---------- */
+/* --- Rust: the toothed rim spins non-stop; the R holds still ------------ */
+/* Deliberately not hover-gated — the gear is always turning. One small
+   composited transform, so the idle cost is negligible. */
 
-.ati--rust .ati-rust-glyph {
+.ati--rust .ati-rust-gear {
     transform-origin: 12px 12px;
+    animation: ati-rust-spin 3s linear infinite;
 }
 
-.card--icon:hover .ati--rust .ati-rust-glyph {
-    animation: ati-rust-work 2.6s ease-in-out infinite;
-}
-
-@keyframes ati-rust-work {
-    0%, 100% { transform: rotate(0deg); }
-    20% { transform: rotate(16deg); }
-    28% { transform: rotate(13.5deg); }
-    48% { transform: rotate(0deg); }
-    70% { transform: rotate(-16deg); }
-    78% { transform: rotate(-13.5deg); }
+@keyframes ati-rust-spin {
+    to { transform: rotate(360deg); }
 }
 
 /* --- React: orbits spin, nucleus breathes ------------------------------ */
@@ -54,19 +48,40 @@
     50% { transform: scale(1.25); }
 }
 
-/* --- Next.js: the long leg of the N glows through, gradient-faded ------ */
+/* --- Next.js: a sheen sweeps through the carved N; a comet orbits ------- */
 
-.ati--nextdotjs .ati-next-accent {
+/* Parked off-disc so nothing shows through the letter at rest. */
+.ati--nextdotjs .ati-next-sheen {
+    transform: translateX(-24px);
+}
+
+.ati--nextdotjs .ati-next-comet {
     opacity: 0;
 }
 
-.card--icon:hover .ati--nextdotjs .ati-next-accent {
-    animation: ati-next-breathe 2s ease-in-out infinite;
+.ati--nextdotjs .ati-next-orbit {
+    transform-origin: 12px 12px;
 }
 
-@keyframes ati-next-breathe {
-    0%, 100% { opacity: 0; }
-    50% { opacity: 0.8; }
+.card--icon:hover .ati--nextdotjs .ati-next-sheen {
+    animation: ati-next-sweep 2.4s cubic-bezier(0.4, 0, 0.3, 1) infinite;
+}
+
+.card--icon:hover .ati--nextdotjs .ati-next-orbit {
+    animation: ati-orbit 2.4s linear infinite;
+}
+
+.card--icon:hover .ati--nextdotjs .ati-next-comet {
+    opacity: 0.95;
+    transition: opacity 0.25s ease;
+}
+
+.card--icon:hover .ati--nextdotjs .ati-next-comet--t1 { opacity: 0.45; }
+.card--icon:hover .ati--nextdotjs .ati-next-comet--t2 { opacity: 0.2; }
+
+@keyframes ati-next-sweep {
+    0% { transform: translateX(-24px); }
+    55%, 100% { transform: translateX(24px); }
 }
 
 /* --- Docker: the whale rocks on the swell, cargo bobs ------------------ */
@@ -117,20 +132,47 @@
     75% { transform: rotate(0deg) translateY(-0.25px); }
 }
 
-/* --- PostgreSQL: pivots near the top right so the trunk sweeps --------- */
+/* --- PostgreSQL: gentle head sway, blinking eyes, sniffing trunk -------- */
 
 .ati--postgresql .ati-pg-body {
     transform-origin: 17px 4px;
 }
 
+/* skewX keeps the y=18 cut line invariant — the trunk bends from the joint. */
+.ati--postgresql .ati-pg-trunk {
+    transform-origin: 15px 18px;
+}
+
 .card--icon:hover .ati--postgresql .ati-pg-body {
-    animation: ati-pg-sway 2.2s ease-in-out infinite;
+    animation: ati-pg-sway 3.4s ease-in-out infinite;
+}
+
+.card--icon:hover .ati--postgresql .ati-pg-trunk {
+    animation: ati-pg-sniff 3.4s ease-in-out infinite;
+}
+
+.card--icon:hover .ati--postgresql .ati-pg-eye {
+    animation: ati-pg-blink 3.4s linear infinite;
 }
 
 @keyframes ati-pg-sway {
     0%, 100% { transform: rotate(0deg); }
-    30% { transform: rotate(-2.5deg) translateY(0.15px); }
-    70% { transform: rotate(2deg); }
+    30% { transform: rotate(-1.6deg) translateY(0.12px); }
+    70% { transform: rotate(1.3deg); }
+}
+
+@keyframes ati-pg-sniff {
+    0%, 55%, 100% { transform: skewX(0deg); }
+    64% { transform: skewX(-5deg); }
+    74% { transform: skewX(3.5deg); }
+    84% { transform: skewX(-2deg); }
+    92% { transform: skewX(1deg); }
+}
+
+/* Quick double blink once per cycle. */
+@keyframes ati-pg-blink {
+    0%, 8%, 12%, 20%, 24%, 100% { transform: scaleY(1); }
+    10%, 22% { transform: scaleY(0.05); }
 }
 
 /* --- Kafka: data dots travel the net, waypoints set inline ------------- */
@@ -158,24 +200,26 @@
 /* --- GitLab: the tanuki's ears twitch in turn -------------------------- */
 
 .card--icon:hover .ati--gitlab .ati-ear--left {
-    animation: ati-ear-left 2.6s ease-in-out infinite;
+    animation: ati-ear-left 2.4s ease-in-out infinite;
 }
 
 .card--icon:hover .ati--gitlab .ati-ear--right {
-    animation: ati-ear-right 2.6s ease-in-out infinite;
-    animation-delay: -1.3s;
+    animation: ati-ear-right 2.4s ease-in-out infinite;
+    animation-delay: -1.2s;
 }
 
 @keyframes ati-ear-left {
-    0%, 22%, 100% { transform: rotate(0deg); }
-    7% { transform: rotate(-7deg); }
-    15% { transform: rotate(2.5deg); }
+    0%, 30%, 100% { transform: rotate(0deg); }
+    8% { transform: rotate(-10deg); }
+    16% { transform: rotate(4deg); }
+    23% { transform: rotate(-2deg); }
 }
 
 @keyframes ati-ear-right {
-    0%, 22%, 100% { transform: rotate(0deg); }
-    7% { transform: rotate(7deg); }
-    15% { transform: rotate(-2.5deg); }
+    0%, 30%, 100% { transform: rotate(0deg); }
+    8% { transform: rotate(10deg); }
+    16% { transform: rotate(-4deg); }
+    23% { transform: rotate(2deg); }
 }
 
 /* ----------------------------------------------------------------------- */

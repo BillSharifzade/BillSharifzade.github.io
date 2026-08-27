@@ -2,11 +2,13 @@ import { useId, useMemo } from 'react'
 import { splitSubpaths } from '../utils/svgSubpaths.js'
 import './AnimatedTechIcon.css'
 
-// Part-level hover animations for the Current Stack logos. Each builder
-// decides how far a glyph can be taken apart: subpaths that act as winding
-// holes (Rust's R, the Next.js leg, React's orbit rings) must stay inside one
-// <path> element or the holes fill in, so those icons animate via whole-glyph
-// motion or same-fill overlays instead of naive splitting. Parts are
+// Part-level animations for the Current Stack logos. Each builder decides how
+// far a glyph can be taken apart: subpaths that act as winding holes (Rust's
+// R, the Next.js N, React's orbit rings) must stay inside one <path> element
+// or the holes fill in. Where a part can't be split, it is separated
+// geometrically instead — two copies of the whole glyph cut apart with a
+// clipPath/mask pair that overlaps inside solid fill, so the seam never
+// shows (Rust's spinning rim, the Postgres trunk, the GitLab ears). Parts are
 // classified by geometry (area / position), not by subpath index, so a
 // simple-icons update reshuffling subpath order won't silently break this.
 
@@ -35,24 +37,64 @@ function buildReact(path) {
   )
 }
 
-function buildNext(path, uid) {
-  // The bigger right leg of the N is a winding hole (it renders dark), so it
-  // can't move on its own. Instead a gradient copy fades in over it — the
-  // same white-to-transparent fade the real Next.js logo gives that stroke.
-  const subs = splitSubpaths(path)
-  if (subs.length < 2) return <path d={path} />
-  const accent = byAreaDesc(subs)[subs.length - 1]
-  const gid = `${uid}-nextgrad`
+function buildRust(path, uid) {
+  // The R is carved out of the cog by winding holes, but the glyph has a
+  // fully solid annulus at r 10.0–10.8 (measured against the raster), so the
+  // toothed rim can be cut off along it and spun while the R and its bolt
+  // holes hold still. Both copies overlap inside the band, hiding the seam.
+  const maskId = `${uid}-rustrim`
+  const clipId = `${uid}-rustcore`
   return (
     <>
       <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
+        <clipPath id={clipId}>
+          <circle cx="12" cy="12" r="10.55" />
+        </clipPath>
+        <mask id={maskId}>
+          <rect x="-2" y="-2" width="28" height="28" fill="#fff" />
+          <circle cx="12" cy="12" r="10.45" fill="#000" />
+        </mask>
       </defs>
+      <g className="ati-rust-gear">
+        <path mask={`url(#${maskId})`} d={path} />
+      </g>
+      <path clipPath={`url(#${clipId})`} d={path} />
+    </>
+  )
+}
+
+function buildNext(path, uid) {
+  // The N is carved out of the solid disc, so a sheen swept BEHIND the disc
+  // shows only through the letterforms — light travelling along the N — while
+  // a comet with a fading tail orbits the rim outside.
+  const gid = `${uid}-nextsheen`
+  const clipId = `${uid}-nextdisc`
+  return (
+    <>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <clipPath id={clipId}>
+          <circle cx="12" cy="12" r="11.8" />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        {/* Rotated to run along the N's diagonal; the inner group translates. */}
+        <g transform="rotate(35 12 12)">
+          <g className="ati-next-sheen">
+            <rect x="6" y="-8" width="12" height="40" fill={`url(#${gid})`} />
+          </g>
+        </g>
+      </g>
       <path d={path} />
-      <path className="ati-next-accent" d={accent.d} fill={`url(#${gid})`} />
+      <g className="ati-next-orbit">
+        <circle className="ati-next-comet" cx="12" cy="-1.1" r="0.8" />
+        <circle className="ati-next-comet ati-next-comet--t1" cx="9.28" cy="-0.81" r="0.55" />
+        <circle className="ati-next-comet ati-next-comet--t2" cx="7.1" cy="-0.15" r="0.35" />
+      </g>
     </>
   )
 }
@@ -106,18 +148,38 @@ function buildKafka(path) {
   )
 }
 
-// Ear overlays sit fully inside the tanuki silhouette at rest (verified
-// against the traced outline: tips ~(5.3,1.0)/(18.7,1.0), head line y≈7.82),
-// share its solid fill, and twitch around their base.
+// The tanuki's ears are the two spikes above the head line (y≈7.8182, traced
+// from the path: inner bases at x 7.5375/16.4686, tip arcs verbatim from the
+// original, outer edges cut where they cross the head line). The base glyph is
+// masked to below that line and these replacement ears — extended by a small
+// root skirt that hides inside the solid head — wiggle on top. Without the
+// mask the original ears stay painted and any overlay motion is invisible,
+// which is why the previous version read as "no animation".
+const GITLAB_HEADLINE = 7.8182
 const GITLAB_EARS = [
-  { variant: 'left', d: 'M1.35 7.75L3.9 1.15L5.15 1.25L7.3 7.75Z', origin: '4.32px 7.6px' },
-  { variant: 'right', d: 'M22.65 7.75L20.1 1.15L18.85 1.25L16.7 7.75Z', origin: '19.68px 7.6px' },
+  {
+    variant: 'left',
+    d: 'M7.5375 7.8182L5.3318 1.0702a.8748.8748 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.851.851 0 0 0-.3362.4049L1.083 7.8182 0.95 8.55h6.5875Z',
+    origin: '4.31px 7.82px',
+  },
+  {
+    variant: 'right',
+    d: 'M16.4686 7.8182L18.6741 1.0702a.8748.8748 0 0 1 .29-.4399.8748.8748 0 0 1 .9997-.0539.851.851 0 0 1 .3362.405L22.92 7.8182 23.05 8.55h-6.5814Z',
+    origin: '19.7px 7.82px',
+  },
 ]
 
-function buildGitlab(path) {
+function buildGitlab(path, uid) {
+  const maskId = `${uid}-glhead`
   return (
     <>
-      <path d={path} />
+      <defs>
+        <mask id={maskId}>
+          <rect x="-2" y="-2" width="28" height="28" fill="#fff" />
+          <rect x="-2" y="-2" width="28" height={GITLAB_HEADLINE + 2} fill="#000" />
+        </mask>
+      </defs>
+      <path mask={`url(#${maskId})`} d={path} />
       {GITLAB_EARS.map((ear) => (
         <path
           key={ear.variant}
@@ -130,12 +192,49 @@ function buildGitlab(path) {
   )
 }
 
+function buildPg(path, uid) {
+  // Outline-style glyph: the eye highlights are two small independent white
+  // dots (safe to split — verified pixel-identical), and the trunk below
+  // y=18 is only the two converging outline strokes. The trunk copy skews
+  // about the y=18 line, which keeps every point ON the cut line fixed, so
+  // the joint is seamless while the tip sweeps.
+  const subs = splitSubpaths(path)
+  const dots = subs.filter((sp) => sp.bbox.area < 2.5 && sp.bbox.cy < 9)
+  if (dots.length !== 2) return <path className="ati-pg-body" d={path} />
+  const rest = subs.filter((sp) => !dots.includes(sp)).map((sp) => sp.d).join('')
+  const clipId = `${uid}-pgtrunk`
+  const maskId = `${uid}-pghead`
+  return (
+    <>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x="11.2" y="17.98" width="7.6" height="6.7" />
+        </clipPath>
+        <mask id={maskId}>
+          <rect x="-1" y="-1" width="26" height="26" fill="#fff" />
+          <rect x="11.2" y="18.02" width="7.6" height="6.7" fill="#000" />
+        </mask>
+      </defs>
+      <g className="ati-pg-body">
+        <path mask={`url(#${maskId})`} d={rest} />
+        <path className="ati-pg-trunk" clipPath={`url(#${clipId})`} d={rest} />
+        {dots.map((sp) => (
+          <path
+            key={sp.d}
+            className="ati-pg-eye"
+            d={sp.d}
+            style={{ transformOrigin: `${r2(sp.bbox.cx)}px ${r2(sp.bbox.cy)}px` }}
+          />
+        ))}
+      </g>
+    </>
+  )
+}
+
 function build(slug, path, uid) {
   switch (slug) {
     case 'rust':
-      // The R is carved out of the cog by winding holes — inseparable — so
-      // the whole gear meshes back and forth instead of free-spinning.
-      return <path className="ati-rust-glyph" d={path} />
+      return buildRust(path, uid)
     case 'react':
       return buildReact(path)
     case 'nextdotjs':
@@ -145,11 +244,11 @@ function build(slug, path, uid) {
     case 'linux':
       return <path className="ati-linux-body" d={path} />
     case 'postgresql':
-      return <path className="ati-pg-body" d={path} />
+      return buildPg(path, uid)
     case 'apachekafka':
       return buildKafka(path)
     case 'gitlab':
-      return buildGitlab(path)
+      return buildGitlab(path, uid)
     default:
       return <path d={path} />
   }
