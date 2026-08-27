@@ -71,7 +71,7 @@ export default function Folder({
     ['--paper-3']: paper3,
   }
 
-  const folderClassName = `folder ${open ? 'open' : ''}`.trim()
+  const folderClassName = `folder cursor-target ${open ? 'open' : ''}`.trim()
   const scaleStyle = { transform: `scale(${size})` }
 
   return (

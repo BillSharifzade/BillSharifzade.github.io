@@ -95,7 +95,9 @@ nav.scrolled {
 
 .logo {
     font-size: 24px;
-    font-weight: 700;
+    /* Matches the proximity effect's resting 'wght' 400 so the first
+       mousemove doesn't snap the weight. */
+    font-weight: 400;
     color: var(--primary);
 }
 
@@ -119,23 +121,13 @@ nav.scrolled {
     position: relative;
 }
 
-/* Desktop links render as ParticleText canvases: the anchor provides the
-   box (width set inline in ch units), the vendored .particle-text fills it.
-   Its stock min-height is meant for hero-sized text — flattened here. */
-.nav-link--particles {
-    display: inline-block;
-    height: 38px;
-    vertical-align: middle;
-}
-
-.nav-link--particles .particle-text {
-    min-height: 0;
-}
-
-/* The underline would float 10px under the canvas box; the hover feedback
-   here is the particle re-scatter instead. */
-.nav-link--particles::after {
-    display: none;
+/* TargetCursor owns the pointer on precise-pointer devices: without this,
+   elements with their own cursor rules (links, buttons, the terminal's
+   I-beam) would show the native cursor on top of the crosshair. */
+@media (pointer: fine) {
+    body * {
+        cursor: none !important;
+    }
 }
 
 .nav-link:hover {

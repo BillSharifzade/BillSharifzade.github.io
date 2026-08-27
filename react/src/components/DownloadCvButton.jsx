@@ -13,7 +13,7 @@ function DownloadCvButton({ className = '', onDownloaded }) {
     <>
       <button
         type="button"
-        className={`download-cv-btn ${className}`}
+        className={`download-cv-btn cursor-target ${className}`}
         onClick={() => setDialogOpen(true)}
         onMouseEnter={(e) => burst(e.currentTarget, BTN_BURST)}
         onFocus={(e) => burst(e.currentTarget, BTN_BURST)}

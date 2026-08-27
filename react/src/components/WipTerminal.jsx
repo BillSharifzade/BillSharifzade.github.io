@@ -846,7 +846,7 @@ export default function WipTerminal() {
           <button
             type="button"
             ref={closeBtnRef}
-            className="wt-dot wt-dot--close"
+            className="wt-dot wt-dot--close cursor-target"
             onClick={onPowerOff}
             aria-label="Power off the terminal"
             title="power off"
@@ -856,7 +856,7 @@ export default function WipTerminal() {
           <span className="wt-dot" aria-hidden="true" />
           <button
             type="button"
-            className="wt-dot wt-dot--zoom"
+            className="wt-dot wt-dot--zoom cursor-target"
             onClick={toggleCompact}
             aria-label={compact ? 'Restore terminal size' : 'Shrink the terminal a bit'}
             title={compact ? 'maximize' : 'minimize'}
@@ -915,7 +915,7 @@ export default function WipTerminal() {
       <button
         type="button"
         ref={powerBtnRef}
-        className="wt-power"
+        className="wt-power cursor-target"
         onClick={powerOn}
         aria-label="Power the terminal back on"
         title="power on"

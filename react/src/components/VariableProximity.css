@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
-
+/* Inherits the site font (JetBrains Mono, loaded as a variable font in
+   index.html so the wght axis actually interpolates). The Roboto Flex import
+   this shipped with is gone — one webfont fewer. */
 .variable-proximity {
-    font-family: 'Roboto Flex', sans-serif;
     cursor: default;
 }
 

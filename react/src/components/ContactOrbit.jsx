@@ -56,7 +56,7 @@ export default function ContactOrbit() {
   const chips = CHANNELS.map((c) => (
     <a
       key={c.label}
-      className="orbit-chip"
+      className="orbit-chip cursor-target"
       href={c.href}
       aria-label={`${c.label} — ${c.handle}`}
       onMouseEnter={(e) => burst(e.currentTarget)}
@@ -92,7 +92,7 @@ export default function ContactOrbit() {
           // key remounts the pill per message, replaying the entrance.
           <a
             key={cta.text}
-            className="orbit-center-cta"
+            className="orbit-center-cta cursor-target"
             href={cta.href}
             {...(cta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           >

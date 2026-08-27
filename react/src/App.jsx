@@ -3,7 +3,7 @@ import DecryptedText from './components/DecryptedText.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import ContactOrbit from './components/ContactOrbit.jsx'
-import ParticleText from './components/ParticleText.jsx'
+import TargetCursor from './components/TargetCursor.jsx'
 import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
@@ -192,53 +192,31 @@ function App() {
       </div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
+      {/* Custom crosshair cursor; corner brackets lock onto .cursor-target
+          elements. Renders nothing on touch devices. */}
+      <TargetCursor spinDuration={2} hideDefaultCursor={true} parallaxOn={true} />
+
       <nav ref={navContainerRef}>
         <div className="nav-content">
           <div className="logo">
+            {/* JetBrains Mono variable: wght is its only axis (100–800). */}
             <VariableProximity
               label={'qwantum'}
-              fromFontVariationSettings="'wght' 400, 'opsz' 9"
-              toFontVariationSettings="'wght' 1000, 'opsz' 40"
+              fromFontVariationSettings="'wght' 400"
+              toFontVariationSettings="'wght' 800"
               containerRef={navContainerRef}
               radius={100}
               falloff='linear'
             />
           </div>
           <div className="nav-links">
-            {/* Each label renders as gatherable particles in the same nav
-                font/size (fontFamily inherits JetBrains Mono); hover
-                re-scatters it, the pointer nudges dots within a small
-                radius. The anchor is sized in ch so layout stays put. */}
-            {[
-              ['#home', 'Profile'],
-              ['#about', 'About'],
-              ['#skills', 'Skills'],
-              ['#projects', 'Projects'],
-              ['#experience', 'Experience'],
-              ['#hobbies', 'Hobbies'],
-              ['#contact', 'Contact'],
-            ].map(([href, label]) => (
-              <a key={href} href={href} className="nav-link nav-link--particles" style={{ width: `${label.length + 1.6}ch` }}>
-                <ParticleText
-                  text={label}
-                  particleSize={1.5}
-                  density={2}
-                  color="#c8b9b9"
-                  highlightColor="#ffffff"
-                  scatter={40}
-                  gatherDuration={900}
-                  stagger={220}
-                  pointerRepel={8}
-                  repelRadius={26}
-                  idleDrift={0.35}
-                  trigger="hover"
-                  fontSize={16}
-                  fontWeight={400}
-                  fontFamily="inherit"
-                  glow={false}
-                />
-              </a>
-            ))}
+            <a href="#home" className="nav-link cursor-target">Profile</a>
+            <a href="#about" className="nav-link cursor-target">About</a>
+            <a href="#skills" className="nav-link cursor-target">Skills</a>
+            <a href="#projects" className="nav-link cursor-target">Projects</a>
+            <a href="#experience" className="nav-link cursor-target">Experience</a>
+            <a href="#hobbies" className="nav-link cursor-target">Hobbies</a>
+            <a href="#contact" className="nav-link cursor-target">Contact</a>
             <DownloadCvButton />
           </div>
           <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>
@@ -602,7 +580,7 @@ function App() {
           </p>
           <div className="footer-tags">
             <a
-              className="secret-job"
+              className="secret-job cursor-target"
               href="https://bonnnieeee.github.io/"
               target="_blank"
               rel="noopener noreferrer"
