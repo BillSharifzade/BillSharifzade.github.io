@@ -193,8 +193,6 @@ const ProfileCardComponent = ({
 
     const handleClick = () => {
       if (!enableMobileTilt || location.protocol !== 'https:') return;
-      // Feature-detect the interface the handler actually consumes; desktop
-      // browsers without DeviceOrientationEvent must not throw here.
       const OrientationEvent = window.DeviceOrientationEvent;
       if (!OrientationEvent) return;
       if (typeof OrientationEvent.requestPermission === 'function') {

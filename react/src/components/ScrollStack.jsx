@@ -62,10 +62,6 @@ const ScrollStack = ({
   const getElementOffset = useCallback(
     element => {
       if (useWindowScroll) {
-        // Walk the offsetTop chain instead of getBoundingClientRect: offsetTop
-        // is layout-based and unaffected by the transforms we apply to cards,
-        // so the measured position stays stable frame-to-frame (no feedback
-        // loop / flicker while scrolling).
         let top = 0;
         let node = element;
         while (node) {
@@ -194,10 +190,6 @@ const ScrollStack = ({
 
   const setupLenis = useCallback(() => {
     if (useWindowScroll) {
-      // Drive scroll with Lenis so the page scroll position and the card
-      // transforms are updated together in the same rAF tick. This keeps pinned
-      // cards perfectly locked to the scroll (no compositor/main-thread desync),
-      // which is what eliminates the slow-scroll flicker.
       const lenis = new Lenis({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -260,9 +252,6 @@ const ScrollStack = ({
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
-    // Reduced motion: no Lenis easing, no scroll-linked pin/scale — the cards
-    // render as a plain static list. Binding the transforms to native scroll
-    // instead would reintroduce the compositor desync AND still be motion.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const cards = Array.from(
@@ -326,7 +315,6 @@ const ScrollStack = ({
     <div className={`scroll-stack-scroller ${className}`.trim()} ref={scrollerRef}>
       <div className="scroll-stack-inner">
         {children}
-        {/* Spacer so the last pin can release cleanly */}
         <div className="scroll-stack-end" />
       </div>
     </div>

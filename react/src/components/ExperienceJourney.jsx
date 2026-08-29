@@ -8,7 +8,6 @@ import tagLogo from '../assets/tag.png'
 import foundersLogo from '../assets/founder_school.png'
 import './ExperienceJourney.css'
 
-// Companies without a real logo asset fall back to a monogram badge.
 const COMPANY_LOGOS = {
   'Azal Telecommunications': azalLogo,
   'Koinoti Nav': kitLogo,
@@ -56,9 +55,6 @@ function ExperienceJourney() {
     })
   }
 
-  // Draw a smooth vertical bezier through every node dot. Re-measured on any
-  // wrapper resize (viewport changes, card expand/collapse) so the curve
-  // always hugs the cards.
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current
     const path = pathRef.current
@@ -97,7 +93,6 @@ function ExperienceJourney() {
     return () => observer.disconnect()
   }, [expanded])
 
-  // Reveal cards as they scroll into view.
   useLayoutEffect(() => {
     const items = wrapperRef.current?.querySelectorAll('.journey-item')
     if (!items) return

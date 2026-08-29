@@ -41,10 +41,6 @@ const StrokeText = ({
   const characters = useMemo(() => Array.from(String(text ?? '')), [text]);
   const charCount = characters.length;
 
-  // Must be >= the longest single-glyph outline, or the dash pattern wraps and
-  // leaves ink showing at t=0 (and drops ink at t=1). Anything much larger than
-  // that just wastes the front of the tween on an invisible glyph, so tune
-  // `dashScale` to the font actually in use.
   const dash = Math.max(fontSize * dashScale, 200);
 
   const fontStyle = useMemo(
@@ -114,8 +110,6 @@ const StrokeText = ({
     const fillDuration = Math.max(0.4, drawDuration * 0.5);
     const staggerConfig = reverse ? { each: stagger, from: 'end' } : stagger;
     const targets = [...strokes, ...fills, wipe].filter(Boolean);
-    // Wait for the *last* staggered character to finish drawing before the fill
-    // starts, so long headings don't get flooded while still being outlined.
     const drawSpan = drawDuration + stagger * Math.max(0, charCount - 1);
 
     const setStart = () => {
@@ -202,7 +196,6 @@ const StrokeText = ({
   }, [box, charCount, dash, drawDuration, fillDelay, stagger, ease, trigger, fillMode, reverse]);
 
   const viewBox = box ? `${box.x} ${box.y} ${box.width} ${box.height}` : `0 ${-fontSize} 600 ${fontSize * 1.3}`;
-  // Drive the rendered size from the measured glyph box (see StrokeText.css).
   const boxWidth = box ? box.width : 600;
   const boxHeight = box ? box.height : fontSize * 1.3;
 

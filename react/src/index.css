@@ -22,15 +22,10 @@ body {
     line-height: 1.6;
 }
 
-/* Hide the native scrollbar — the top progress bar is the scroll indicator.
-   overflow-x: clip stops transformed offscreen elements (mobile nav panel,
-   bounce-card fan) from widening the page on phones. */
 html {
     overflow-x: clip;
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE/Edge */
 }
 
 html::-webkit-scrollbar,
@@ -38,10 +33,8 @@ body::-webkit-scrollbar {
     width: 0;
     height: 0;
     display: none;
-    /* Chrome/Safari */
 }
 
-/* Lenis smooth-scroll integration */
 html.lenis,
 html.lenis body {
     height: auto;
@@ -87,16 +80,12 @@ nav.scrolled {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* Wider than the page's 1200px container: the bar spans the viewport
-       anyway, so pushing logo and links further apart lets them breathe. */
     max-width: 1360px;
     margin: 0 auto;
 }
 
 .logo {
     font-size: 24px;
-    /* Matches the proximity effect's resting 'wght' 150 so the first
-       mousemove doesn't snap the weight. */
     font-weight: 150;
     color: var(--primary);
 }
@@ -104,12 +93,9 @@ nav.scrolled {
 .nav-links {
     display: flex;
     align-items: center;
-    /* Fluid: ~40px of air on wide screens, tightening as the bar narrows
-       toward the 768px hamburger breakpoint. */
     gap: clamp(20px, 2.8vw, 40px);
 }
 
-/* Set the CV button a touch apart from the plain links. */
 .nav-links .download-cv-btn {
     margin-left: clamp(2px, 1vw, 14px);
 }
@@ -121,8 +107,6 @@ nav.scrolled {
     position: relative;
 }
 
-/* TargetCursor is scoped to the header: hide the native cursor only there
-   (the crosshair fades in over the nav and out everywhere else). */
 @media (pointer: fine) {
     nav,
     nav * {
@@ -134,9 +118,6 @@ nav.scrolled {
     color: var(--primary);
 }
 
-/* Desktop nav hover (underline retired): the muted label rolls up and out
-   while a white copy (::after on the inner span, fed by data-text) rolls in
-   from below. The anchor clips the roll. */
 .nav-links .nav-link {
     display: inline-block;
     overflow: hidden;
@@ -175,8 +156,6 @@ nav.scrolled {
     padding: 0 20px;
 }
 
-/* Exposed to assistive tech, painted nowhere. Used where the visible run of a
-   decorative effect is not the real copy — see DecryptedText. */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -280,7 +259,6 @@ nav.scrolled {
     display: none;
 }
 
-/* New folders grid replacing heavy skill cards */
 .folders-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -314,13 +292,11 @@ nav.scrolled {
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.3s ease;
     min-height: 220px;
-    /* standardize height */
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/* Remove hover effects; keep only electric border */
 .skill-category:hover {
     transform: none;
     box-shadow: none;
@@ -354,7 +330,6 @@ nav.scrolled {
     transition: all 0.3s ease;
 }
 
-/* Remove item hover effect to keep cards clean */
 .skill-item:hover {
     background: rgba(255, 255, 255, 0.05);
 }
@@ -368,8 +343,6 @@ nav.scrolled {
     display: inline-block;
 }
 
-/* Selected Projects — an AccordionGallery of project covers; all panel styling
-   lives in components/AccordionGallery.css. */
 
 .contact-grid {
     display: grid;
@@ -390,13 +363,11 @@ nav.scrolled {
     }
 }
 
-/* --- START: Contact Card Link Styles --- */
 .contact-grid>a {
     text-decoration: none;
     color: inherit;
 }
 
-/* --- END: Contact Card Link Styles --- */
 
 .contact-item {
     text-align: center;
@@ -435,7 +406,6 @@ nav.scrolled {
     color: black;
 }
 
-/* Proper Signal brand SVG sizing inside the badge */
 .signal-icon-wrap {
     background: var(--primary);
 }
@@ -490,9 +460,7 @@ nav.scrolled {
     transition: width 0.3s ease;
 }
 
-/* Download CV button */
 .download-cv-btn {
-    /* Positioning context for the hover burst particles. */
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -537,7 +505,6 @@ nav.scrolled {
     color: var(--primary);
 }
 
-/* Footer secret job tag */
 .footer-tags {
     margin-top: 22px;
     display: flex;
@@ -636,7 +603,6 @@ nav.scrolled {
     border-top-color: #ffc0cb;
 }
 
-/* Hobbies scroll stack — flows with the page (no nested scroll area) */
 .scroll-stack-scroller.hobbies-stack {
     height: auto;
     overflow: visible;
@@ -706,9 +672,6 @@ nav.scrolled {
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* Centered via the auto-margin rules below (not `justify-content:
-           center`), so short landscape viewports degrade to a scrollable
-           top-aligned column instead of clipping links off both ends. */
         justify-content: flex-start;
         gap: 30px;
         position: fixed;

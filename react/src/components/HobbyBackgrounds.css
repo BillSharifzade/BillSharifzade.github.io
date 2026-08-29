@@ -1,5 +1,3 @@
-/* Minimalist animated backgrounds for the hobby cards.
-   Each layer sits behind .hobby-content and is purely decorative. */
 
 .hobby-bg {
     position: absolute;
@@ -14,7 +12,6 @@
     z-index: 1;
 }
 
-/* ---------- Cosmos & Numbers: swirling galaxy + general relativity ---------- */
 
 .galaxy {
     position: absolute;
@@ -86,7 +83,6 @@
     padding: 0 2px;
 }
 
-/* ---------- Strategy & Play: drifting crosshair + stomping knight ---------- */
 
 .fps-crosshair {
     position: absolute;
@@ -133,8 +129,6 @@
     height: 100px;
 }
 
-/* The knight's feet rest on the board's projected top surface
-   (board height 52px * cos(58°) ≈ 27px, feet at its visual center) */
 .knight-piece {
     position: absolute;
     z-index: 1;
@@ -208,7 +202,6 @@
     }
 }
 
-/* ---------- Craft & Sound: knitting scarf + floating notes ---------- */
 
 .scarf {
     position: absolute;
@@ -226,7 +219,6 @@
     height: 30%;
     border-left: 1px solid rgba(255, 255, 255, 0.18);
     border-right: 1px solid rgba(255, 255, 255, 0.18);
-    /* Chevron knit stitches */
     background-image:
         repeating-linear-gradient(45deg,
             transparent 0 6px,
@@ -254,7 +246,6 @@
     }
 }
 
-/* The working needle at the growth edge */
 .scarf-needle {
     position: absolute;
     left: 50%;
@@ -313,7 +304,6 @@
     }
 }
 
-/* Second needle, mirrored so the pair stays crossed at the working edge */
 .scarf-needle--2 {
     animation-name: needleWork2;
 }
@@ -426,7 +416,6 @@
     }
 }
 
-/* ---------- Words & Thought: book with turning pages ---------- */
 
 .book {
     position: absolute;
@@ -479,12 +468,6 @@
     z-index: 5;
 }
 
-/* Turning sheets. Geometry deliberately matches .book-page--right exactly, so a
-   sheet waiting to turn is indistinguishable from the page beneath it and a
-   landed one lines up with .book-page--left — that is what lets a sheet fade
-   out and reappear on the other side without the swap ever being visible.
-   Backgrounds stay near-transparent for the same reason: three coincident
-   sheets must not read as darker than one. */
 .book-flip {
     position: absolute;
     right: 0;
@@ -506,9 +489,6 @@
     animation: pageFlip 7s cubic-bezier(0.45, 0.05, 0.35, 1) infinite;
 }
 
-/* Sheen sweeping across the sheet as it stands up — kept on a pseudo-element
-   because a brightness keyframe on .book-flip itself would need a keyframe stop
-   mid-turn, and that stop would break the rotation into two eased segments. */
 .book-flip::after {
     content: '';
     position: absolute;
@@ -519,8 +499,6 @@
     animation: pageSheen 7s ease-in-out infinite;
 }
 
-/* Later sheets stack above earlier ones so a sheet that is fading out on the
-   left is always covered by the one that landed after it. */
 .book-flip--1,
 .book-flip--1::after {
     z-index: 2;
@@ -541,21 +519,18 @@
 
 @keyframes pageFlip {
 
-    /* waiting, flat on the right page */
     0%,
     6% {
         transform: rotateY(-4deg);
         opacity: 1;
     }
 
-    /* turned over and resting on the left page */
     34%,
     86% {
         transform: rotateY(-176deg);
         opacity: 1;
     }
 
-    /* fades out under the sheet that landed on top of it, returns unseen */
     93% {
         transform: rotateY(-176deg);
         opacity: 0;
@@ -579,8 +554,6 @@
         opacity: 0;
     }
 
-    /* peaks while the sheet is still face-on; at the halfway point it is edge-on
-       and there is nothing left to light. */
     13% {
         opacity: 1;
     }
@@ -591,7 +564,6 @@
     }
 }
 
-/* ---------- Responsiveness & accessibility ---------- */
 
 @media (max-width: 768px) {
     .galaxy {
@@ -602,7 +574,6 @@
         opacity: 0.35;
     }
 
-    /* Centered along the bottom edge, clear of the wrapped chips row */
     .gr-formula {
         left: 0;
         right: 0;
@@ -618,7 +589,6 @@
         right: 5%;
     }
 
-    /* Smaller knight tucked into the corner so the chips row stays clear */
     .knight-scene {
         right: 2%;
         bottom: 0.7rem;

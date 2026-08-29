@@ -22,23 +22,6 @@ function scramble(text, revealCount) {
   return result
 }
 
-/**
- * Scrambled text that resolves itself.
- *
- * `trigger="scroll"` (the default) holds the copy scrambled until it reaches the
- * viewport, matching SectionTitle/StrokeText. Running on mount meant a reload
- * anywhere on the page burned the reveal off-screen, and every block below the
- * fold paid for its timers before anyone could see them.
- *
- * The placeholder is scrambled at the full length of the text, so nothing
- * reflows when the reveal starts. It is also gibberish for as long as it sits
- * unread, so the real string is carried alongside it for screen readers and the
- * visible run is marked decorative.
- *
- * Frames are driven by rAF against elapsed time rather than by a setTimeout per
- * character: at the intervalMs=8 the About copy uses, a timer chain re-rendered
- * roughly twice per painted frame for nothing.
- */
 export default function DecryptedText({
   text,
   play = true,
@@ -50,7 +33,6 @@ export default function DecryptedText({
 }) {
   const hostRef = useRef(null)
   const outRef = useRef(null)
-  // State only covers the first paint; the reveal itself writes to the DOM.
   const [initial] = useState(() => (play && !prefersReducedMotion() ? scramble(text, 0) : text))
 
   useEffect(() => {
@@ -65,7 +47,6 @@ export default function DecryptedText({
 
     let raf = null
     let startedAt = 0
-    // Same pacing as the old timer chain: one character every intervalMs * step.
     const msPerChar = Math.max(1, intervalMs * step)
 
     const frame = (now) => {
@@ -86,9 +67,6 @@ export default function DecryptedText({
       }
     }
 
-    // The bottom inset puts the start line at 82% of the viewport, where
-    // StrokeText's ScrollTrigger fires, so a heading and the copy under it come
-    // in together.
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries.some((e) => e.isIntersecting)) return

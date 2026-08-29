@@ -1,11 +1,3 @@
-// Splits a single SVG path string into independently renderable subpaths.
-//
-// simple-icons chains subpaths with relative `m` commands, so a subpath sliced
-// out verbatim would land at the wrong coordinates. This walker tracks the
-// current point through the whole path and re-emits every subpath with an
-// absolute `M` start (implicit moveto line pairs become explicit `l`).
-// Bboxes are approximate — endpoints plus control points, arcs padded by their
-// radii — which is plenty for classifying parts by size and position.
 
 const PARAM_COUNTS = { M: 2, L: 2, H: 1, V: 1, C: 6, S: 4, Q: 4, T: 2, A: 7, Z: 0 }
 const NUM_RE = /[+-]?(?:\d*\.\d+|\d+\.?)(?:[eE][+-]?\d+)?/y
@@ -26,8 +18,6 @@ function tokenize(d) {
     i = NUM_RE.lastIndex
     return m[0]
   }
-  // Arc flags are single 0/1 digits and may butt up against the next number
-  // ("0 01.29" = flags 0,1 then .29), so they can't go through readNumber.
   const readFlag = () => {
     skip()
     const ch = d[i]
@@ -69,7 +59,7 @@ const fmt = (n) => String(Math.round(n * 1e4) / 1e4)
 export function splitSubpaths(d) {
   const tokens = tokenize(d)
   const subs = []
-  let cur = null // { parts: [], minX, minY, maxX, maxY }
+  let cur = null
   let x = 0
   let y = 0
   let sx = 0

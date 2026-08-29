@@ -13,8 +13,6 @@ import {
   dateLine,
 } from '../data/cv.js'
 
-// The site's #818cf8 is too light to hold up in print at 9pt, so the document
-// steps the same hue down to an ink-weight indigo and keeps the light tint for rules.
 const ACCENT = '#4338ca'
 const TINT = '#a5b4fc'
 const INK = '#16161d'
@@ -90,12 +88,8 @@ const styles = StyleSheet.create({
 
   interests: { fontSize: 8.8, color: MUTED },
 
-  // Absolutely-positioned fixed Texts: a flex row wrapper collapses here, so each
-  // footer element is placed independently against the page box.
   footerRule: { position: 'absolute', bottom: 40, left: 46, right: 46, height: 1, backgroundColor: RULE },
   footerLeft: { position: 'absolute', bottom: 26, left: 46, fontSize: 7.5, color: FAINT },
-  // Static rather than a `render`-driven page number: the render prop produced no
-  // output here, and it cannot be verified against the browser build the app ships.
   footerRight: {
     position: 'absolute',
     bottom: 26,
@@ -107,8 +101,6 @@ const styles = StyleSheet.create({
   },
 })
 
-// minPresenceAhead reserves space after the heading, so a section title can never
-// strand itself at the foot of a page with its content overleaf.
 function Section({ title }) {
   return (
     <View style={styles.sectionHead} minPresenceAhead={70} wrap={false}>
@@ -158,8 +150,6 @@ function CvDocument() {
         <Section title="Experience" />
         {experience.map((exp) => (
           <View key={exp.company} style={styles.expItem}>
-            {/* Heading and description stay together; bullets flow across page
-                breaks so a role never strands half a page of whitespace. */}
             <View wrap={false} minPresenceAhead={46}>
               <View style={styles.expHeadRow}>
                 <Text style={styles.expTitle}>

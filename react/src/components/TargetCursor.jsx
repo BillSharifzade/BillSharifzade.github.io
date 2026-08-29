@@ -1,18 +1,8 @@
-// Vendored from https://reactbits.dev/r/TargetCursor-JS-CSS.json with one
-// local change: a `scopeSelector` prop. When set, the crosshair fades in only
-// while the pointer is inside a matching element (this site scopes it to the
-// header nav) — pair it with hideDefaultCursor={false} plus a CSS
-// `cursor: none` rule on the same scope so the native cursor only vanishes
-// where the crosshair takes over.
 
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
 import './TargetCursor.css';
 
-// A position: fixed element is positioned relative to the viewport UNLESS an
-// ancestor establishes a containing block (transform, perspective, filter,
-// will-change of those, or contain). When that happens, the cursor's translate
-// no longer maps to viewport coordinates, so we measure and compensate for it.
 const getContainingBlock = element => {
   let node = element?.parentElement;
   while (node && node !== document.documentElement) {
@@ -123,7 +113,6 @@ const TargetCursor = ({
       y: window.innerHeight / 2 - initialOffset.y
     });
 
-    // Scoped mode starts hidden until the pointer enters the scope.
     if (scopeSelector) {
       scopeVisibleRef.current = false;
       gsap.set(cursor, { autoAlpha: 0 });

@@ -8,9 +8,6 @@
   cursor: pointer;
 }
 
-/* The SVG is sized from the measured glyph box so the wordmark renders at its
-   true `fontSize` on wide containers and scales down proportionally on narrow
-   ones — no letterboxing, no oversized stretching to fill the container. */
 .stroke-text__svg {
   display: block;
   width: 100%;

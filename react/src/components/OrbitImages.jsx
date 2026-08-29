@@ -1,22 +1,8 @@
-// Component created by Dominik Koch
-// https://x.com/dominikkoch
-//
-// Vendored from https://reactbits.dev/r/OrbitImages-JS-CSS.json with three
-// local changes:
-//  - `items`: arbitrary React nodes (e.g. links) orbit instead of <img>s;
-//    aria-hidden then stays off so the links remain reachable.
-//  - pause/resume is seamless: the loop animates progress from its current
-//    value across exactly +/-100 (offsets are modulo 100, so the loop
-//    boundary can't jump — upstream always re-animated toward absolute 100,
-//    which crawled and snapped after a pause).
-//  - `aspectRatio`: responsive mode isn't locked to the upstream 1/1 square,
-//    so a flat ellipse doesn't reserve a page-tall block.
 
 import { useMemo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 import './OrbitImages.css';
 
-// Aliased so the project's eslint setup sees the JSX usage of `motion`.
 const MotionDiv = motion.div;
 
 function generateEllipsePath(cx, cy, rx, ry) {
@@ -188,8 +174,6 @@ export default function OrbitImages({
 
   useEffect(() => {
     if (paused) return;
-    // From wherever the orbit stopped, sweep exactly one full lap; offsets
-    // are modulo 100, so the repeat boundary lands where it started.
     const from = progress.get();
     const controls = animate(progress, direction === 'reverse' ? from - 100 : from + 100, {
       duration,

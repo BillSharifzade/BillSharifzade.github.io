@@ -22,8 +22,6 @@ function triggerDownload(blob, filename) {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
-  // Synchronous revocation can abort the download on Safari/iOS before the
-  // browser has opened the blob; 40s is FileSaver.js's battle-tested delay.
   setTimeout(() => URL.revokeObjectURL(url), 40_000)
 }
 

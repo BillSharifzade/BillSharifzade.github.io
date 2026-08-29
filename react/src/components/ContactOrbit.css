@@ -1,5 +1,3 @@
-/* Desktop gets the orbit, phones keep the plain grid: at phone widths the
-   responsive scale would shrink the chips below tappable size. */
 .contact-orbit {
     display: none;
 }
@@ -15,24 +13,19 @@
     }
 }
 
-/* The counter-rotation wrapper OrbitImages puts around each item. */
 .contact-orbit .orbit-item > div {
     width: 100%;
     height: 100%;
 }
 
-/* The orbit path line: faint and dashed. */
 .contact-orbit .orbit-path-svg path {
     stroke-dasharray: 7 11;
 }
 
-/* Chips near the centre must stay clickable — only the CTA pill itself may
-   swallow the pointer, not the full-size overlay around it. */
 .contact-orbit .orbit-center-content {
     pointer-events: none;
 }
 
-/* --- chips (burst comes from utils/burst.js on hover) --------------------- */
 
 .orbit-chip {
     position: relative;
@@ -55,7 +48,6 @@
     height: 52px;
 }
 
-/* --- centre CTA pill: one ask per channel, swapped on a timer ------------- */
 
 .orbit-center-cta {
     pointer-events: auto;

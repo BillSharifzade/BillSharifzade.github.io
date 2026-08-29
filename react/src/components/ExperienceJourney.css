@@ -35,7 +35,6 @@
     justify-content: flex-end;
 }
 
-/* The dot the curve passes through — alternates around the center line */
 .journey-node {
     position: absolute;
     top: 44px;
@@ -67,8 +66,6 @@
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* No backdrop blur support → the translucent card over the animated beams
-   would hurt legibility; fall back to the old near-opaque gradient. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .journey-card {
         background: linear-gradient(160deg, rgba(20, 20, 20, 0.92), rgba(9, 9, 9, 0.92));
@@ -87,7 +84,6 @@
     gap: 16px;
 }
 
-/* Company logos forced to pure white regardless of brand colors */
 .journey-logo {
     flex: 0 0 auto;
     width: 66px;
@@ -173,7 +169,6 @@
     transition: transform 0.35s ease;
 }
 
-/* Smooth expand/collapse via the 0fr -> 1fr grid trick */
 .journey-card-body {
     display: grid;
     grid-template-rows: 0fr;
@@ -223,7 +218,6 @@
         width: calc(100% - 74px);
     }
 
-    /* Left rail with a gentle wiggle so the curve stays curvy on mobile */
     .journey-item--left .journey-node {
         left: 16px;
     }

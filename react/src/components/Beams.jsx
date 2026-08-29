@@ -49,8 +49,6 @@ function extendMaterial(BaseMaterial, cfg) {
   return mat;
 }
 
-// Live prefers-reduced-motion flag: switching the OS setting takes effect
-// without a reload.
 const useReducedMotion = () => {
   const [reduced, setReduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -64,9 +62,6 @@ const useReducedMotion = () => {
   return reduced;
 };
 
-// dpr caps at 1.5: on 2x displays that is ~44% less fragment work, invisible on
-// this dark noise-dithered background. Under reduced motion, "demand" renders
-// the mount frame and then holds it still ("never" would leave a blank canvas).
 const CanvasWrapper = ({ children, reduced }) => (
   <Canvas dpr={reduced ? 1 : [1, 1.5]} frameloop={reduced ? 'demand' : 'always'} className="beams-container">
     {children}

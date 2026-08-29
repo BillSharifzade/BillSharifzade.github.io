@@ -22,12 +22,8 @@ import WipTerminal from './components/WipTerminal.jsx'
 import VisitorCounter from './components/VisitorCounter.jsx'
 import './index.css'
 
-// The three.js background is pure decoration — lazy-loading it keeps ~900KB of
-// WebGL machinery out of the critical chunk; the page is fully usable before it
-// fades in.
 const Beams = lazy(() => import('./components/Beams.jsx'))
 
-// cv.js keeps the canonical copy; the gallery only needs the fields it renders.
 const projectPanels = projects.map((p) => ({
   images: projectCovers[p.cover],
   alt: `${p.name} — project cover`,
@@ -49,9 +45,6 @@ function scrollToTarget(target) {
   }
 }
 
-// The typewriter owns its 10–20Hz state here so the rest of the app tree never
-// re-renders for it — before extraction every keystroke of the animation
-// re-rendered <App/> (and defeated ProfileCard's memo) forever.
 const TYPING_TEXTS = [
   'Backend Architect',
   'AI Architecture Specialist',
@@ -192,17 +185,11 @@ function App() {
       </div>
       <div className="scroll-indicator" id="scrollIndicator"></div>
 
-      {/* Crosshair cursor scoped to the header: it fades in over the nav
-          (where a CSS rule hides the native cursor) and brackets lock onto
-          the .cursor-target links. Renders nothing on touch devices. */}
       <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
 
       <nav ref={navContainerRef}>
         <div className="nav-content">
           <div className="logo">
-            {/* JetBrains Mono variable: wght is its only axis (100–800), so
-                the punch comes from sweeping nearly all of it — thin at rest,
-                heavy under the pointer. */}
             <VariableProximity
               label={'qwantum'}
               fromFontVariationSettings="'wght' 150"
@@ -213,8 +200,6 @@ function App() {
             />
           </div>
           <div className="nav-links">
-            {/* Rolling labels: the muted copy rolls out, a white duplicate
-                (the ::after, fed by data-text) rolls in from below. */}
             {[
               ['#home', 'Profile'],
               ['#about', 'About'],
@@ -534,8 +519,6 @@ function App() {
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
-          {/* Desktop: channels orbit the mail CTA. The grid below takes over
-              on narrow screens (swap lives in ContactOrbit.css). */}
           <ContactOrbit />
           <div className="contact-grid">
             <a href="mailto:sharifzadebilal@gmail.com">

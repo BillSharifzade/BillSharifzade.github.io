@@ -1,5 +1,3 @@
-/* Unique-visitor pill — anchored to the middle-right of the footer on desktop,
-   flows under the footer text on narrow screens. */
 .visitor-counter {
     position: absolute;
     right: 40px;
@@ -38,7 +36,6 @@
     background: #4ade80;
 }
 
-/* Compositor-only pulse: a ring that scales and fades (no box-shadow paint). */
 .vc-dot::after {
     content: '';
     position: absolute;
@@ -80,9 +77,6 @@
     }
 }
 
-/* The footer copy is centered full-width text; below ~1320px the absolutely
-   positioned pill would overlap the certifications line, so it drops into
-   the flow instead. */
 @media (max-width: 1320px) {
     .visitor-counter {
         position: static;

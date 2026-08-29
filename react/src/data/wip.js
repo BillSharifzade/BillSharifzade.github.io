@@ -1,8 +1,3 @@
-// Projects currently in flight, rendered by the WipTerminal `wip` command.
-// This is the file to edit when work starts or ships: cv.js keeps the finished
-// record, this keeps the live one. `left: 'ongoing'` is fine for open-ended
-// work. `special: true` gets the pink treatment in wipLines() — reserved for
-// exactly one project.
 export const wipProjects = [
   {
     name: 'kernel',

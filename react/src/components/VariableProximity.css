@@ -1,6 +1,3 @@
-/* Inherits the site font (JetBrains Mono, loaded as a variable font in
-   index.html so the wght axis actually interpolates). The Roboto Flex import
-   this shipped with is gone — one webfont fewer. */
 .variable-proximity {
     cursor: default;
 }

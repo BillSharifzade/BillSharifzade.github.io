@@ -1,11 +1,3 @@
-// Regenerates public/og.png (the 1200×630 social-preview card) by rendering
-// an HTML mock of the site's terminal in headless Chrome. Run from react/:
-//
-//   node scripts/make-og.mjs
-//
-// Needs Chrome/Chromium and network access (Google Fonts). The side column is
-// a chromed Arch Linux mark built from the simple-icons path.
-
 import { writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
@@ -27,8 +19,6 @@ function chrome() {
   throw new Error('no Chrome/Chromium binary found')
 }
 
-// The simple-icons path carries a tiny ™ glyph in later subpaths — keep only
-// the mountain.
 const arch = siArchlinux.path.slice(0, siArchlinux.path.indexOf('M', 1))
 
 const prompt = (cmd) =>
@@ -150,8 +140,6 @@ try {
   execFileSync(chrome(), [
     '--headless', '--disable-gpu', '--hide-scrollbars',
     '--window-size=1200,630', '--force-device-scale-factor=1',
-    // Fast-forwards timers and waits on pending loads, so the web font and
-    // the data-URI avatar are guaranteed in before the shot.
     '--virtual-time-budget=10000',
     `--screenshot=${OUT}`, `file://${page}`,
   ], { stdio: 'ignore' })

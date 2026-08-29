@@ -6,7 +6,6 @@
     --ag-radius: 18px;
     --ag-media-size: 320px;
     --ag-open-size: 420px;
-    /* Measured from the open caption in JS; the artwork keeps clear of it. */
     --ag-caption-h: 0px;
     --ag-shot-pad: clamp(16px, 3.4%, 34px);
 
@@ -48,8 +47,6 @@
     border-radius: inherit;
 }
 
-/* Plate the shots sit on: the same grid + centre glow the generated cover
-   artwork is drawn with, so a screenshot and an SVG plate share a backdrop. */
 .ag-panel__media {
     --ag-gray: 1;
     position: absolute;
@@ -80,11 +77,6 @@
     height: var(--ag-media-size);
 }
 
-/* Collapsed panels keep the oversized box the parallax drift slides around and
-   centre their slice in it; the open one shrinks to the panel so nothing is
-   cropped at its edges, and reserves the caption plate plus its 24px offset.
-   Reserving on every panel instead would strand the artwork off-centre in the
-   slivers, where the media box is taller than the panel. */
 .ag-panel--active .ag-panel__media {
     width: 100%;
     height: 100%;
@@ -101,8 +93,6 @@
     justify-content: center;
 }
 
-/* Intrinsic sizing rather than object-fit, so the border and radius wrap the
-   picture itself instead of a letterboxed box around it. */
 .ag-panel__shot img {
     max-width: 100%;
     max-height: 100%;
@@ -116,7 +106,6 @@
     -webkit-user-drag: none;
 }
 
-/* The dim factor lives on .ag-panel so this sibling actually inherits it. */
 .ag-panel__overlay {
     position: absolute;
     inset: 0;
@@ -129,8 +118,6 @@
         color-mix(in srgb, var(--ag-overlay) calc(var(--ag-dim) * 100%), transparent);
 }
 
-/* Rotated project name shown while a panel is collapsed, so no panel is an
-   anonymous sliver. Fades out as the caption below fades in. */
 .ag-panel__spine {
     position: absolute;
     left: 50%;
@@ -165,8 +152,6 @@
     gap: 16px;
     padding: 18px 20px;
     border-radius: 14px;
-    /* The card itself is only painted on the open panel. gsap fades the copy;
-       fading the copy alone would leave an empty plate on every sliver. */
     background: transparent;
     border: 1px solid transparent;
     transition: background 0.35s ease, border-color 0.35s ease;
@@ -215,7 +200,6 @@
     opacity: 0;
 }
 
-/* Official brand marks, rendered monochrome to stay in the site's palette. */
 .ag-panel__tech {
     list-style: none;
     margin: 0 0 14px;
@@ -269,8 +253,6 @@
     text-overflow: ellipsis;
 }
 
-/* Inset anchor covering the panel: keeps the caption's rich copy out of the
-   link's accessible name while the whole panel stays clickable. */
 .ag-panel__hit {
     position: absolute;
     inset: 0;

@@ -12,7 +12,6 @@
   will-change: scroll-position;
 }
 
-/* Hide the internal scrollbar for a cleaner look */
 .scroll-stack-scroller::-webkit-scrollbar {
   width: 0;
   height: 0;
@@ -42,7 +41,6 @@
   border-radius: 40px;
   box-sizing: border-box;
   position: relative;
-  /* Match the site's neutral dark aesthetic */
   background: linear-gradient(145deg, #151515, #0c0c0c);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
@@ -60,7 +58,6 @@
   height: 1px;
 }
 
-/* --- Hobby card content (monochrome, matches site) --- */
 .hobby-card-title {
   font-size: 1.9rem;
   font-weight: 700;

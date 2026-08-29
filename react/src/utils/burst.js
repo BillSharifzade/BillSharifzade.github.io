@@ -1,7 +1,3 @@
-// GooeyNav's click-burst mechanic (reactbits.dev), extracted and re-tuned as
-// a hover flourish: N points scatter from the element's centre on randomized
-// spokes and pull back in, in the site's grey ramp. Used by the contact-orbit
-// chips and the Download CV button. Styles live in Burst.css.
 
 import './Burst.css'
 

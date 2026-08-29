@@ -9,7 +9,6 @@ import {
   siGitlab,
 } from 'simple-icons'
 
-// `slug` selects the part-level hover animation in AnimatedTechIcon.
 export const techIcons = [
   { title: 'Rust', slug: 'rust', path: siRust.path },
   { title: 'React', slug: 'react', path: siReact.path },

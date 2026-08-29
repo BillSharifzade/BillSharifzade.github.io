@@ -2,8 +2,6 @@ import { useState } from 'react'
 import CvFormatDialog from './CvFormatDialog.jsx'
 import { burst } from '../utils/burst.js'
 
-// Hover fires the same monochrome particle burst as the contact-orbit chips,
-// sized down for the pill shape.
 const BTN_BURST = { count: 10, distances: [58, 10], time: 420 }
 
 function DownloadCvButton({ className = '', onDownloaded }) {

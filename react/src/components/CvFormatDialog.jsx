@@ -11,8 +11,6 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
   useEffect(() => {
     if (!open) return
     setError(null)
-    // The opener keeps focus when the portal mounts — move it into the dialog
-    // and trap Tab inside until close, then hand it back.
     const prevFocus = document.activeElement
     panelRef.current?.focus()
     const onKey = (e) => {
@@ -36,7 +34,6 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
       }
     }
     document.addEventListener('keydown', onKey)
-    // Freeze both native scroll and Lenis while the dialog is open.
     const lenis = window.__appLenis
     lenis?.stop()
     document.body.style.overflow = 'hidden'

@@ -3,22 +3,10 @@ import { wipProjects } from '../data/wip.js'
 import { CV_FORMATS } from '../utils/cvExporters.js'
 import './WipTerminal.css'
 
-// A working shell, not a screenshot of one. Everything routes through one
-// exec(): the auto-typed `wip` on first scroll-into-view runs the same path a
-// visitor's keystrokes do, so there is no separate "demo mode" to drift out of
-// sync. `cd <section>` drives the page's own Lenis instance, which is the whole
-// joke: the site really is the filesystem.
-//
-// Output streams line by line through one queue (stream/abortStream); the
-// prompt row hides while a stream is live and Ctrl+C drops whatever is left.
-// Input is a real <input> laid transparently over the prompt line (mobile
-// keyboards, IME, native selection all keep working); what you see is a mirror
-// of its value with a block cursor drawn at selectionStart.
 
 const HOME = '/universe/laniakea/milky_way/solar_system/earth/coolest_website'
 const SECTIONS = ['home', 'about', 'skills', 'projects', 'in-progress', 'experience', 'hobbies', 'contact']
 const FILES = ['README.md', 'wip.toml']
-// Write-y verbs all fail the same way; sudo has its own answer.
 const DENIED = ['rm', 'touch', 'mkdir', 'rmdir', 'mv', 'cp', 'chmod', 'chown', 'dd']
 const COMMANDS = [
   'help', 'pwd', 'ls', 'cd', 'cat', 'wip', 'ps', 'neofetch', 'fastfetch', 'echo', 'download',
@@ -64,7 +52,6 @@ const PS_ROWS = [
   ['1024', '0.0', '0.1', 'wip-term -e rush'],
 ]
 
-// --- pure line builders: a line is { pre?, spans: [{ t, c }] } -------------
 
 const s = (t, c = 'txt') => ({ t, c })
 const line = (...spans) => ({ spans })
@@ -91,7 +78,6 @@ function wipLines() {
   const dots = ['ok', 'accent', 'cyan']
   const out = [line(s('current work, closest to shipping first:', 'dim')), blank()]
   wipProjects.forEach((p, i) => {
-    // One project is not like the others.
     if (p.special) {
       const filled = Math.round(p.progress * 18)
       out.push(
@@ -254,8 +240,6 @@ function shutdownLines() {
   ]
 }
 
-// systemd cosplay for the power button. Delays are the pause AFTER each line:
-// fast bursts with a few thinking-pauses, like a machine that actually boots.
 function bootEntries() {
   const ok = (txt) => line(s('[  OK  ] ', 'ok'), s(txt))
   const krn = (stamp, txt) => pre(s(`[${stamp}] `, 'dim'), s(txt))
@@ -285,7 +269,6 @@ function bootEntries() {
 
 const prefersReduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-// --------------------------------------------------------------------------
 
 export default function WipTerminal() {
   const [lines, setLines] = useState(motdLines)
@@ -296,8 +279,7 @@ export default function WipTerminal() {
   const [power, setPower] = useState('on')
   const [compact, setCompact] = useState(false)
   const [ask, setAsk] = useState(false)
-  const [hintStage, setHintStage] = useState('hidden') // hidden | shown | leaving
-  // Mirror of download-flow outcomes for screen readers (role="status" below).
+  const [hintStage, setHintStage] = useState('hidden')
   const [srStatus, setSrStatus] = useState('')
   const stageRef = useRef(null)
   const rootRef = useRef(null)
@@ -326,14 +308,11 @@ export default function WipTerminal() {
     return id
   }
 
-  // Announce a status message to screen readers, then clear it so a later
-  // re-render can't re-announce stale text.
   function announce(msg) {
     setSrStatus(msg)
     later(() => setSrStatus((cur) => (cur === msg ? '' : cur)), 5000)
   }
 
-  // --- output streaming ----------------------------------------------------
 
   function abortStream() {
     const st = streamRef.current
@@ -341,14 +320,11 @@ export default function WipTerminal() {
     clearTimeout(st.timer)
     streamRef.current = null
     busyRef.current = false
-    // An aborted shutdown stream never reaches collapseToPower — ^C saves the
-    // machine — so the red button must become pressable again.
     poweringRef.current = false
     setBusy(false)
     return true
   }
 
-  // entries: [{ line, delay }] where delay is the pause after the line.
   function stream(entries, { onDone } = {}) {
     if (!entries.length) {
       onDone?.()
@@ -380,7 +356,6 @@ export default function WipTerminal() {
     st.timer = setTimeout(tick, 40)
   }
 
-  // --- power ---------------------------------------------------------------
 
   function collapseToPower() {
     const stage = stageRef.current
@@ -388,12 +363,7 @@ export default function WipTerminal() {
     if (!stage || !term || powerRef.current === 'off') return
     askRef.current = false
     setAsk(false)
-    // Hiding the terminal would silently drop focus to <body>; hand it to the
-    // power button instead — but only once its visibility transition allows
-    // focusing (it turns visible 0.28s into the collapse), and only if focus
-    // was actually inside the terminal.
     const hadFocus = stage.contains(document.activeElement)
-    // Pin the current height so the CSS transition has a number to leave from.
     stage.style.height = term.offsetHeight + 'px'
     void stage.offsetHeight
     powerRef.current = 'off'
@@ -402,9 +372,6 @@ export default function WipTerminal() {
     requestAnimationFrame(() => {
       stage.style.height = POWER_STAGE_H + 'px'
     })
-    // The button only becomes focusable 0.28s into its visibility transition
-    // and the browser drops focus to <body> when the terminal hides at 0.55s,
-    // so keep grabbing until the focus actually sticks.
     if (hadFocus) {
       let tries = 0
       const grab = () => {
@@ -425,9 +392,6 @@ export default function WipTerminal() {
     setPower('on')
     setLines([])
     stickRef.current = true
-    // The power button hides itself; park focus on the red dot (not the input,
-    // which would pop the keyboard on touch) so keyboard users aren't dropped
-    // to <body>.
     const hadFocus = document.activeElement === powerBtnRef.current
     if (hadFocus) {
       let tries = 0
@@ -468,7 +432,6 @@ export default function WipTerminal() {
     }, 500)
   }
 
-  // --- hint pill -----------------------------------------------------------
 
   function dismissHint() {
     if (hintDoneRef.current) return
@@ -477,7 +440,6 @@ export default function WipTerminal() {
     later(() => setHintStage('hidden'), 450)
   }
 
-  // --- cv download ---------------------------------------------------------
 
   async function runExport(fmt) {
     if (exportingRef.current) {
@@ -522,7 +484,6 @@ export default function WipTerminal() {
     stream([{ line: line(s(`generating ${fmt.label} …`, 'dim')), delay: 80 }], { onDone: () => runExport(fmt) })
   }
 
-  // --- the shell -----------------------------------------------------------
 
   function warpTo(id) {
     const el = document.getElementById(id)
@@ -600,7 +561,7 @@ export default function WipTerminal() {
       case 'exit':
         return [line(s('there is no escape — scroll instead', 'dim'))]
       case 'clear':
-        return null // handled by caller
+        return null
       case 'reboot':
         later(() => window.location.reload(), 900)
         return [
@@ -656,9 +617,6 @@ export default function WipTerminal() {
     stream(entries, { onDone })
   }
 
-  // Boot: auto-type `wip` the first time the terminal scrolls into view, through
-  // the same submit() a visitor uses. The hint pill follows once the output has
-  // had a moment on screen.
   useEffect(() => {
     const root = rootRef.current
     if (!root || bootedRef.current) return
@@ -702,8 +660,6 @@ export default function WipTerminal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Keep the newest line in view — before paint (useEffect scrolled after it,
-  // which read as flicker) and only while the reader is actually at the bottom.
   useLayoutEffect(() => {
     const body = bodyRef.current
     if (body && stickRef.current) body.scrollTop = body.scrollHeight
@@ -759,7 +715,6 @@ export default function WipTerminal() {
   }
 
   function onKeyDown(e) {
-    // Mid-IME-composition Enter/Tab commits the composition, not the command.
     if ((e.isComposing || e.keyCode === 229) && (e.key === 'Enter' || e.key === 'Tab')) return
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -811,7 +766,6 @@ export default function WipTerminal() {
     }
   }
 
-  // Focus on click, but never at the cost of selecting output text.
   function onBodyClick() {
     if (window.getSelection()?.isCollapsed) inputRef.current?.focus({ preventScroll: true })
   }
@@ -823,10 +777,6 @@ export default function WipTerminal() {
   return (
     <div className={`wt-stage${power === 'off' ? ' wt-stage--off' : ''}`} ref={stageRef}>
       {power === 'on' && hintStage !== 'hidden' && (
-        // Decorative nudge (the header already carries "click · try 'help'"
-        // for AT): a note with a hand-drawn arrow pointing into the terminal.
-        // Opacity and float live on different properties/elements so the
-        // animations can't fight over `transform` like the old pill's did.
         <button
           type="button"
           className={`wt-hint-callout${hintStage === 'leaving' ? ' wt-hint-callout--leaving' : ''}`}

@@ -3,24 +3,6 @@ import { gsap } from 'gsap'
 
 import './AccordionGallery.css'
 
-// Adapted from React Bits' AccordionGallery. Two changes beyond styling:
-//
-//  1. `--ag-dim` is set on the panel, not on `.ag-panel__media`. Upstream declares
-//     it on the media element while the overlay that consumes it is a *sibling*,
-//     so the custom property never inherits and the dimming tween is inert.
-//  2. The panel is a <div> with an inset <a> hit area instead of being an <a>
-//     itself. Each caption carries a title, stack and description; making the
-//     whole thing one link would fold all of that into the link's accessible
-//     name. The anchor is labelled by the heading and the copy stays readable.
-//  3. Artwork is *contained*, not full-bleed. Covers here are UI screenshots and
-//     diagrams that only read if you can see all of them, so the media box is
-//     sized to the panel while it is open and its bottom padding is measured
-//     from the caption (`--ag-caption-h`) instead of being guessed — otherwise
-//     the caption plate blankets the lower half of every cover. A panel may
-//     carry several shots; they share the region side by side.
-//
-// Narrow viewports flip to a vertical accordion in JS rather than in a media
-// query, so the media-size measurement stays on the same axis as the layout.
 
 const AccordionGallery = ({
   items = [],
@@ -61,8 +43,6 @@ const AccordionGallery = ({
 
   const count = items.length
   const [active, setActive] = useState(Math.min(Math.max(defaultIndex, 0), Math.max(count - 1, 0)))
-  // `active` is also mirrored in a ref: focus fires on pointerdown and re-renders
-  // before the click handler runs, so handlers cannot trust their captured copy.
   const activeRef = useRef(active)
   const pressOpenRef = useRef(null)
 
@@ -187,12 +167,7 @@ const AccordionGallery = ({
       const size = Math.max(140, usable * Math.min(Math.max(expandRatio, 0.2), 0.9) * 1.22)
       mediaSizeRef.current = size
       el.style.setProperty('--ag-media-size', `${size}px`)
-      // Captions are laid out at the *expanded* width for the whole tween, so
-      // the copy does not reflow line-by-line while the panel is still opening.
       el.style.setProperty('--ag-open-size', `${usable * Math.min(Math.max(expandRatio, 0.2), 0.9)}px`)
-      // Every caption is laid out at the open width, so the active one's height
-      // is the space the artwork has to stay clear of. Read it after the two
-      // properties above are set, or it reflects the previous open width.
       const label = labelRefs.current[active]
       el.style.setProperty('--ag-caption-h', `${label ? label.offsetHeight : 0}px`)
       applyLayout(!firstRunRef.current)
@@ -220,13 +195,6 @@ const AccordionGallery = ({
     if (trigger === 'hover' && !narrow) openPanel(i)
   }
 
-  // First interaction with a collapsed panel opens it; the second follows the
-  // link. Without this a tap on a sliver would navigate before it was readable.
-  //
-  // The decision must be made against the panel that was open when the press
-  // STARTED. Pressing the anchor focuses it, onFocus opens that panel, and React
-  // re-renders — so by the time click fires a naive `i !== active` test is
-  // already false, and every first tap on a touch device navigates away.
   const handlePointerDown = () => {
     pressOpenRef.current = activeRef.current
   }
@@ -240,9 +208,6 @@ const AccordionGallery = ({
     }
   }
 
-  // Step from the panel that is *open*, not the one holding focus, and take
-  // focus with it. Deriving the step from the focused index means a second
-  // arrow press recomputes the same neighbour and the gallery stops moving.
   const step = (delta) => {
     const idx = (activeRef.current + delta + count) % count
     openPanel(idx)

@@ -4,11 +4,6 @@ import { burst } from '../utils/burst.js'
 import signalLogo from '../assets/signal_logo.svg'
 import './ContactOrbit.css'
 
-// The contact channels as chips orbiting a rotating call-to-action pill on a
-// visible dashed path (desktop only — the plain .contact-grid stays for
-// narrow screens, see ContactOrbit.css). Hovering a chip fires a monochrome
-// particle burst; the centre pill cycles through one ask per channel and
-// links to whichever it is currently showing.
 
 const CHANNELS = [
   { label: 'Email', handle: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com', icon: 'fas fa-envelope' },
@@ -25,7 +20,6 @@ const CHANNELS = [
 ]
 
 const href = (label) => CHANNELS.find((c) => c.label === label)
-// One ask per channel; the pill links to the channel it is showing.
 const CENTER_CTAS = [
   { text: 'text me on Telegram!', ...href('Telegram') },
   { text: 'follow & drop a ★ on GitHub', ...href('GitHub') },
@@ -69,7 +63,6 @@ export default function ContactOrbit() {
     </a>
   ))
 
-  // Under reduced motion the pill holds still on the email ask.
   const cta = reduced ? CENTER_CTAS[CENTER_CTAS.length - 1] : CENTER_CTAS[ctaIndex]
 
   return (
@@ -89,7 +82,6 @@ export default function ContactOrbit() {
         pathColor="rgba(255, 255, 255, 0.16)"
         pathWidth={2}
         centerContent={
-          // key remounts the pill per message, replaying the entrance.
           <a
             key={cta.text}
             className="orbit-center-cta"

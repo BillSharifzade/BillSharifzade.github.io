@@ -1,11 +1,6 @@
-/* Stage wraps terminal + power button so power-off can animate the wrapper's
-   height (set imperatively in px) without the page jumping around. */
 .wt-stage {
     position: relative;
     max-width: 940px;
-    /* Extra top gap so the hint callout clears the section title's glyphs
-       (measured: title SVG bottom sits 192px into the section; the callout
-       needs its own 92px above the terminal). */
     margin: 88px auto 0;
     transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -25,12 +20,10 @@
         opacity 0.4s ease;
 }
 
-/* Green dot: a bit smaller, visibly but not drastically. */
 .wip-terminal--compact {
     max-width: 800px;
 }
 
-/* Red dot: shrink into the power button and get out of the tab order. */
 .wt-stage--off .wip-terminal {
     transform: scale(0.05);
     opacity: 0;
@@ -51,7 +44,6 @@
     background: #0a0a0c;
 }
 
-/* --- traffic lights ----------------------------------------------------- */
 
 .wt-dot {
     width: 12px;
@@ -74,7 +66,6 @@
     transition: transform 0.18s ease, filter 0.18s ease;
 }
 
-/* Invisible halo that lifts the 12px dots to a ~26px hit target. */
 .wt-dot--close::before,
 .wt-dot--zoom::before {
     content: '';
@@ -141,9 +132,6 @@
     opacity: 0;
 }
 
-/* --- "this terminal is real" note + arrow -------------------------------- */
-/* Static (no float) — it only fades in, draws its arrow, and fades away on
-   dismissal. */
 
 .wt-hint-callout {
     position: absolute;
@@ -179,7 +167,6 @@
     filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.3));
 }
 
-/* pathLength=1 normalises both paths, so one dash unit draws each fully. */
 .wt-hint-arrow-line {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -210,7 +197,6 @@
     to { stroke-dashoffset: 0; }
 }
 
-/* Visually hidden live region for download-flow announcements. */
 .wt-sr-status {
     position: absolute;
     width: 1px;
@@ -223,12 +209,6 @@
     border: 0;
 }
 
-/* --- power button -------------------------------------------------------- */
-/* Three layers of one machined button: the element is the brushed-steel bezel
-   (conic gradient), ::before is the domed cap that physically depresses on
-   :active, ::after carries the idle pulse ring so the keyframes never fight
-   the bezel's own layered shadows. Everything animated is transform/opacity/
-   box-shadow on a tiny element — nothing here touches layout. */
 
 .wt-power {
     position: absolute;
@@ -243,8 +223,6 @@
     border-radius: 50%;
     border: 1px solid #0a0b0d;
     padding: 0;
-    /* Brushed-steel bezel: alternating bright/dark conic stops read as light
-       raking across a machined ring. */
     background:
         conic-gradient(from 210deg,
             #585c64, #b9c0cb 9%, #34373d 21%, #8b919c 33%, #3a3d44 45%,
@@ -265,9 +243,6 @@
         visibility 0s 0.45s;
 }
 
-/* The cap: a domed inset face that takes the actual press. The 2px ring of
-   near-black box-shadow around it is the machined groove between cap and
-   bezel — that recess line is what sells the depth. */
 .wt-power::before {
     content: '';
     position: absolute;
@@ -282,7 +257,6 @@
     transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-/* Pulse ring lives on its own layer. */
 .wt-power::after {
     content: '';
     position: absolute;
@@ -327,7 +301,6 @@
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 7px rgba(255, 255, 255, 0.45));
 }
 
-/* Press: the cap sinks into the bezel, the glyph rides it down. */
 .wt-stage--off .wt-power:active {
     transform: scale(1.02);
 }
@@ -362,14 +335,11 @@
     }
 }
 
-/* --- body ---------------------------------------------------------------- */
 
 .wt-body {
     height: clamp(380px, 52vh, 520px);
     overflow-y: auto;
     overflow-x: auto;
-    /* Reserve the scrollbar lane up front — its appearance mid-stream was one
-       of the flicker sources. */
     scrollbar-gutter: stable;
     overscroll-behavior: contain;
     padding: 18px 20px 22px;
@@ -377,7 +347,6 @@
     line-height: 1.6;
     cursor: text;
     transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    /* Firefox */
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
@@ -402,13 +371,11 @@
     min-height: 1.6em;
 }
 
-/* Aligned output (tables, ASCII art) must not wrap; the body scrolls sideways. */
 .wt-line--pre {
     white-space: pre;
     word-break: normal;
 }
 
-/* --- palette ----------------------------------------------------------- */
 
 .wt-txt { color: #e3d3d3; }
 .wt-dim { color: #6e6e78; }
@@ -418,7 +385,6 @@
 .wt-accent { color: #fdba74; }
 .wt-cyan { color: #22d3ee; }
 
-/* neofetch swatch row */
 .wt-c0 { color: #3f3f46; }
 .wt-c1 { color: #f87171; }
 .wt-c2 { color: #4ade80; }
@@ -428,7 +394,6 @@
 .wt-c6 { color: #22d3ee; }
 .wt-c7 { color: #e5e5e5; }
 
-/* the MIPE palette — one project earns a glow */
 .wt-love {
     color: #fb7185;
     text-shadow: 0 0 12px rgba(251, 113, 133, 0.35);
@@ -462,15 +427,12 @@
     }
 }
 
-/* --- prompt & cursor --------------------------------------------------- */
 
 .wt-line--prompt {
     position: relative;
     white-space: pre-wrap;
 }
 
-/* Real input stretched over the prompt line: invisible but fully functional,
-   so focus, IME, and mobile keyboards behave. The mirror spans render it. */
 .wt-input {
     position: absolute;
     inset: 0;
@@ -520,7 +482,6 @@
         animation: none;
     }
 
-    /* No draw-in: show the arrow fully. */
     .wt-hint-arrow-line,
     .wt-hint-arrow-head {
         stroke-dashoffset: 0;
@@ -561,9 +522,6 @@
         display: none;
     }
 
-    /* iOS Safari zooms the page when a focused input's font-size is under
-       16px. The input is an invisible overlay, so the mirror's metrics are
-       unaffected. */
     .wt-input {
         font-size: 16px;
     }

@@ -6,8 +6,6 @@ import './BounceCards.css';
 export default function BounceCards({
     className = '',
     images = [],
-    // Monochrome icon cards: [{ title, path }] with 24x24 SVG path data.
-    // When provided, takes precedence over `images`.
     items = [],
     containerWidth = 400,
     containerHeight = 400,

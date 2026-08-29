@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import './VisitorCounter.css'
 
-// Unique-visitor counter backed by Abacus (https://abacus.jasoncameron.dev):
-// GET /hit/{ns}/{key} increments and returns {"value":N}; /get reads without
-// incrementing. A localStorage flag decides which one this browser calls, so
-// each visitor is counted once. If storage is unavailable (private mode) we
-// only ever read — never double-count. If the API is unreachable after one
-// retry, the component renders nothing rather than a broken pill.
 const API = 'https://abacus.jasoncameron.dev'
 const NAMESPACE = 'billsharifzade-github-io'
-// Dev builds hit a separate key so local testing never inflates the real count.
 const COUNTER_KEY = import.meta.env.DEV ? 'unique-visitors-dev' : 'unique-visitors'
 const VISITED_FLAG = 'bs_uv_counted_v1'
 
@@ -57,9 +50,6 @@ export default function VisitorCounter() {
         try {
           const value = await fetchValue(action, controller.signal)
           clearTimeout(timer)
-          // Flag before the cancelled check: the server already counted this
-          // hit, and skipping the flag (unmount, StrictMode re-run) would
-          // count the same visitor again next time.
           if (action === 'hit') markVisited()
           if (cancelled) return
           setCount(value)
@@ -71,7 +61,6 @@ export default function VisitorCounter() {
           if (cancelled) return
         }
       }
-      // Both attempts failed — stay hidden.
     })()
 
     return () => {
@@ -80,7 +69,6 @@ export default function VisitorCounter() {
     }
   }, [])
 
-  // Count up from zero once the pill scrolls into view.
   useEffect(() => {
     if (count === null) return
     const el = rootRef.current

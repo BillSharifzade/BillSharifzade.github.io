@@ -2,15 +2,6 @@ import { useId, useMemo } from 'react'
 import { splitSubpaths } from '../utils/svgSubpaths.js'
 import './AnimatedTechIcon.css'
 
-// Part-level animations for the Current Stack logos. Each builder decides how
-// far a glyph can be taken apart: subpaths that act as winding holes (Rust's
-// R, the Next.js N, React's orbit rings) must stay inside one <path> element
-// or the holes fill in. Where a part can't be split, it is separated
-// geometrically instead — two copies of the whole glyph cut apart with a
-// clipPath/mask pair that overlaps inside solid fill, so the seam never
-// shows (Rust's spinning rim, the Postgres trunk, the GitLab ears). Parts are
-// classified by geometry (area / position), not by subpath index, so a
-// simple-icons update reshuffling subpath order won't silently break this.
 
 const CENTER = 12
 
@@ -20,9 +11,6 @@ const byAreaDesc = (subs) => [...subs].sort((a, b) => b.bbox.area - a.bbox.area)
 
 function buildReact(path) {
   const subs = splitSubpaths(path)
-  // The nucleus is the simplest centered subpath; it sits in a zero-winding
-  // gap, so it can pulse as its own element. The orbit fragments keep their
-  // shared winding by being re-joined into a single path.
   const centered = subs.filter((sp) => distToCenter(sp.bbox) < 2)
   const nucleus = centered.length
     ? centered.reduce((a, b) => (a.d.length <= b.d.length ? a : b))
@@ -38,10 +26,6 @@ function buildReact(path) {
 }
 
 function buildRust(path, uid) {
-  // The R is carved out of the cog by winding holes, but the glyph has a
-  // fully solid annulus at r 10.0–10.8 (measured against the raster), so the
-  // toothed rim can be cut off along it and spun while the R and its bolt
-  // holes hold still. Both copies overlap inside the band, hiding the seam.
   const maskId = `${uid}-rustrim`
   const clipId = `${uid}-rustcore`
   return (
@@ -64,9 +48,6 @@ function buildRust(path, uid) {
 }
 
 function buildNext(path, uid) {
-  // The N is carved out of the solid disc, so a sheen swept BEHIND the disc
-  // shows only through the letterforms — light travelling along the N — while
-  // a comet with a fading tail orbits the rim outside.
   const gid = `${uid}-nextsheen`
   const clipId = `${uid}-nextdisc`
   return (
@@ -82,7 +63,6 @@ function buildNext(path, uid) {
         </clipPath>
       </defs>
       <g clipPath={`url(#${clipId})`}>
-        {/* Rotated to run along the N's diagonal; the inner group translates. */}
         <g transform="rotate(35 12 12)">
           <g className="ati-next-sheen">
             <rect x="6" y="-8" width="12" height="40" fill={`url(#${gid})`} />
@@ -114,9 +94,6 @@ function buildDocker(path) {
 }
 
 function buildKafka(path) {
-  // The node circles are hollow rings tangled into the connector web's
-  // winding, so the glyph stays intact and two "data" dots travel the links:
-  // top → middle → lower-right and bottom → middle → upper-right.
   const subs = splitSubpaths(path)
   if (subs.length < 6) return <path d={path} />
   const nodes = byAreaDesc(subs).slice(1)
@@ -148,13 +125,6 @@ function buildKafka(path) {
   )
 }
 
-// The tanuki's ears are the two spikes above the head line (y≈7.8182, traced
-// from the path: inner bases at x 7.5375/16.4686, tip arcs verbatim from the
-// original, outer edges cut where they cross the head line). The base glyph is
-// masked to below that line and these replacement ears — extended by a small
-// root skirt that hides inside the solid head — wiggle on top. Without the
-// mask the original ears stay painted and any overlay motion is invisible,
-// which is why the previous version read as "no animation".
 const GITLAB_HEADLINE = 7.8182
 const GITLAB_EARS = [
   {
@@ -193,11 +163,6 @@ function buildGitlab(path, uid) {
 }
 
 function buildPg(path, uid) {
-  // Outline-style glyph: the eye highlights are two small independent white
-  // dots (safe to split — verified pixel-identical), and the trunk below
-  // y=18 is only the two converging outline strokes. The trunk copy skews
-  // about the y=18 line, which keeps every point ON the cut line fixed, so
-  // the joint is seamless while the tip sweeps.
   const subs = splitSubpaths(path)
   const dots = subs.filter((sp) => sp.bbox.area < 2.5 && sp.bbox.cy < 9)
   if (dots.length !== 2) return <path className="ati-pg-body" d={path} />
