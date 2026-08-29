@@ -292,7 +292,7 @@ function App() {
 
       <section id="skills" className="section fade-in-section" style={{ paddingTop: 40, paddingBottom: 40 }}>
         <div className="container">
-          <SectionTitle text="Core Stack" />
+          <SectionTitle text="My skills" />
           <div className="folders-grid">
             <Folder
               size={1.35}
