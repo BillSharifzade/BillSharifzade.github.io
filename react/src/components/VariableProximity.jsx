@@ -1,10 +1,13 @@
 import { forwardRef, useMemo, useRef, useEffect } from 'react';
-// eslint-disable-next-line no-unused-vars -- used as <motion.span>; this config has no jsx-uses-vars
-import { motion } from 'motion/react';
+import { useOnScreen } from '../hooks/useOnScreen.js';
 import './VariableProximity.css';
 
-function useAnimationFrame(callback) {
+// Runs `callback` per frame, but only while `active` — an always-on rAF loop
+// keeps the main thread awake (and the laptop fan on) for an effect nobody can
+// see when the element is scrolled away.
+function useAnimationFrame(callback, active) {
     useEffect(() => {
+        if (!active) return;
         let frameId;
         const loop = () => {
             callback();
@@ -12,7 +15,7 @@ function useAnimationFrame(callback) {
         };
         frameId = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(frameId);
-    }, [callback]);
+    }, [callback, active]);
 }
 
 function useMousePositionRef(containerRef) {
@@ -102,6 +105,26 @@ const VariableProximity = forwardRef((props, ref) => {
         }
     };
 
+    // Letter centres only move when layout does, so they are measured once and
+    // reused. Reading them back every frame forced a full layout flush per
+    // letter on every mouse move — the single most expensive thing on the page.
+    const centersRef = useRef(null);
+    const staleRef = useRef(true);
+    const restedRef = useRef(false);
+
+    useEffect(() => {
+        const invalidate = () => { staleRef.current = true; };
+        window.addEventListener('resize', invalidate);
+        window.addEventListener('scroll', invalidate, { passive: true });
+        document.fonts?.ready.then(invalidate).catch(() => { });
+        return () => {
+            window.removeEventListener('resize', invalidate);
+            window.removeEventListener('scroll', invalidate);
+        };
+    }, [label]);
+
+    const active = useOnScreen(containerRef);
+
     useAnimationFrame(() => {
         if (!containerRef?.current) return;
         const { x, y } = mousePositionRef.current;
@@ -109,21 +132,42 @@ const VariableProximity = forwardRef((props, ref) => {
             return;
         }
         lastPositionRef.current = { x, y };
-        const containerRect = containerRef.current.getBoundingClientRect();
+
+        if (staleRef.current || !centersRef.current) {
+            const containerRect = containerRef.current.getBoundingClientRect();
+            centersRef.current = letterRefs.current.map((letterRef) => {
+                if (!letterRef) return null;
+                const rect = letterRef.getBoundingClientRect();
+                return {
+                    cx: rect.left + rect.width / 2 - containerRect.left,
+                    cy: rect.top + rect.height / 2 - containerRect.top,
+                };
+            });
+            staleRef.current = false;
+        }
+
+        const centers = centersRef.current;
+
+        // Far from every letter: reset once, then stay idle until the pointer
+        // comes back into range.
+        const inRange = centers.some(
+            (c) => c && calculateDistance(x, y, c.cx, c.cy) < radius
+        );
+        if (!inRange) {
+            if (restedRef.current) return;
+            restedRef.current = true;
+            letterRefs.current.forEach((letterRef) => {
+                if (letterRef) letterRef.style.fontVariationSettings = fromFontVariationSettings;
+            });
+            return;
+        }
+        restedRef.current = false;
 
         letterRefs.current.forEach((letterRef, index) => {
-            if (!letterRef) return;
+            const center = centers[index];
+            if (!letterRef || !center) return;
 
-            const rect = letterRef.getBoundingClientRect();
-            const letterCenterX = rect.left + rect.width / 2 - containerRect.left;
-            const letterCenterY = rect.top + rect.height / 2 - containerRect.top;
-
-            const distance = calculateDistance(
-                mousePositionRef.current.x,
-                mousePositionRef.current.y,
-                letterCenterX,
-                letterCenterY
-            );
+            const distance = calculateDistance(x, y, center.cx, center.cy);
 
             if (distance >= radius) {
                 letterRef.style.fontVariationSettings = fromFontVariationSettings;
@@ -141,7 +185,7 @@ const VariableProximity = forwardRef((props, ref) => {
             interpolatedSettingsRef.current[index] = newSettings;
             letterRef.style.fontVariationSettings = newSettings;
         });
-    });
+    }, active);
 
     const words = label.split(' ');
     let letterIndex = 0;
@@ -159,7 +203,7 @@ const VariableProximity = forwardRef((props, ref) => {
                     {word.split('').map(letter => {
                         const currentLetterIndex = letterIndex++;
                         return (
-                            <motion.span
+                            <span
                                 key={currentLetterIndex}
                                 ref={el => {
                                     letterRefs.current[currentLetterIndex] = el;
@@ -171,7 +215,7 @@ const VariableProximity = forwardRef((props, ref) => {
                                 aria-hidden="true"
                             >
                                 {letter}
-                            </motion.span>
+                            </span>
                         );
                     })}
                     {wordIndex < words.length - 1 && <span style={{ display: 'inline-block' }}>&nbsp;</span>}

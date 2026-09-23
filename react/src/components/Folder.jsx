@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon from './Icon.jsx'
 import './Folder.css'
 
 function darkenColor(hex, percent) {
@@ -22,7 +23,7 @@ export default function Folder({
   items = [],
   className = '',
   label,
-  iconClass,
+  icon,
 }) {
   const maxItems = 3
   const papers = items.slice(0, maxItems)
@@ -114,7 +115,7 @@ export default function Folder({
           <div className="folder__front right"></div>
           {label && (
             <div className="folder__label">
-              {iconClass && <i className={iconClass} aria-hidden="true"></i>}
+              {icon && <Icon name={icon} />}
               <span className="folder__label-text">{label}</span>
             </div>
           )}

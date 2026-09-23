@@ -217,7 +217,7 @@
   pointer-events: none;
 }
 
-.folder__label i {
+.folder__label .icon {
   font-size: 16px;
 }
 .folder:focus-visible {

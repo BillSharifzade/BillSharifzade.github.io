@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon from './Icon.jsx'
 import CvFormatDialog from './CvFormatDialog.jsx'
 import { burst } from '../utils/burst.js'
 
@@ -18,7 +19,7 @@ function DownloadCvButton({ className = '', onDownloaded }) {
         aria-haspopup="dialog"
         aria-expanded={dialogOpen}
       >
-        <i className="fas fa-download"></i>
+        <Icon name="download" />
         <span>Download CV</span>
       </button>
       <CvFormatDialog

@@ -1,37 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import OrbitImages from './OrbitImages.jsx'
+import { useOnScreen } from '../hooks/useOnScreen.js'
 import { burst } from '../utils/burst.js'
-import signalLogo from '../assets/signal_logo.svg'
+import { channel, channels } from '../data/contacts.js'
+import { CONTACT_LOGOS } from '../data/contactLogos.js'
+import Icon from './Icon.jsx'
 import './ContactOrbit.css'
 
 
-const CHANNELS = [
-  { label: 'Email', handle: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com', icon: 'fas fa-envelope' },
-  {
-    label: 'Signal',
-    handle: 'qwantum.01',
-    href: 'https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN',
-    img: signalLogo,
-    external: true,
-  },
-  { label: 'Telegram', handle: '@knight_of_bonnie', href: 'https://t.me/knight_of_bonnie', icon: 'fab fa-telegram', external: true },
-  { label: 'LinkedIn', handle: 'Bilal Sharifzade', href: 'https://www.linkedin.com/in/bilal-sharifzade-555bba35a/', icon: 'fab fa-linkedin', external: true },
-  { label: 'GitHub', handle: 'BillSharifzade', href: 'https://github.com/BillSharifzade', icon: 'fab fa-github', external: true },
-]
-
-const href = (label) => CHANNELS.find((c) => c.label === label)
 const CENTER_CTAS = [
-  { text: 'text me on Telegram!', ...href('Telegram') },
-  { text: 'follow & drop a ★ on GitHub', ...href('GitHub') },
-  { text: 'send a network request on LinkedIn', ...href('LinkedIn') },
-  { text: 'ping me on Signal', ...href('Signal') },
-  { text: 'or old-school: email me', ...href('Email') },
+  { text: 'text me on Telegram!', ...channel('Telegram') },
+  { text: 'follow & drop a ★ on GitHub', ...channel('GitHub') },
+  { text: 'send a network request on LinkedIn', ...channel('LinkedIn') },
+  { text: 'ping me on Signal', ...channel('Signal') },
+  { text: 'or old-school: email me', ...channel('Email') },
 ]
 const CTA_INTERVAL = 3400
 
 export default function ContactOrbit() {
   const [reduced, setReduced] = useState(false)
   const [ctaIndex, setCtaIndex] = useState(0)
+  const rootRef = useRef(null)
+  const onScreen = useOnScreen(rootRef)
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -41,13 +31,15 @@ export default function ContactOrbit() {
     return () => mq.removeEventListener('change', sync)
   }, [])
 
+  // No point cycling the call-to-action while the section is off screen — it
+  // only ever re-renders something nobody is looking at.
   useEffect(() => {
-    if (reduced) return
+    if (reduced || !onScreen) return
     const id = window.setInterval(() => setCtaIndex((i) => (i + 1) % CENTER_CTAS.length), CTA_INTERVAL)
     return () => window.clearInterval(id)
-  }, [reduced])
+  }, [reduced, onScreen])
 
-  const chips = CHANNELS.map((c) => (
+  const chips = channels.map((c) => (
     <a
       key={c.label}
       className="orbit-chip"
@@ -57,16 +49,16 @@ export default function ContactOrbit() {
       onFocus={(e) => burst(e.currentTarget)}
       {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
-      {c.img
-        ? <img className="orbit-chip-img" src={c.img} alt="" draggable={false} />
-        : <i className={c.icon} aria-hidden="true"></i>}
+      {c.logo
+        ? <img className="orbit-chip-img" src={CONTACT_LOGOS[c.logo]} alt="" draggable={false} />
+        : <Icon name={c.icon} />}
     </a>
   ))
 
   const cta = reduced ? CENTER_CTAS[CENTER_CTAS.length - 1] : CENTER_CTAS[ctaIndex]
 
   return (
-    <div className="contact-orbit">
+    <div className="contact-orbit" ref={rootRef}>
       <OrbitImages
         items={chips}
         shape="ellipse"

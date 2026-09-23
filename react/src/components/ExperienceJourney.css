@@ -161,11 +161,11 @@
     border-color: var(--primary);
 }
 
-.journey-card.is-open .journey-expand i {
+.journey-card.is-open .journey-expand .icon {
     transform: rotate(180deg);
 }
 
-.journey-expand i {
+.journey-expand .icon {
     transition: transform 0.35s ease;
 }
 

@@ -6,6 +6,7 @@ import milliLogo from '../assets/milli.png'
 import technohubLogo from '../assets/technohub.png'
 import tagLogo from '../assets/tag.png'
 import foundersLogo from '../assets/founder_school.png'
+import Icon from './Icon.jsx'
 import './ExperienceJourney.css'
 
 const COMPANY_LOGOS = {
@@ -84,7 +85,10 @@ function ExperienceJourney() {
       d += ` L ${last.x} ${rect.height}`
 
       path.setAttribute('d', d)
-      setSvgSize({ w: Math.round(rect.width), h: Math.round(rect.height) })
+      // A fresh object every ResizeObserver tick re-renders the whole timeline
+      // even when nothing moved, and the render can feed the observer again.
+      const next = { w: Math.round(rect.width), h: Math.round(rect.height) }
+      setSvgSize((prev) => (prev.w === next.w && prev.h === next.h ? prev : next))
     }
 
     redraw()
@@ -156,7 +160,7 @@ function ExperienceJourney() {
                   aria-expanded={isOpen}
                   aria-label={isOpen ? `Collapse ${exp.company} details` : `Expand ${exp.company} details`}
                 >
-                  <i className="fas fa-chevron-down"></i>
+                  <Icon name="chevron-down" />
                 </button>
               </div>
               <div className="journey-card-body">

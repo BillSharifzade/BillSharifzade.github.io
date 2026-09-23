@@ -3,8 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- Fonts are self-hosted, so no googleapis/gstatic origins are needed. -->
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' data: https://abacus.jasoncameron.dev; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
+    content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' data: https://abacus.jasoncameron.dev; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
   <link rel="icon" type="image/png" href="/src/assets/arch.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,15 +34,18 @@
 
   <meta name="theme-color" content="#0b0b12" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap"
-    rel="stylesheet">
+  <!--JSONLD-->
+  <!-- ^ build placeholder, filled by the cv-seo-fallback plugin in vite.config.js.
+       Do not delete: scripts/strip-comments.mjs skips these, and the build fails
+       if one goes missing. -->
+
+  <!--FONTPRELOAD-->
   <link rel="preload" as="image" href="/src/assets/main_img.webp" fetchpriority="high" />
 </head>
 
 <body>
   <div id="root"></div>
+  <!--CV_FALLBACK-->
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

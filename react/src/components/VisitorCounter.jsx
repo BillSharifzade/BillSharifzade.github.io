@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Icon from './Icon.jsx'
 import './VisitorCounter.css'
 
 const API = 'https://abacus.jasoncameron.dev'
@@ -111,7 +112,7 @@ export default function VisitorCounter() {
       aria-label={`${formatter.format(count)} unique visitors`}
     >
       <span className="vc-dot" aria-hidden="true" />
-      <i className="fas fa-eye" aria-hidden="true" />
+      <Icon name="eye" />
       <span className="vc-count" aria-hidden="true">{formatter.format(display)}</span>
       <span className="vc-label" aria-hidden="true">unique visitors</span>
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import Icon from './Icon.jsx'
 import { CV_FORMATS } from '../utils/cvExporters.js'
 import './CvFormatDialog.css'
 
@@ -79,7 +80,7 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
         tabIndex={-1}
       >
         <button type="button" className="cv-dialog-close" aria-label="Close" onClick={onClose}>
-          <i className="fas fa-times"></i>
+          <Icon name="times" />
         </button>
         <h3 className="cv-dialog-title">Choose Format</h3>
         <p className="cv-dialog-subtitle">Pick how you'd like the CV delivered</p>
@@ -93,7 +94,9 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
               disabled={busyFormat !== null}
               aria-busy={busyFormat === format.id}
             >
-              <i className={busyFormat === format.id ? 'fas fa-spinner fa-spin' : format.icon}></i>
+              {busyFormat === format.id
+                ? <Icon name="spinner" spin />
+                : <Icon name={format.icon} />}
               <span className="cv-format-label">{format.label}</span>
               <span className="cv-format-hint">{format.hint}</span>
             </button>

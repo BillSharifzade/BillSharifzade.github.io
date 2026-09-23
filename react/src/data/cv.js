@@ -1,3 +1,5 @@
+import { cvContacts } from './contacts.js'
+
 export const profile = {
   name: 'Sharifzoda Bilol',
   role: 'Backend Architect · AI Architecture Specialist · Full-Stack Developer',
@@ -5,15 +7,7 @@ export const profile = {
     'Backend architect with deep expertise in systems engineering across fintech, high-load platforms, ' +
     'and applied AI. I build robust, maintainable, and efficient solutions, with a focus on low-level ' +
     'programming, ML, blockchain, and architecting large-scale systems from scratch.',
-  contacts: [
-    { label: 'Location', value: 'Dushanbe, Tajikistan', bare: true },
-    { label: 'Email', value: 'sharifzadebilal@gmail.com', href: 'mailto:sharifzadebilal@gmail.com' },
-    { label: 'Telegram', value: '@knight_of_bonnie' },
-    { label: 'Signal', value: 'qwantum.01' },
-    { label: 'GitHub', value: 'github.com/BillSharifzade', href: 'https://github.com/BillSharifzade' },
-    { label: 'LinkedIn', value: 'linkedin.com/in/bilal-sharifzade-555bba35a', href: 'https://www.linkedin.com/in/bilal-sharifzade-555bba35a/' },
-    { label: 'Website', value: 'billsharifzade.github.io', href: 'https://billsharifzade.github.io/' },
-  ],
+  contacts: cvContacts,
 }
 
 export function contactLine(c) {
@@ -140,7 +134,6 @@ export function dateLine(exp) {
 export const projects = [
   {
     name: 'Multi-Protocol API Framework',
-    icon: 'fab fa-rust',
     href: 'https://github.com/BillSharifzade/rs-apilib',
     repo: 'rs-apilib',
     cover: 'apiweave',
@@ -158,7 +151,6 @@ export const projects = [
   },
   {
     name: 'Recruitment Automation Platform',
-    icon: 'fab fa-rust',
     href: 'https://github.com/BillSharifzade/Rust-Screenx-HR-Automatization',
     repo: 'Rust-Screenx-HR-Automatization',
     cover: 'screenx',
@@ -175,7 +167,6 @@ export const projects = [
   },
   {
     name: 'Competency Matrix Platform',
-    icon: 'fab fa-golang',
     href: 'https://github.com/BillSharifzade/HR_Progress',
     repo: 'HR_Progress',
     cover: 'hr-progress',
@@ -192,7 +183,6 @@ export const projects = [
   },
   {
     name: 'Async Kafka Client',
-    icon: 'fab fa-rust',
     href: 'https://github.com/BillSharifzade/rs-rdkafka',
     repo: 'rs-rdkafka',
     cover: 'rdkafka',
@@ -209,7 +199,6 @@ export const projects = [
   },
   {
     name: 'Process Viewer CLI',
-    icon: 'fab fa-rust',
     href: 'https://github.com/BillSharifzade/rs-procs',
     repo: 'rs-procs',
     cover: 'procs',

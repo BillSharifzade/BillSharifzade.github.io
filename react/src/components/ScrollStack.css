@@ -92,7 +92,7 @@
   font-weight: 500;
 }
 
-.hobby-chip i {
+.hobby-chip .icon {
   color: #ffffff;
   font-size: 1rem;
 }

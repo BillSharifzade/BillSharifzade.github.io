@@ -33,6 +33,9 @@
 
 .orbit-item {
   position: absolute;
+  offset-distance: 0%;
+  animation-name: orbit-travel;
+  animation-iteration-count: infinite;
   will-change: transform;
   user-select: none;
 }
@@ -50,4 +53,15 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+@keyframes orbit-travel {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-item {
+    animation-play-state: paused !important;
+  }
 }

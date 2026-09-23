@@ -62,8 +62,29 @@ const useReducedMotion = () => {
   return reduced;
 };
 
-const CanvasWrapper = ({ children, reduced }) => (
-  <Canvas dpr={reduced ? 1 : [1, 1.5]} frameloop={reduced ? 'demand' : 'always'} className="beams-container">
+// A backgrounded tab keeps burning GPU on the beam shader otherwise — rAF is
+// throttled, not stopped, and on some compositors it keeps running outright.
+// The canvas is a fixed full-viewport backdrop, so only page visibility matters
+// here; it is never scrolled out of view.
+const usePageVisible = () => {
+  const [visible, setVisible] = useState(() => typeof document === 'undefined' || !document.hidden);
+  useEffect(() => {
+    const onChange = () => setVisible(!document.hidden);
+    document.addEventListener('visibilitychange', onChange);
+    return () => document.removeEventListener('visibilitychange', onChange);
+  }, []);
+  return visible;
+};
+
+const CanvasWrapper = ({ children, reduced, visible }) => (
+  <Canvas
+    // This is an out-of-focus dark backdrop, so rendering above 1 device pixel
+    // per CSS pixel buys nothing visible while costing 2-4x the fragment work
+    // on the HiDPI laptops and phones most visitors are on.
+    dpr={1}
+    frameloop={reduced || !visible ? 'demand' : 'always'}
+    className="beams-container"
+  >
     {children}
   </Canvas>
 );
@@ -164,6 +185,7 @@ const Beams = ({
   rotation = 0
 }) => {
   const reduced = useReducedMotion();
+  const visible = usePageVisible();
   const meshRef = useRef(null);
   const beamMaterial = useMemo(
     () =>
@@ -223,7 +245,7 @@ const Beams = ({
   );
 
   return (
-    <CanvasWrapper reduced={reduced}>
+    <CanvasWrapper reduced={reduced} visible={visible}>
       <group rotation={[0, 0, degToRad(rotation)]}>
         <PlaneNoise ref={meshRef} material={beamMaterial} count={beamNumber} width={beamWidth} height={beamHeight} />
         <DirLight color={lightColor} position={[0, 3, 10]} />

@@ -1,9 +1,7 @@
 
-import { useMemo, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { useMemo, useLayoutEffect, useRef, useState } from 'react';
+import { useOnScreen } from '../hooks/useOnScreen.js';
 import './OrbitImages.css';
-
-const MotionDiv = motion.div;
 
 function generateEllipsePath(cx, cy, rx, ry) {
   return `M ${cx - rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx + rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx - rx} ${cy}`;
@@ -71,16 +69,15 @@ function generateWavePath(cx, cy, w, amplitude, waves) {
   return pts.join(' ') + ' Z';
 }
 
-function OrbitItem({ item, index, totalItems, path, itemSize, rotation, progress, fill }) {
-  const itemOffset = fill ? (index / totalItems) * 100 : 0;
-
-  const offsetDistance = useTransform(progress, (p) => {
-    const offset = (((p + itemOffset) % 100) + 100) % 100;
-    return `${offset}%`;
-  });
+// Travel along the path is a plain linear 0->100% loop, which CSS expresses
+// natively via offset-distance. A negative animation-delay starts each item
+// partway round, reproducing the even spacing the old JS driver computed per
+// frame — and the whole thing runs off the main thread.
+function OrbitItem({ item, index, totalItems, path, itemSize, rotation, fill, duration, easing, direction, running }) {
+  const itemOffset = fill ? index / totalItems : 0;
 
   return (
-    <MotionDiv
+    <div
       className="orbit-item"
       style={{
         width: itemSize,
@@ -88,11 +85,15 @@ function OrbitItem({ item, index, totalItems, path, itemSize, rotation, progress
         offsetPath: `path("${path}")`,
         offsetRotate: '0deg',
         offsetAnchor: 'center center',
-        offsetDistance,
+        animationDuration: `${duration}s`,
+        animationDelay: `${-itemOffset * duration}s`,
+        animationTimingFunction: easing,
+        animationDirection: direction === 'reverse' ? 'reverse' : 'normal',
+        animationPlayState: running ? 'running' : 'paused',
       }}
     >
       <div style={{ transform: `rotate(${-rotation}deg)` }}>{item}</div>
-    </MotionDiv>
+    </div>
   );
 }
 
@@ -170,19 +171,10 @@ export default function OrbitImages({
     return () => observer.disconnect();
   }, [responsive, baseWidth]);
 
-  const progress = useMotionValue(0);
-
-  useEffect(() => {
-    if (paused) return;
-    const from = progress.get();
-    const controls = animate(progress, direction === 'reverse' ? from - 100 : from + 100, {
-      duration,
-      ease: easing,
-      repeat: Infinity,
-      repeatType: 'loop',
-    });
-    return () => controls.stop();
-  }, [progress, duration, easing, direction, paused]);
+  // A 30s loop that would otherwise keep the compositor busy for the whole
+  // visit, including while scrolled far off screen or in a background tab.
+  const onScreen = useOnScreen(containerRef);
+  const running = onScreen && !paused;
 
   const containerWidth = responsive ? '100%' : (typeof width === 'number' ? width : '100%');
   const containerHeight = responsive ? 'auto' : (typeof height === 'number' ? height : (typeof width === 'number' ? width : 'auto'));
@@ -241,8 +233,11 @@ export default function OrbitImages({
               path={path}
               itemSize={itemSize}
               rotation={rotation}
-              progress={progress}
               fill={fill}
+              duration={duration}
+              easing={easing}
+              direction={direction}
+              running={running}
             />
           ))}
         </div>

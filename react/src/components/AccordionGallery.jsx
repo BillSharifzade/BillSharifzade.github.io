@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback, useId } from 'react'
 import { gsap } from 'gsap'
 
+import Icon from './Icon.jsx'
 import './AccordionGallery.css'
 
 
@@ -249,14 +250,14 @@ const AccordionGallery = ({
         return (
           <div
             key={item.repo || item.label || i}
-            ref={(el) => (panelRefs.current[i] = el)}
+            ref={(el) => { panelRefs.current[i] = el }}
             className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
             role="listitem"
           >
             <span className="ag-panel__frame">
               <span
                 className={`ag-panel__media${shots.length > 1 ? ' ag-panel__media--multi' : ''}`}
-                ref={(el) => (mediaRefs.current[i] = el)}
+                ref={(el) => { mediaRefs.current[i] = el }}
               >
                 {shots.map((src, k) => (
                   <span className="ag-panel__shot" key={src}>
@@ -267,18 +268,18 @@ const AccordionGallery = ({
               <span className="ag-panel__overlay" aria-hidden="true" />
             </span>
 
-            <span className="ag-panel__spine" ref={(el) => (spineRefs.current[i] = el)} aria-hidden="true">
+            <span className="ag-panel__spine" ref={(el) => { spineRefs.current[i] = el }} aria-hidden="true">
               {item.label}
             </span>
 
             {showLabels && (
-              <div className="ag-panel__label" ref={(el) => (labelRefs.current[i] = el)}>
-                <span className="ag-panel__bar" ref={(el) => (barRefs.current[i] = el)} />
+              <div className="ag-panel__label" ref={(el) => { labelRefs.current[i] = el }}>
+                <span className="ag-panel__bar" ref={(el) => { barRefs.current[i] = el }} />
                 <div className="ag-panel__copy">
-                  <h3 className="ag-panel__title" id={titleId} ref={(el) => (titleRefs.current[i] = el)}>
+                  <h3 className="ag-panel__title" id={titleId} ref={(el) => { titleRefs.current[i] = el }}>
                     {item.label}
                   </h3>
-                  <div className="ag-panel__meta" ref={(el) => (metaRefs.current[i] = el)}>
+                  <div className="ag-panel__meta" ref={(el) => { metaRefs.current[i] = el }}>
                     {item.icons?.length > 0 && (
                       <ul className="ag-panel__tech">
                         {item.icons.map((tech) => (
@@ -293,7 +294,7 @@ const AccordionGallery = ({
                     {item.blurb && <p className="ag-panel__blurb">{item.blurb}</p>}
                     {item.repo && (
                       <span className="ag-panel__repo">
-                        <i className="fab fa-github" aria-hidden="true"></i> {item.repo}
+                        <Icon name="github" /> {item.repo}
                       </span>
                     )}
                   </div>
@@ -303,7 +304,7 @@ const AccordionGallery = ({
 
             <a
               className="ag-panel__hit"
-              ref={(el) => (hitRefs.current[i] = el)}
+              ref={(el) => { hitRefs.current[i] = el }}
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"

@@ -1,0 +1,29 @@
+/* Matches Font Awesome's inline-SVG metrics so icons drop into the same slots
+   the webfont <i> elements occupied: 1em tall, baseline-nudged, colour-inherited. */
+.icon {
+    display: inline-block;
+    /* Width is set per icon from its aspect ratio (see Icon.jsx); this is only
+       the fallback for an icon rendered without one. */
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    fill: currentColor;
+    overflow: visible;
+    flex-shrink: 0;
+}
+
+.icon--spin {
+    animation: iconSpin 2s linear infinite;
+}
+
+@keyframes iconSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .icon--spin {
+        animation-duration: 4s;
+    }
+}

@@ -129,14 +129,46 @@ function ogImageVersion() {
   return createHash('md5').update(png).digest('hex').slice(0, 8)
 }
 
+// The Latin subset is the only one an English page needs, and it is discovered
+// two round-trips deep (html -> css -> woff2) without a preload. The filename is
+// content-hashed at build time, so the tag is emitted from the bundle rather
+// than hard-coded.
+function fontPreload(bundle) {
+  if (!bundle) return ''
+  // Anchored so it cannot match the latin-ext subset, which an English page
+  // never needs and which would waste the one preload slot that matters.
+  const latin = Object.keys(bundle).find((f) =>
+    /jetbrains-mono-latin-[A-Za-z0-9_-]+\.woff2$/.test(f) && !f.includes('latin-ext')
+  )
+  return latin ? `<link rel="preload" as="font" type="font/woff2" href="/${latin}" crossorigin />` : ''
+}
+
+// These placeholders were once silently stripped out of index.html, which left
+// the crawler fallback and the Person schema building to nothing for months —
+// a no-op .replace() looks exactly like a successful one. Fail the build
+// instead.
+function fill(html, placeholder, value) {
+  if (!html.includes(placeholder)) {
+    throw new Error(
+      `index.html is missing the ${placeholder} placeholder — ` +
+      `SEO markup would be silently dropped. Restore it before building.`
+    )
+  }
+  return html.replace(placeholder, value)
+}
+
 function seoFallback() {
   return {
     name: 'cv-seo-fallback',
-    transformIndexHtml(html) {
-      return html
-        .replace('<!--CV_FALLBACK-->', renderFallback())
-        .replace('<!--JSONLD-->', renderJsonLd())
-        .replace(/og\.png\?v=[^"]*/g, `og.png?v=${ogImageVersion()}`)
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        let out = html
+        out = fill(out, '<!--CV_FALLBACK-->', renderFallback())
+        out = fill(out, '<!--JSONLD-->', renderJsonLd())
+        out = fill(out, '<!--FONTPRELOAD-->', fontPreload(ctx.bundle))
+        return out.replace(/og\.png\?v=[^"]*/g, `og.png?v=${ogImageVersion()}`)
+      },
     },
   }
 }
@@ -174,4 +206,29 @@ function seoFiles() {
 export default defineConfig({
   plugins: [react(), seoFallback(), seoFiles()],
   base: '/',
+  build: {
+    // three.js alone clears the default 500 kB warning, and it is already
+    // deliberately split into its own lazily-imported chunk.
+    chunkSizeWarningLimit: 1000,
+    // Small font subsets (cyrillic-ext is ~2 kB) would otherwise be inlined as
+    // data: URIs, which `font-src 'self'` blocks outright — the glyphs silently
+    // fall back. Keep every font as a real, cacheable file.
+    assetsInlineLimit(filePath) {
+      if (filePath.endsWith('.woff2') || filePath.endsWith('.woff')) return false
+    },
+    rollupOptions: {
+      output: {
+        // React and the animation libraries change far less often than the CV
+        // content does. Splitting them out means a copy edit reships only the
+        // app chunk instead of busting one ~600 kB bundle. Matched by path
+        // rather than by package name so that deep entry points
+        // (react-dom/client, motion/react) land in the same chunk.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react'
+          if (/[\\/]node_modules[\\/](gsap|motion|framer-motion|lenis)[\\/]/.test(id)) return 'animation'
+        },
+      },
+    },
+  },
 })

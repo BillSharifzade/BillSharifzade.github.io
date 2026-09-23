@@ -16,6 +16,7 @@ const COMMANDS = [
 const FORMAT_IDS = CV_FORMATS.map((f) => f.id)
 const CV_BASENAME = 'Sharifzoda_Bilol_CV'
 const POWER_STAGE_H = 230
+const MAX_SCROLLBACK = 500
 
 const ARCH_ART = [
   '                   -`',
@@ -300,7 +301,14 @@ export default function WipTerminal() {
   const hintDoneRef = useRef(false)
   const miscTimersRef = useRef([])
 
-  const append = (extra) => setLines((prev) => [...prev, ...extra])
+  // Every line is a live DOM node. `neofetch` alone emits ~20 and nothing ever
+  // removed them, so a visitor who kept typing could grow the tree without
+  // bound. A real terminal drops old scrollback the same way.
+  const append = (extra) =>
+    setLines((prev) => {
+      const next = [...prev, ...extra]
+      return next.length > MAX_SCROLLBACK ? next.slice(next.length - MAX_SCROLLBACK) : next
+    })
 
   const later = (fn, ms) => {
     const id = window.setTimeout(fn, ms)

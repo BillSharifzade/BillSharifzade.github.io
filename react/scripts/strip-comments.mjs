@@ -40,6 +40,8 @@ const SKIP_DIRS = new Set(['node_modules', 'dist', 'build', '.git', 'vendor', 'c
 const JS_EXT = new Set(['.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx', '.mts', '.cts'])
 const CSS_EXT = new Set(['.css'])
 const HTML_EXT = new Set(['.html', '.htm'])
+// Build-time substitution markers consumed by vite.config.js — never strip these.
+const HTML_PLACEHOLDER = /^<!--\s*(CV_FALLBACK|JSONLD|FONTPRELOAD)\s*-->$/
 
 // Comments whose removal can change behavior — kept unless --all.
 const KEEP_RE =
@@ -237,8 +239,12 @@ function stripHtml(source) {
     } else if (source.startsWith('<!--', i)) {
       const end = source.indexOf('-->', i + 4)
       const stop = end === -1 ? n : end + 3
-      // keep conditional comments, just in case
-      if (!/^<!--\s*\[/.test(source.slice(i, i + 12))) ranges.push({ start: i, end: stop })
+      const body = source.slice(i, stop)
+      // Keep conditional comments, and keep build placeholders: vite.config.js
+      // substitutes the SEO markup into them, and removing one silently drops
+      // the crawler fallback and the Person schema from the built page.
+      const keep = /^<!--\s*\[/.test(body) || HTML_PLACEHOLDER.test(body)
+      if (!keep) ranges.push({ start: i, end: stop })
       i = stop
     } else {
       i++

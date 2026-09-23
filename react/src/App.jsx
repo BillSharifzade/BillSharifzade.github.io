@@ -1,14 +1,16 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import DecryptedText from './components/DecryptedText.jsx'
+import Icon from './components/Icon.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import ContactOrbit from './components/ContactOrbit.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
-import signalLogo from './assets/signal_logo.svg'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
+import { channels } from './data/contacts.js'
+import { CONTACT_LOGOS } from './data/contactLogos.js'
 import { projectCovers } from './data/projectCovers.js'
 import { resolveIcons } from './data/projectIcons.js'
 import AccordionGallery from './components/AccordionGallery.jsx'
@@ -22,7 +24,17 @@ import WipTerminal from './components/WipTerminal.jsx'
 import VisitorCounter from './components/VisitorCounter.jsx'
 import './index.css'
 
-const Beams = lazy(() => import('./components/Beams.jsx'))
+// Beams pulls in three.js (~240 kB gzipped) for a decorative backdrop. Holding
+// the import until the browser is idle keeps it from competing with the hero
+// image and first paint; the page reads identically on the solid black body
+// background until it lands.
+const Beams = lazy(() =>
+  new Promise((resolve) => {
+    const load = () => resolve(import('./components/Beams.jsx'))
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(load, { timeout: 2000 })
+    else setTimeout(load, 200)
+  })
+)
 
 const projectPanels = projects.map((p) => ({
   images: projectCovers[p.cover],
@@ -44,6 +56,16 @@ function scrollToTarget(target) {
     target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
   }
 }
+
+const NAV_LINKS = [
+  ['#home', 'Profile'],
+  ['#about', 'About'],
+  ['#skills', 'Skills'],
+  ['#projects', 'Projects'],
+  ['#experience', 'Experience'],
+  ['#hobbies', 'Hobbies'],
+  ['#contact', 'Contact'],
+]
 
 const TYPING_TEXTS = [
   'Backend Architect',
@@ -85,36 +107,40 @@ function TypingSubtitle() {
 
 function App() {
   const heroContentRef = useRef(null)
-  const hamburgerRef = useRef(null)
-  const mobileNavRef = useRef(null)
+  const navRef = useRef(null)
+  const indicatorRef = useRef(null)
   const navContainerRef = useRef(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
+  // Scroll drives three purely visual properties. Writing them straight from
+  // the scroll event interleaves style writes with the browser's own layout
+  // work; batching into one rAF keeps it to a single write per frame.
   useEffect(() => {
-    const nav = document.querySelector('nav')
-    function updateScrollIndicator() {
+    let frame = 0
+    const paint = () => {
+      frame = 0
       const scrolled = window.scrollY
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const pct = maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0
-      const indicator = document.getElementById('scrollIndicator')
-      if (indicator) indicator.style.width = pct + '%'
-    }
-    function onScroll() {
-      const scrolled = window.scrollY
-      if (nav) {
-        if (scrolled > 100) nav.classList.add('scrolled')
-        else nav.classList.remove('scrolled')
-      }
+      const nav = navRef.current
+      if (nav) nav.classList.toggle('scrolled', scrolled > 100)
+
       const hero = heroContentRef.current
-      const fadeOutDistance = 400
-      if (hero) {
-        const opacity = 1 - (scrolled / fadeOutDistance)
-        hero.style.opacity = String(Math.max(0, opacity))
+      if (hero) hero.style.opacity = String(Math.max(0, 1 - scrolled / 400))
+
+      const indicator = indicatorRef.current
+      if (indicator) {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+        indicator.style.width = `${maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0}%`
       }
-      updateScrollIndicator()
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(paint)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
+    paint()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (frame) cancelAnimationFrame(frame)
+    }
   }, [])
 
   useEffect(() => {
@@ -131,43 +157,23 @@ function App() {
     return () => { sectionObserver.disconnect() }
   }, [])
 
+  // Escape closes the drawer, matching what a dialog-like overlay is expected
+  // to do once it has covered the page.
   useEffect(() => {
-    const links = document.querySelectorAll('.nav-link, .cta-button')
-    const onClick = (e) => {
-      const anchor = e.currentTarget
-      const href = anchor.getAttribute('href')
-      if (href && href.startsWith('#')) {
-        e.preventDefault()
-        const target = document.querySelector(href)
-        scrollToTarget(target)
-      }
-    }
-    links.forEach(link => link.addEventListener('click', onClick))
-    return () => links.forEach(link => link.removeEventListener('click', onClick))
-  }, [])
+    if (!menuOpen) return
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [menuOpen])
 
-  function toggleMobileNav() {
-    const mobileNav = mobileNavRef.current
-    const btn = hamburgerRef.current
-    if (!mobileNav || !btn) return
-    mobileNav.classList.toggle('active')
-    const icon = btn.querySelector('i')
-    const expanded = mobileNav.classList.contains('active')
-    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false')
-    icon.classList.toggle('fa-bars', !expanded)
-    icon.classList.toggle('fa-times', expanded)
+  const onNavClick = (e) => {
+    const href = e.currentTarget.getAttribute('href')
+    if (!href?.startsWith('#')) return
+    e.preventDefault()
+    setMenuOpen(false)
+    scrollToTarget(document.querySelector(href))
   }
 
-  function closeMobileNav() {
-    const mobileNav = mobileNavRef.current
-    const btn = hamburgerRef.current
-    if (!mobileNav || !btn) return
-    mobileNav.classList.remove('active')
-    const icon = btn.querySelector('i')
-    btn.setAttribute('aria-expanded', 'false')
-    icon.classList.add('fa-bars')
-    icon.classList.remove('fa-times')
-  }
   return (
     <>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
@@ -183,11 +189,11 @@ function App() {
           />
         </Suspense>
       </div>
-      <div className="scroll-indicator" id="scrollIndicator"></div>
+      <div className="scroll-indicator" ref={indicatorRef}></div>
 
       <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
 
-      <nav ref={navContainerRef}>
+      <nav ref={(el) => { navRef.current = el; navContainerRef.current = el }}>
         <div className="nav-content">
           <div className="logo">
             <VariableProximity
@@ -200,39 +206,46 @@ function App() {
             />
           </div>
           <div className="nav-links">
-            {[
-              ['#home', 'Profile'],
-              ['#about', 'About'],
-              ['#skills', 'Skills'],
-              ['#projects', 'Projects'],
-              ['#experience', 'Experience'],
-              ['#hobbies', 'Hobbies'],
-              ['#contact', 'Contact'],
-            ].map(([href, label]) => (
-              <a key={href} href={href} className="nav-link cursor-target">
+            {NAV_LINKS.map(([href, label]) => (
+              <a key={href} href={href} className="nav-link cursor-target" onClick={onNavClick}>
                 <span className="nav-link-roll" data-text={label}>{label}</span>
               </a>
             ))}
             <DownloadCvButton />
           </div>
-          <button className="hamburger-menu" id="hamburgerMenu" aria-label="Toggle menu" aria-controls="mobileNavLinks" aria-expanded="false" ref={hamburgerRef} onClick={toggleMobileNav}>
-            <i className="fas fa-bars"></i>
+          <button
+            className="hamburger-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-controls="mobileNavLinks"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <Icon name={menuOpen ? 'times' : 'bars'} />
           </button>
         </div>
-        <div className="mobile-nav-links" id="mobileNavLinks" ref={mobileNavRef}>
-          <a href="#home" className="nav-link" onClick={closeMobileNav}>Profile</a>
-          <a href="#about" className="nav-link" onClick={closeMobileNav}>About</a>
-          <a href="#skills" className="nav-link" onClick={closeMobileNav}>Skills</a>
-          <a href="#projects" className="nav-link" onClick={closeMobileNav}>Projects</a>
-          <a href="#experience" className="nav-link" onClick={closeMobileNav}>Experience</a>
-          <a href="#hobbies" className="nav-link" onClick={closeMobileNav}>Hobbies</a>
-          <a href="#contact" className="nav-link" onClick={closeMobileNav}>Contact</a>
-          <DownloadCvButton className="download-cv-btn--mobile" onDownloaded={closeMobileNav} />
+        {/* inert keeps the off-canvas drawer out of the tab order and out of the
+            accessibility tree while it is translated off-screen. */}
+        <div
+          className={`mobile-nav-links${menuOpen ? ' active' : ''}`}
+          id="mobileNavLinks"
+          inert={!menuOpen}
+        >
+          {NAV_LINKS.map(([href, label]) => (
+            <a key={href} href={href} className="nav-link" onClick={onNavClick}>{label}</a>
+          ))}
+          <DownloadCvButton
+            className="download-cv-btn--mobile"
+            onDownloaded={() => setMenuOpen(false)}
+          />
         </div>
       </nav>
 
       <section id="home" className="hero">
         <div className="hero-content" ref={heroContentRef}>
+          {/* The name is shown as art inside the profile card, so the document
+              still needs a real <h1> for search engines and screen readers.
+              Visually hidden rather than restyled, to leave the design alone. */}
+          <h1 className="sr-only">Sharifzoda Bilol — Backend Architect</h1>
 
           <div style={{ maxWidth: 420, margin: '20px auto 30px' }}>
             <ProfileCard
@@ -283,7 +296,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Rust"
-              iconClass="fab fa-rust"
+              icon="rust"
               items={[
                 <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Expert</span></div>,
                 <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Expert</span></div>,
@@ -294,7 +307,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Web"
-              iconClass="fab fa-js-square"
+              icon="js-square"
               items={[
                 <div className="skill-item" key="w1"><span>React & React Native</span><span>Expert</span></div>,
                 <div className="skill-item" key="w2"><span>Typescript</span><span>Advanced</span></div>,
@@ -305,7 +318,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Linux"
-              iconClass="fab fa-linux"
+              icon="linux"
               items={[
                 <div className="skill-item" key="l1"><span>Arch, Gentoo, Kali</span><span>Expert</span></div>,
                 <div className="skill-item" key="l2"><span>Kernel, Systemd, Syscalls</span><span>Expert</span></div>,
@@ -316,7 +329,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Python"
-              iconClass="fab fa-python"
+              icon="python"
               items={[
                 <div className="skill-item" key="p1"><span>NumPy/Pandas</span><span>Advanced</span></div>,
                 <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
@@ -327,7 +340,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Security & Crypto"
-              iconClass="fas fa-shield-alt"
+              icon="shield-alt"
               items={[
                 <div className="skill-item" key="c1"><span>Cybersecurity, AppSec</span><span>Intermediate</span></div>,
                 <div className="skill-item" key="c2"><span>Cryptography</span><span>Intermediate</span></div>,
@@ -338,7 +351,7 @@ function App() {
               size={1.35}
               color="#2d2d2d"
               label="Low-level"
-              iconClass="fas fa-microchip"
+              icon="microchip"
               items={[
                 <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
                 <div className="skill-item" key="s2"><span>Zig</span><span>Intermediate</span></div>,
@@ -441,8 +454,8 @@ function App() {
                 <h3 className="hobby-card-title">Cosmos &amp; Numbers</h3>
                 <p className="hobby-card-desc">The analytical side — decoding the universe and the mathematics beneath it, from relativity to non-Euclidean geometry.</p>
                 <div className="hobby-chips">
-                  <span className="hobby-chip"><i className="fas fa-meteor"></i> Astrophysics</span>
-                  <span className="hobby-chip"><i className="fas fa-infinity"></i> Mathematics</span>
+                  <span className="hobby-chip"><Icon name="meteor" /> Astrophysics</span>
+                  <span className="hobby-chip"><Icon name="infinity" /> Mathematics</span>
                 </div>
               </div>
             </ScrollStackItem>
@@ -457,7 +470,7 @@ function App() {
                   <line x1="58" y1="40" x2="78" y2="40" stroke="currentColor" strokeWidth="2" />
                 </svg>
                 <div className="knight-scene">
-                  <i className="fas fa-chess-knight knight-piece"></i>
+                  <Icon name="chess-knight" className="knight-piece" />
                   <span className="knight-board"></span>
                 </div>
               </div>
@@ -465,8 +478,8 @@ function App() {
                 <h3 className="hobby-card-title">Strategy &amp; Play</h3>
                 <p className="hobby-card-desc">Competition and calculation — long-term planning on the board and split-second tactics on the server.</p>
                 <div className="hobby-chips">
-                  <span className="hobby-chip"><i className="fas fa-chess-knight"></i> Chess</span>
-                  <span className="hobby-chip"><i className="fas fa-crosshairs"></i> Counter Strike 2</span>
+                  <span className="hobby-chip"><Icon name="chess-knight" /> Chess</span>
+                  <span className="hobby-chip"><Icon name="crosshairs" /> Counter Strike 2</span>
                 </div>
               </div>
             </ScrollStackItem>
@@ -487,8 +500,8 @@ function App() {
                 <h3 className="hobby-card-title">Craft &amp; Sound</h3>
                 <p className="hobby-card-desc">Hands-on creativity — building something tangible row by row and unwinding through strings and melody.</p>
                 <div className="hobby-chips">
-                  <span className="hobby-chip"><i className="fas fa-guitar"></i> Guitar</span>
-                  <span className="hobby-chip"><i className="fas fa-mitten"></i> Knitting</span>
+                  <span className="hobby-chip"><Icon name="guitar" /> Guitar</span>
+                  <span className="hobby-chip"><Icon name="mitten" /> Knitting</span>
                 </div>
               </div>
             </ScrollStackItem>
@@ -507,8 +520,8 @@ function App() {
                 <h3 className="hobby-card-title">Words &amp; Thought</h3>
                 <p className="hobby-card-desc">Reflection and expression — questioning first principles and compressing ideas into rhythm and imagery.</p>
                 <div className="hobby-chips">
-                  <span className="hobby-chip"><i className="fas fa-feather-pointed"></i> Poems</span>
-                  <span className="hobby-chip"><i className="fas fa-yin-yang"></i> Philosophy</span>
+                  <span className="hobby-chip"><Icon name="feather-pointed" /> Poems</span>
+                  <span className="hobby-chip"><Icon name="yin-yang" /> Philosophy</span>
                 </div>
               </div>
             </ScrollStackItem>
@@ -520,48 +533,26 @@ function App() {
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
           <ContactOrbit />
+          {/* The narrow-screen counterpart to ContactOrbit — same channels,
+              laid out as a grid. ContactOrbit.css swaps between the two. */}
           <div className="contact-grid">
-            <a href="mailto:sharifzadebilal@gmail.com">
-              <div className="contact-item">
-                <div className="contact-icon"><i className="fas fa-envelope"></i></div>
-                <h3>Email</h3>
-                <p>sharifzadebilal@gmail.com</p>
-              </div>
-            </a>
-
-            <a href="https://signal.me/#eu/Rrvk7a7IZAngzf-XhPOkYe8_X-oy1pc9BSutK9idldmInEXjy8BPEJDELEKtQQlN" target="_blank" rel="noopener noreferrer">
-              <div className="contact-item">
-                <div className="contact-icon signal-icon-wrap">
-                  <img src={signalLogo} alt="Signal" className="signal-icon" />
+            {channels.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                <div className="contact-item">
+                  <div className={`contact-icon${c.logo ? ' signal-icon-wrap' : ''}`}>
+                    {c.logo
+                      ? <img src={CONTACT_LOGOS[c.logo]} alt="" className="signal-icon" />
+                      : <Icon name={c.icon} />}
+                  </div>
+                  <h3>{c.label}</h3>
+                  <p>{c.handle}</p>
                 </div>
-                <h3>Signal</h3>
-                <p>qwantum.01</p>
-              </div>
-            </a>
-
-            <a href="https://t.me/knight_of_bonnie" target="_blank" rel="noopener noreferrer">
-              <div className="contact-item">
-                <div className="contact-icon"><i className="fab fa-telegram"></i></div>
-                <h3>Telegram</h3>
-                <p>@knight_of_bonnie</p>
-              </div>
-            </a>
-
-            <a href="https://www.linkedin.com/in/bilal-sharifzade-555bba35a/" target="_blank" rel="noopener noreferrer">
-              <div className="contact-item">
-                <div className="contact-icon"><i className="fab fa-linkedin"></i></div>
-                <h3>LinkedIn</h3>
-                <p>Bilal Sharifzade</p>
-              </div>
-            </a>
-
-            <a href="https://github.com/BillSharifzade" target="_blank" rel="noopener noreferrer">
-              <div className="contact-item">
-                <div className="contact-icon"><i className="fab fa-github"></i></div>
-                <h3>GitHub</h3>
-                <p>BillSharifzade</p>
-              </div>
-            </a>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -580,7 +571,7 @@ function App() {
               rel="noopener noreferrer"
               aria-label="I also work as solar knight for my Bonnie"
             >
-              <i className="fas fa-heart"></i> Secret job
+              <Icon name="heart" /> Secret job
               <span className="secret-job-tooltip">I also work as solar knight for my Bonnie</span>
             </a>
           </div>
