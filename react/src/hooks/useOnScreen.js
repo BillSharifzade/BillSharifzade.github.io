@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
  * True while `ref`'s element intersects the viewport AND the tab is in the
  * foreground.
  *
- * The page runs several infinite animations (the orbiting contact chips, the
- * nav's proximity-weighted logo, the WebGL backdrop). Left unguarded each one
+ * The page runs several long-lived timers and animations (the contact phone's
+ * clock, the nav's proximity-weighted logo, the WebGL backdrop). Left unguarded each one
  * keeps a rAF loop or compositor animation alive for the whole visit, including
  * while it is scrolled far out of view or the tab is buried. Gating them on this
  * hook costs one IntersectionObserver and gives the CPU back when nothing is

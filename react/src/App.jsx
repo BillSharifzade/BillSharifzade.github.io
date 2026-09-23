@@ -3,14 +3,12 @@ import DecryptedText from './components/DecryptedText.jsx'
 import Icon from './components/Icon.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
-import ContactOrbit from './components/ContactOrbit.jsx'
+import ContactDevice from './components/ContactDevice.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
 import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
-import { channels } from './data/contacts.js'
-import { CONTACT_LOGOS } from './data/contactLogos.js'
 import { projectCovers } from './data/projectCovers.js'
 import { resolveIcons } from './data/projectIcons.js'
 import AccordionGallery from './components/AccordionGallery.jsx'
@@ -532,28 +530,7 @@ function App() {
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
-          <ContactOrbit />
-          {/* The narrow-screen counterpart to ContactOrbit — same channels,
-              laid out as a grid. ContactOrbit.css swaps between the two. */}
-          <div className="contact-grid">
-            {channels.map((c) => (
-              <a
-                key={c.label}
-                href={c.href}
-                {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                <div className="contact-item">
-                  <div className={`contact-icon${c.logo ? ' signal-icon-wrap' : ''}`}>
-                    {c.logo
-                      ? <img src={CONTACT_LOGOS[c.logo]} alt="" className="signal-icon" />
-                      : <Icon name={c.icon} />}
-                  </div>
-                  <h3>{c.label}</h3>
-                  <p>{c.handle}</p>
-                </div>
-              </a>
-            ))}
-          </div>
+          <ContactDevice onNavigate={(hash) => scrollToTarget(document.querySelector(hash))} />
         </div>
       </section>
 

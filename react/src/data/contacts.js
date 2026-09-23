@@ -2,9 +2,10 @@
  * Every way to reach Bilol, in one place.
  *
  * These handles were previously written out three times — in cv.js for the
- * exports and the crawler fallback, in ContactOrbit for the orbiting chips, and
+ * exports and the crawler fallback, in the contact section's component, and
  * again inline in App.jsx for the mobile contact grid. Changing a handle meant
- * remembering all three, and nothing caught it when one drifted.
+ * remembering all three, and nothing caught it when one drifted. Today the
+ * page reads them once, through contactApps.js, for the phone's app icons.
  *
  * Listed in the order the site shows them. `handle` is what the page displays;
  * `cvValue` is the longer form the CV prints when the two differ (a CV is read

@@ -1,0 +1,955 @@
+/* ContactDevice — a solid, static iPhone mockup running an iOS 27-style home
+ * screen. No hover tilt, no parallax: the only motion is what a phone does.
+ *
+ * Every dimension is written in the device's own logical points through the
+ * --px unit (1 pt = 1/416 of the frame's width, resolved with container query
+ * units), so the whole thing scales with its column and nothing is measured
+ * in JS. Layer order inside the screen, bottom to top:
+ *   1 home UI · 5 lock screen · 6 opened app · 7 status bar · 8 island
+ *   9 volume HUD / home bar · 11 wake tap target (screen off) · 12 glare
+ */
+
+.cd-root {
+    container-type: inline-size;
+    width: clamp(250px, 100%, 340px);
+    margin: 0 auto;
+    color: #fff;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cd-phone {
+    --px: calc(100cqw / 416);
+    --rail: calc(var(--px) * 4);
+    --inset: calc(var(--px) * 15);
+    --screen-radius: calc(var(--px) * 53);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 416 / 870;
+    border-radius: calc(var(--px) * 68);
+    background: linear-gradient(160deg, #5a5b64 0%, #2b2b31 22%, #4a4a52 48%, #202024 74%, #42424a 100%);
+    box-shadow:
+        0 40px 80px -30px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.cd-bezel {
+    position: absolute;
+    inset: var(--rail);
+    border-radius: calc(var(--px) * 64);
+    background: #07070a;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.cd-screen {
+    position: absolute;
+    inset: var(--inset);
+    border-radius: var(--screen-radius);
+    overflow: hidden;
+    background: #000;
+    isolation: isolate;
+    contain: layout paint style;
+    transform: translateZ(0);
+}
+
+/* ---- hardware -------------------------------------------------------------- */
+
+.cd-btn {
+    position: absolute;
+    z-index: 2;
+    width: calc(var(--px) * 4);
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--px) * 1.6);
+    background: linear-gradient(90deg, #5b5b64, #2f2f36 45%, #3c3c44);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: transform 90ms ease-out, filter 90ms ease-out;
+}
+
+/* A forgiving hit area around a 4pt sliver. */
+.cd-btn::after {
+    content: '';
+    position: absolute;
+    inset: -8px -10px;
+}
+
+.cd-btn--left {
+    left: calc(var(--px) * -3);
+}
+
+.cd-btn--right {
+    right: calc(var(--px) * -3);
+    background: linear-gradient(270deg, #5b5b64, #2f2f36 45%, #3c3c44);
+}
+
+.cd-btn--left:active {
+    transform: translateX(calc(var(--px) * 2));
+    filter: brightness(0.8);
+}
+
+.cd-btn--right:active {
+    transform: translateX(calc(var(--px) * -2));
+    filter: brightness(0.8);
+}
+
+.cd-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.cd-btn--action { top: calc(var(--px) * 120); height: calc(var(--px) * 28); }
+.cd-btn--vol-up { top: calc(var(--px) * 172); height: calc(var(--px) * 62); }
+.cd-btn--vol-down { top: calc(var(--px) * 246); height: calc(var(--px) * 62); }
+.cd-btn--side { top: calc(var(--px) * 202); height: calc(var(--px) * 98); }
+.cd-btn--camera { top: calc(var(--px) * 402); height: calc(var(--px) * 46); }
+
+.cd-antenna {
+    position: absolute;
+    z-index: 1;
+    width: var(--rail);
+    height: calc(var(--px) * 6);
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.cd-antenna--l { left: 0; }
+.cd-antenna--r { right: 0; }
+.cd-antenna--top { top: calc(var(--px) * 92); }
+.cd-antenna--bottom { bottom: calc(var(--px) * 92); }
+
+/* ---- Liquid Glass ---------------------------------------------------------- */
+
+/* Apple's material, approximated in CSS: the backdrop is diffused (blur +
+ * saturation, the iOS 27 tuning that favours legibility), the surface carries
+ * a faint luminosity gradient, the rim gets a darkened edge with brighter
+ * specular highlights along the top and bottom, and a masked ring in ::before
+ * gathers light at the edge the way a lens does. `--clear` is the more
+ * transparent variant for elements over rich content, like the dock. */
+.cd-glass {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.08));
+    -webkit-backdrop-filter: blur(22px) saturate(1.8);
+    backdrop-filter: blur(22px) saturate(1.8);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+        0 0 0 1px rgba(0, 0, 0, 0.28),
+        0 12px 28px -12px rgba(0, 0, 0, 0.55);
+}
+
+.cd-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: calc(var(--px) * 3);
+    background:
+        radial-gradient(140% 80% at 50% -20%, rgba(255, 255, 255, 0.55), transparent 60%),
+        radial-gradient(140% 80% at 50% 120%, rgba(255, 255, 255, 0.28), transparent 60%),
+        linear-gradient(115deg, rgba(255, 255, 255, 0.25), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.12));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.cd-glass--clear {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    backdrop-filter: blur(16px) saturate(1.6);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .cd-glass,
+    .cd-glass--clear {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        background: rgba(30, 30, 40, 0.92);
+    }
+}
+
+/* ---- screen: shared -------------------------------------------------------- */
+
+/* Wallpaper: a flowing glass-like gradient in the site's indigo, bright enough
+ * at the top for the widget and the island HUDs to diffuse something, darker
+ * towards the dock so labels and glass stay legible. */
+.cd-wall {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(75% 45% at 22% 6%, rgba(139, 148, 255, 0.8) 0%, rgba(139, 148, 255, 0) 62%),
+        radial-gradient(60% 40% at 84% 26%, rgba(196, 160, 255, 0.5) 0%, rgba(196, 160, 255, 0) 60%),
+        radial-gradient(55% 32% at 12% 58%, rgba(72, 190, 255, 0.34) 0%, rgba(72, 190, 255, 0) 60%),
+        radial-gradient(70% 40% at 80% 86%, rgba(167, 139, 250, 0.45) 0%, rgba(167, 139, 250, 0) 62%),
+        linear-gradient(155deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.12) 42%, rgba(255, 255, 255, 0) 50%),
+        linear-gradient(180deg, #11122a 0%, #0a0a18 55%, #050508 100%);
+}
+
+.cd-status {
+    position: absolute;
+    z-index: 7;
+    top: calc(var(--px) * 13);
+    left: 0;
+    right: 0;
+    height: calc(var(--px) * 24);
+    padding: 0 calc(var(--px) * 30);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: calc(var(--px) * 15);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    pointer-events: none;
+    transition: opacity 250ms ease;
+}
+
+.cd-status-time {
+    min-width: calc(var(--px) * 90);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.cd-status-icons {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--px) * 6);
+}
+
+.cd-status-icons .icon {
+    font-size: calc(var(--px) * 14);
+}
+
+.cd-cell {
+    width: calc(var(--px) * 18);
+    height: calc(var(--px) * 11);
+    fill: currentColor;
+}
+
+.cd-batt {
+    width: calc(var(--px) * 27);
+    height: calc(var(--px) * 13);
+    fill: currentColor;
+}
+
+.cd-screen[data-screen='off'] .cd-status {
+    opacity: 0;
+}
+
+/* Dynamic Island — the compact cutout of the newest Pro models. It doubles as
+ * the HUD surface: silent/ring, Camera Control, and the iOS 27 Siri orb. */
+.cd-island {
+    position: absolute;
+    z-index: 8;
+    top: calc(var(--px) * 12);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--px) * 84);
+    height: calc(var(--px) * 25);
+    border-radius: 999px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 380ms cubic-bezier(0.32, 0.72, 0, 1), height 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cd-island[data-hud='silent'],
+.cd-island[data-hud='ring'] {
+    width: calc(var(--px) * 150);
+}
+
+.cd-island[data-hud='camera'] {
+    width: calc(var(--px) * 238);
+}
+
+.cd-island[data-hud='siri'] {
+    width: calc(var(--px) * 150);
+    height: calc(var(--px) * 36);
+}
+
+.cd-island-cam {
+    position: absolute;
+    right: calc(var(--px) * 7);
+    top: 50%;
+    width: calc(var(--px) * 11);
+    height: calc(var(--px) * 11);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: radial-gradient(circle at 38% 35%, #232a3d 0, #0a0c14 45%, #000 70%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: opacity 200ms ease;
+}
+
+.cd-island[data-hud] .cd-island-cam {
+    opacity: 0;
+}
+
+.cd-island-hud {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--px) * 7);
+    font-size: calc(var(--px) * 12.5);
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.cd-island[data-hud] .cd-island-hud {
+    opacity: 1;
+    transform: none;
+    transition-delay: 120ms;
+}
+
+.cd-hud-icon {
+    font-size: calc(var(--px) * 13);
+}
+
+.cd-hud-icon--silent {
+    color: #ff453a;
+}
+
+.cd-siri-orb {
+    width: calc(var(--px) * 22);
+    height: calc(var(--px) * 22);
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ff6ec7, #7c5cff, #3bd1ff, #6ee7b7, #ffd166, #ff6ec7);
+    filter: blur(1.2px) saturate(1.3);
+    box-shadow: 0 0 14px rgba(124, 92, 255, 0.65);
+    animation: cd-orb 2.2s linear infinite;
+}
+
+.cd-siri-wave {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--px) * 3);
+}
+
+.cd-siri-wave i {
+    width: calc(var(--px) * 3);
+    height: calc(var(--px) * 14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    animation: cd-wave 900ms ease-in-out infinite;
+}
+
+.cd-siri-wave i:nth-child(2) { animation-delay: 120ms; height: calc(var(--px) * 18); }
+.cd-siri-wave i:nth-child(3) { animation-delay: 240ms; height: calc(var(--px) * 10); }
+.cd-siri-wave i:nth-child(4) { animation-delay: 360ms; height: calc(var(--px) * 16); }
+.cd-siri-wave i:nth-child(5) { animation-delay: 480ms; }
+
+@keyframes cd-orb {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes cd-wave {
+    0%, 100% { transform: scaleY(0.45); }
+    50% { transform: scaleY(1); }
+}
+
+/* ---- home screen ----------------------------------------------------------- */
+
+.cd-ui {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transform-origin: 50% 50%;
+    transition: opacity 320ms ease, transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cd-screen[data-screen='lock'] .cd-ui {
+    opacity: 0;
+    transform: scale(0.92);
+}
+
+.cd-screen[data-screen='off'] .cd-ui {
+    opacity: 0;
+    transform: scale(0.97);
+    transition-duration: 220ms, 260ms;
+}
+
+.cd-widget {
+    position: absolute;
+    top: calc(var(--px) * 74);
+    left: calc(var(--px) * 24);
+    right: calc(var(--px) * 24);
+    height: calc(var(--px) * 152);
+    border-radius: calc(var(--px) * 28);
+    padding: calc(var(--px) * 18) calc(var(--px) * 20);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: calc(var(--px) * 12);
+}
+
+.cd-widget-me {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+}
+
+.cd-avatar {
+    width: calc(var(--px) * 46);
+    height: calc(var(--px) * 46);
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.cd-widget-text {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--px) * 2);
+}
+
+.cd-widget-name {
+    font-size: calc(var(--px) * 15);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.cd-widget-role {
+    font-size: calc(var(--px) * 11.5);
+    opacity: 0.74;
+    white-space: nowrap;
+}
+
+.cd-widget-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    text-align: right;
+}
+
+.cd-widget-time {
+    font-size: calc(var(--px) * 34);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.cd-widget-place {
+    font-size: calc(var(--px) * 11);
+    opacity: 0.74;
+    margin-top: calc(var(--px) * -8);
+    white-space: nowrap;
+}
+
+.cd-widget-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: calc(var(--px) * 11);
+    font-weight: 600;
+    color: #34d399;
+}
+
+.cd-widget-status i {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.cd-apps {
+    position: absolute;
+    top: calc(var(--px) * 250);
+    left: calc(var(--px) * 24);
+    right: calc(var(--px) * 24);
+    display: grid;
+    grid-template-columns: repeat(4, calc(var(--px) * 60));
+    justify-content: space-between;
+    row-gap: calc(var(--px) * 22);
+}
+
+.cd-app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--px) * 6);
+    width: calc(var(--px) * 60);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.cd-app:focus-visible {
+    outline: none;
+}
+
+.cd-app:focus-visible .cd-tile {
+    box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+}
+
+/* iOS 27 app icons: the artwork stays crisp and high-contrast; glass is a
+ * refined finish — static highlights along the top and bottom edges, a
+ * darkened rim, and a soft gloss — rather than a sheen over the art. */
+.cd-tile {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--px) * 60);
+    height: calc(var(--px) * 60);
+    border-radius: 22.5%;
+    background: var(--tile);
+    color: var(--fg, #fff);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+        0 0 0 1px rgba(0, 0, 0, 0.18),
+        0 calc(var(--px) * 6) calc(var(--px) * 14) rgba(0, 0, 0, 0.35);
+    transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 140ms ease;
+}
+
+.cd-tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 38%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.08) 100%);
+    pointer-events: none;
+}
+
+.cd-tile svg {
+    position: relative;
+    z-index: 1;
+    display: block;
+    fill: currentColor;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.28));
+}
+
+.cd-app:active .cd-tile {
+    transform: scale(0.88);
+    filter: brightness(0.78);
+}
+
+.cd-app-label {
+    font-size: calc(var(--px) * 11);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.cd-search {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--px) * 134);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--px) * 6);
+    height: calc(var(--px) * 30);
+    padding: 0 calc(var(--px) * 14);
+    border-radius: 999px;
+    font-size: calc(var(--px) * 12);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.cd-search svg {
+    width: calc(var(--px) * 12);
+    height: calc(var(--px) * 12);
+}
+
+.cd-dock {
+    position: absolute;
+    left: calc(var(--px) * 22);
+    right: calc(var(--px) * 22);
+    bottom: calc(var(--px) * 24);
+    height: calc(var(--px) * 94);
+    border-radius: calc(var(--px) * 32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--px) * 30);
+}
+
+.cd-dock .cd-app-label {
+    display: none;
+}
+
+.cd-homebar {
+    position: absolute;
+    z-index: 9;
+    left: 50%;
+    bottom: 0;
+    width: calc(var(--px) * 180);
+    height: calc(var(--px) * 26);
+    transform: translateX(-50%);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: opacity 250ms ease;
+}
+
+.cd-homebar::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--px) * 8);
+    width: calc(var(--px) * 134);
+    height: calc(var(--px) * 5);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    transform: translateX(-50%);
+}
+
+.cd-homebar:focus-visible {
+    outline: none;
+}
+
+.cd-homebar:focus-visible::before {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.cd-screen[data-screen='off'] .cd-homebar {
+    opacity: 0;
+}
+
+/* ---- lock screen ----------------------------------------------------------- */
+
+.cd-lock {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: calc(var(--px) * 62);
+    opacity: 0;
+    transform: scale(1.08);
+    visibility: hidden;
+    transition: opacity 300ms ease, transform 380ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 380ms;
+}
+
+.cd-screen[data-screen='lock'] .cd-lock {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+.cd-screen[data-screen='off'] .cd-lock {
+    transform: scale(0.97);
+}
+
+.cd-lock-tap {
+    position: absolute;
+    inset: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cd-lock-tap:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -6px;
+    border-radius: var(--screen-radius);
+}
+
+.cd-lock-icon,
+.cd-lock-date,
+.cd-lock-time,
+.cd-lock-hint {
+    position: relative;
+    pointer-events: none;
+}
+
+.cd-lock-icon {
+    font-size: calc(var(--px) * 18);
+    opacity: 0.85;
+}
+
+.cd-lock-date {
+    margin-top: calc(var(--px) * 14);
+    font-size: calc(var(--px) * 16);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    opacity: 0.92;
+}
+
+/* The clock is set in glass: tall numerals, wallpaper light in the fill, a
+ * bright top edge and a soft shadow underneath. */
+.cd-lock-time {
+    margin-top: calc(var(--px) * 4);
+    font-size: calc(var(--px) * 88);
+    font-weight: 800;
+    letter-spacing: -0.07em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transform: scaleY(1.16);
+    transform-origin: 50% 40%;
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.86) 50%, rgba(214, 220, 255, 0.95) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+}
+
+.cd-lock-btn {
+    position: absolute;
+    z-index: 2;
+    bottom: calc(var(--px) * 42);
+    width: calc(var(--px) * 54);
+    height: calc(var(--px) * 54);
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(var(--px) * 22);
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease, transform 140ms ease;
+}
+
+.cd-lock-btn svg {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+}
+
+.cd-lock-btn:active {
+    transform: scale(0.92);
+}
+
+.cd-lock-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.cd-lock-btn--torch { left: calc(var(--px) * 46); }
+.cd-lock-btn--camera { right: calc(var(--px) * 46); }
+
+.cd-lock-btn.is-on {
+    background: #fff;
+    color: #111;
+}
+
+.cd-lock-hint {
+    position: absolute;
+    bottom: calc(var(--px) * 22);
+    font-size: calc(var(--px) * 11);
+    opacity: 0.7;
+}
+
+/* ---- opened app ------------------------------------------------------------ */
+
+.cd-applayer {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    background: var(--splash);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: calc(var(--px) * 40);
+}
+
+.cd-hero {
+    position: relative;
+    isolation: isolate;
+    width: calc(var(--px) * 118);
+    height: calc(var(--px) * 118);
+    border-radius: 22.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg, #fff);
+    transform-origin: 50% 50%;
+}
+
+/* The tile the hero grows out of. Brand apps dissolve it once the app has
+ * opened, leaving the mark alone on the splash colour. */
+.cd-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--tile);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+    transition: opacity 260ms ease;
+}
+
+.cd-hero svg {
+    position: relative;
+    display: block;
+    fill: currentColor;
+}
+
+.cd-applayer[data-phase='open'] .cd-hero:not(.cd-hero--keep)::before {
+    opacity: 0;
+}
+
+.cd-app-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: calc(var(--px) * 26);
+    opacity: 0;
+    transform: translateY(calc(var(--px) * 10));
+    transition: opacity 280ms ease, transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cd-applayer[data-phase='open'] .cd-app-info {
+    opacity: 1;
+    transform: none;
+}
+
+.cd-app-name {
+    font-size: calc(var(--px) * 21);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.cd-app-handle {
+    margin-top: calc(var(--px) * 4);
+    font-size: calc(var(--px) * 12.5);
+    opacity: 0.82;
+}
+
+.cd-app-cta {
+    margin-top: calc(var(--px) * 22);
+    padding: calc(var(--px) * 10) calc(var(--px) * 20);
+    border-radius: 999px;
+    border: 0;
+    color: #fff;
+    font: inherit;
+    font-size: calc(var(--px) * 13);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 140ms ease;
+}
+
+.cd-app-cta:active {
+    transform: scale(0.95);
+}
+
+.cd-app-cta:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+/* ---- HUDs, wake, glare ----------------------------------------------------- */
+
+.cd-volhud {
+    position: absolute;
+    z-index: 9;
+    left: calc(var(--px) * 8);
+    top: calc(var(--px) * 157);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--px) * 10);
+    opacity: 0;
+    transform: translateX(calc(var(--px) * -8));
+    transition: opacity 220ms ease, transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+    pointer-events: none;
+}
+
+.cd-volhud[data-show] {
+    opacity: 1;
+    transform: none;
+}
+
+.cd-volhud-track {
+    width: calc(var(--px) * 9);
+    height: calc(var(--px) * 136);
+    border-radius: 999px;
+    overflow: hidden;
+    transition: width 200ms ease;
+}
+
+.cd-volhud[data-show] .cd-volhud-track {
+    width: calc(var(--px) * 12);
+}
+
+.cd-volhud-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--vol);
+    background: #fff;
+    transition: height 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cd-volhud-icon {
+    font-size: calc(var(--px) * 13);
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.cd-sleep {
+    position: absolute;
+    inset: 0;
+    z-index: 11;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cd-sleep:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -6px;
+    border-radius: var(--screen-radius);
+}
+
+.cd-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    border-radius: inherit;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 28%, transparent 45%);
+    pointer-events: none;
+}
+
+.cd-caption {
+    margin: 28px 0 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cd-phone *,
+    .cd-phone *::before {
+        transition-duration: 1ms !important;
+    }
+
+    .cd-siri-orb,
+    .cd-siri-wave i {
+        animation: none;
+    }
+}
