@@ -1,13 +1,16 @@
-/* ContactDevice — a solid, static iPhone mockup running an iOS 27-style home
- * screen. No hover tilt, no parallax: the only motion is what a phone does.
+/* ContactDevice — a solid, static iPhone mockup running a black-and-white,
+ * iOS 27-style home screen. No hover tilt, no parallax: the only motion is
+ * what a phone does.
  *
  * Every dimension is written in the device's own logical points through the
  * --px unit (1 pt = 1/416 of the frame's width, resolved with container query
  * units), so the whole thing scales with its column and nothing is measured
  * in JS. Layer order inside the screen, bottom to top:
- *   1 home UI · 5 lock screen · 6 opened app · 7 status bar · 8 island
- *   9 volume HUD / home bar · 11 wake tap target (screen off) · 12 glare
- */
+ *   1 home UI · 5 lock screen · 6 opened app · 7 App Switcher · 8 panels
+ *   9 status bar · 10 island · 11 volume HUD · 12 home bar · 13 brightness
+ *   14 wake tap target (screen off) · 15 glare
+ *
+ * Panels, the switcher and the app screens live in ContactDevicePanels.css. */
 
 .cd-root {
     container-type: inline-size;
@@ -121,12 +124,14 @@
 
 /* ---- Liquid Glass ---------------------------------------------------------- */
 
-/* Apple's material, approximated in CSS: the backdrop is diffused (blur +
- * saturation, the iOS 27 tuning that favours legibility), the surface carries
- * a faint luminosity gradient, the rim gets a darkened edge with brighter
- * specular highlights along the top and bottom, and a masked ring in ::before
- * gathers light at the edge the way a lens does. `--clear` is the more
- * transparent variant for elements over rich content, like the dock. */
+/* Apple's material, approximated in CSS and kept monochrome: the backdrop is
+ * diffused (blur + saturation, the iOS 27 tuning that favours legibility),
+ * the surface carries a faint luminosity gradient, the rim gets a darkened
+ * edge with brighter specular highlights along the top and bottom, and a
+ * masked ring in ::before gathers light at the edge the way a lens does.
+ * `--clear` is the more transparent variant for elements over content, like
+ * the dock. App tiles and Control Center tiles share the rim and ring but
+ * skip the backdrop blur — over a black wallpaper it would only cost. */
 .cd-glass {
     position: relative;
     isolation: isolate;
@@ -141,7 +146,9 @@
         0 12px 28px -12px rgba(0, 0, 0, 0.55);
 }
 
-.cd-glass::before {
+.cd-glass::before,
+.cd-tile::before,
+.cd-cc-tile::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -167,50 +174,78 @@
 
 @media (prefers-reduced-transparency: reduce) {
     .cd-glass,
-    .cd-glass--clear {
+    .cd-glass--clear,
+    .cd-panel,
+    .cd-switcher-bg {
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
-        background: rgba(30, 30, 40, 0.92);
+        background: rgba(24, 24, 28, 0.94);
     }
 }
 
 /* ---- screen: shared -------------------------------------------------------- */
 
-/* Wallpaper: a flowing glass-like gradient in the site's indigo, bright enough
- * at the top for the widget and the island HUDs to diffuse something, darker
- * towards the dock so labels and glass stay legible. */
+/* Black wallpaper with just enough light in it for glass to catch. */
 .cd-wall {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(75% 45% at 22% 6%, rgba(139, 148, 255, 0.8) 0%, rgba(139, 148, 255, 0) 62%),
-        radial-gradient(60% 40% at 84% 26%, rgba(196, 160, 255, 0.5) 0%, rgba(196, 160, 255, 0) 60%),
-        radial-gradient(55% 32% at 12% 58%, rgba(72, 190, 255, 0.34) 0%, rgba(72, 190, 255, 0) 60%),
-        radial-gradient(70% 40% at 80% 86%, rgba(167, 139, 250, 0.45) 0%, rgba(167, 139, 250, 0) 62%),
-        linear-gradient(155deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.12) 42%, rgba(255, 255, 255, 0) 50%),
-        linear-gradient(180deg, #11122a 0%, #0a0a18 55%, #050508 100%);
+        radial-gradient(75% 45% at 28% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 60%),
+        radial-gradient(55% 35% at 86% 68%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 60%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.05) 47%, rgba(255, 255, 255, 0) 54%),
+        #000;
+}
+
+.cd-avatar {
+    width: calc(var(--px) * 46);
+    height: calc(var(--px) * 46);
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(1);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .cd-status {
     position: absolute;
-    z-index: 7;
-    top: calc(var(--px) * 13);
+    z-index: 9;
+    top: 0;
     left: 0;
     right: 0;
-    height: calc(var(--px) * 24);
-    padding: 0 calc(var(--px) * 30);
+    height: calc(var(--px) * 48);
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    padding: calc(var(--px) * 13) calc(var(--px) * 18) 0;
     font-size: calc(var(--px) * 15);
     font-weight: 700;
     letter-spacing: -0.01em;
-    pointer-events: none;
     transition: opacity 250ms ease;
 }
 
+/* The two ears are the pull-down handles for Notification Center and Control
+ * Center, so they are real buttons. */
+.cd-status-zone {
+    display: flex;
+    align-items: center;
+    height: calc(var(--px) * 24);
+    padding: 0 calc(var(--px) * 12);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    touch-action: none;
+    border-radius: 999px;
+}
+
+.cd-status-zone:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 .cd-status-time {
-    min-width: calc(var(--px) * 90);
+    min-width: calc(var(--px) * 66);
     text-align: center;
     font-variant-numeric: tabular-nums;
 }
@@ -231,6 +266,10 @@
     fill: currentColor;
 }
 
+.cd-cell.is-off {
+    opacity: 0.35;
+}
+
 .cd-batt {
     width: calc(var(--px) * 27);
     height: calc(var(--px) * 13);
@@ -239,13 +278,14 @@
 
 .cd-screen[data-screen='off'] .cd-status {
     opacity: 0;
+    pointer-events: none;
 }
 
 /* Dynamic Island — the compact cutout of the newest Pro models. It doubles as
  * the HUD surface: silent/ring, Camera Control, and the iOS 27 Siri orb. */
 .cd-island {
     position: absolute;
-    z-index: 8;
+    z-index: 10;
     top: calc(var(--px) * 12);
     left: 50%;
     transform: translateX(-50%);
@@ -282,7 +322,7 @@
     height: calc(var(--px) * 11);
     border-radius: 50%;
     transform: translateY(-50%);
-    background: radial-gradient(circle at 38% 35%, #232a3d 0, #0a0c14 45%, #000 70%);
+    background: radial-gradient(circle at 38% 35%, #2a2a2f 0, #0c0c10 45%, #000 70%);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
     transition: opacity 200ms ease;
 }
@@ -313,17 +353,13 @@
     font-size: calc(var(--px) * 13);
 }
 
-.cd-hud-icon--silent {
-    color: #ff453a;
-}
-
 .cd-siri-orb {
     width: calc(var(--px) * 22);
     height: calc(var(--px) * 22);
     border-radius: 50%;
-    background: conic-gradient(from 0deg, #ff6ec7, #7c5cff, #3bd1ff, #6ee7b7, #ffd166, #ff6ec7);
-    filter: blur(1.2px) saturate(1.3);
-    box-shadow: 0 0 14px rgba(124, 92, 255, 0.65);
+    background: conic-gradient(from 0deg, #ffffff, #8b8b92, #e9e9ee, #3a3a40, #ffffff);
+    filter: blur(1.2px);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
     animation: cd-orb 2.2s linear infinite;
 }
 
@@ -398,15 +434,6 @@
     min-width: 0;
 }
 
-.cd-avatar {
-    width: calc(var(--px) * 46);
-    height: calc(var(--px) * 46);
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
-}
-
 .cd-widget-text {
     display: flex;
     flex-direction: column;
@@ -455,7 +482,8 @@
     gap: 0.45em;
     font-size: calc(var(--px) * 11);
     font-weight: 600;
-    color: #34d399;
+    color: #fff;
+    opacity: 0.92;
 }
 
 .cd-widget-status i {
@@ -501,9 +529,9 @@
     box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
 }
 
-/* iOS 27 app icons: the artwork stays crisp and high-contrast; glass is a
- * refined finish — static highlights along the top and bottom edges, a
- * darkened rim, and a soft gloss — rather than a sheen over the art. */
+/* App icons: iOS 27's clear glass icons in monochrome. The artwork stays
+ * crisp; the glass is a finish — static highlights along the top and bottom
+ * edges, a darkened rim, the lens ring, and a soft gloss. */
 .cd-tile {
     position: relative;
     isolation: isolate;
@@ -513,13 +541,14 @@
     width: calc(var(--px) * 60);
     height: calc(var(--px) * 60);
     border-radius: 22.5%;
-    background: var(--tile);
-    color: var(--fg, #fff);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.09));
+    color: #fff;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.16),
-        0 0 0 1px rgba(0, 0, 0, 0.18),
-        0 calc(var(--px) * 6) calc(var(--px) * 14) rgba(0, 0, 0, 0.35);
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        0 calc(var(--px) * 6) calc(var(--px) * 14) rgba(0, 0, 0, 0.45);
     transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 140ms ease;
 }
 
@@ -528,7 +557,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 38%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.08) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0) 58%, rgba(255, 255, 255, 0.06) 100%);
     pointer-events: none;
 }
 
@@ -537,7 +566,19 @@
     z-index: 1;
     display: block;
     fill: currentColor;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.28));
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+.cd-tile--sm {
+    width: calc(var(--px) * 38);
+    height: calc(var(--px) * 38);
+    flex: 0 0 auto;
+}
+
+.cd-tile--xs {
+    width: calc(var(--px) * 22);
+    height: calc(var(--px) * 22);
+    flex: 0 0 auto;
 }
 
 .cd-app:active .cd-tile {
@@ -553,27 +594,6 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
-.cd-search {
-    position: absolute;
-    left: 50%;
-    bottom: calc(var(--px) * 134);
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: calc(var(--px) * 6);
-    height: calc(var(--px) * 30);
-    padding: 0 calc(var(--px) * 14);
-    border-radius: 999px;
-    font-size: calc(var(--px) * 12);
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.88);
-}
-
-.cd-search svg {
-    width: calc(var(--px) * 12);
-    height: calc(var(--px) * 12);
-}
-
 .cd-dock {
     position: absolute;
     left: calc(var(--px) * 22);
@@ -583,8 +603,7 @@
     border-radius: calc(var(--px) * 32);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: calc(var(--px) * 30);
+    justify-content: space-evenly;
 }
 
 .cd-dock .cd-app-label {
@@ -593,16 +612,17 @@
 
 .cd-homebar {
     position: absolute;
-    z-index: 9;
+    z-index: 12;
     left: 50%;
     bottom: 0;
-    width: calc(var(--px) * 180);
-    height: calc(var(--px) * 26);
+    width: calc(var(--px) * 200);
+    height: calc(var(--px) * 30);
     transform: translateX(-50%);
     padding: 0;
     border: 0;
     background: none;
     cursor: pointer;
+    touch-action: none;
     transition: opacity 250ms ease;
 }
 
@@ -694,22 +714,26 @@
     opacity: 0.92;
 }
 
-/* The clock is set in glass: tall numerals, wallpaper light in the fill, a
- * bright top edge and a soft shadow underneath. */
-.cd-lock-time {
-    margin-top: calc(var(--px) * 4);
-    font-size: calc(var(--px) * 88);
+/* The clock is set in glass: tall numerals, light in the fill, a bright top
+ * edge and a soft shadow underneath. Shared with Notification Center. */
+.cd-lock-time,
+.cd-nc-time {
     font-weight: 800;
     letter-spacing: -0.07em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     transform: scaleY(1.16);
     transform-origin: 50% 40%;
-    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.86) 50%, rgba(214, 220, 255, 0.95) 100%);
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.86) 50%, rgba(220, 220, 228, 0.95) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+}
+
+.cd-lock-time {
+    margin-top: calc(var(--px) * 4);
+    font-size: calc(var(--px) * 88);
 }
 
 .cd-lock-btn {
@@ -766,55 +790,37 @@
     position: absolute;
     inset: 0;
     z-index: 6;
-    background: var(--splash);
+    background: #000;
     color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: calc(var(--px) * 40);
+    transform-origin: 50% 100%;
 }
 
-.cd-hero {
-    position: relative;
-    isolation: isolate;
-    width: calc(var(--px) * 118);
-    height: calc(var(--px) * 118);
-    border-radius: 22.5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--fg, #fff);
-    transform-origin: 50% 50%;
-}
-
-/* The tile the hero grows out of. Brand apps dissolve it once the app has
- * opened, leaving the mark alone on the splash colour. */
-.cd-hero::before {
-    content: '';
+.cd-appview {
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    background: var(--tile);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.12);
-    transition: opacity 260ms ease;
 }
 
-.cd-hero svg {
-    position: relative;
-    display: block;
-    fill: currentColor;
-}
-
-.cd-applayer[data-phase='open'] .cd-hero:not(.cd-hero--keep)::before {
-    opacity: 0;
+/* The glyph that flies out of the icon. It fades into the app's own screen,
+ * and stays as the splash for dock apps. Never a hit target. */
+.cd-hero {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--px) * 118);
+    height: calc(var(--px) * 118);
+    margin: calc(var(--px) * -79) 0 0 calc(var(--px) * -59);
+    transform-origin: 50% 50%;
+    pointer-events: none;
 }
 
 .cd-app-info {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: calc(var(--px) * 26);
+    justify-content: center;
+    padding-top: calc(var(--px) * 100);
     opacity: 0;
     transform: translateY(calc(var(--px) * 10));
     transition: opacity 280ms ease, transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -829,12 +835,6 @@
     font-size: calc(var(--px) * 21);
     font-weight: 700;
     letter-spacing: -0.02em;
-}
-
-.cd-app-handle {
-    margin-top: calc(var(--px) * 4);
-    font-size: calc(var(--px) * 12.5);
-    opacity: 0.82;
 }
 
 .cd-app-cta {
@@ -860,11 +860,11 @@
     outline-offset: 3px;
 }
 
-/* ---- HUDs, wake, glare ----------------------------------------------------- */
+/* ---- HUDs, brightness, wake, glare ----------------------------------------- */
 
 .cd-volhud {
     position: absolute;
-    z-index: 9;
+    z-index: 11;
     left: calc(var(--px) * 8);
     top: calc(var(--px) * 157);
     display: flex;
@@ -909,10 +909,19 @@
     color: rgba(255, 255, 255, 0.92);
 }
 
+.cd-dim {
+    position: absolute;
+    inset: 0;
+    z-index: 13;
+    background: #000;
+    pointer-events: none;
+    transition: opacity 120ms linear;
+}
+
 .cd-sleep {
     position: absolute;
     inset: 0;
-    z-index: 11;
+    z-index: 14;
     padding: 0;
     border: 0;
     background: transparent;
@@ -928,18 +937,10 @@
 .cd-glare {
     position: absolute;
     inset: 0;
-    z-index: 12;
+    z-index: 15;
     border-radius: inherit;
     background: linear-gradient(115deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 28%, transparent 45%);
     pointer-events: none;
-}
-
-.cd-caption {
-    margin: 28px 0 0;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    opacity: 0.8;
 }
 
 @media (prefers-reduced-motion: reduce) {
