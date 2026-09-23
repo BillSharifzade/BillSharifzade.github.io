@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import Icon from './Icon.jsx'
 import CvFormatDialog from './CvFormatDialog.jsx'
 import { CONTACT_APPS, DOCK_APPS } from '../data/contactApps.js'
@@ -34,7 +35,7 @@ const OPEN_MS = 480
 const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)'
 const HUD_MS = 1500
 const HOLD_MS = 550
-const VOLUME_STEPS = 16
+const VOLUME_STEP = 100 / 16 // the hardware buttons step in sixteenths
 const PULL_OPEN = 70
 const SWIPE_HOME = 40
 const RECENTS_MAX = 5
@@ -155,10 +156,10 @@ export default function ContactDevice({ onNavigate }) {
     focus: false,
     playing: false,
   })
-  const [brightness, setBrightness] = useState(0.85)
+  const [brightness, setBrightness] = useState(85) // 0–100
   const [silent, setSilent] = useState(false)
   const [torch, setTorch] = useState(false)
-  const [volume, setVolume] = useState(11)
+  const [volume, setVolume] = useState(69) // 0–100
   const [volumeHud, setVolumeHud] = useState(false)
   const [islandHud, setIslandHud] = useState(null) // 'silent' | 'ring' | 'camera' | 'siri'
   const [cvOpen, setCvOpen] = useState(false)
@@ -192,18 +193,24 @@ export default function ContactDevice({ onNavigate }) {
     anims.forEach((a) => a.reverse())
     Promise.all(anims.map((a) => a.finished))
       .then(() => {
-        anims.forEach((a) => a.cancel())
+        // The reversed animations keep holding their end frames (app clipped
+        // to its icon, home screen fully visible) until the layer is gone —
+        // the layout effect's cleanup cancels them on unmount. Cancelling
+        // here first would paint one frame of the open app, and this runs
+        // from a promise, so the removal is flushed synchronously too.
         animsRef.current = []
         closingRef.current = false
-        setLaunch((l) => {
-          // Hand keyboard focus back to the icon that launched the app.
-          if (l?.el?.isConnected && document.activeElement === document.body) {
-            const focusable = l.el.closest('a, button') ?? l.el
-            focusable.focus?.({ preventScroll: true })
-          }
-          return null
+        flushSync(() => {
+          setLaunch((l) => {
+            // Hand keyboard focus back to the icon that launched the app.
+            if (l?.el?.isConnected && document.activeElement === document.body) {
+              const focusable = l.el.closest('a, button') ?? l.el
+              focusable.focus?.({ preventScroll: true })
+            }
+            return null
+          })
+          setPhase('enter')
         })
-        setPhase('enter')
       })
       .catch(() => {
         closingRef.current = false
@@ -539,11 +546,11 @@ export default function ContactDevice({ onNavigate }) {
 
   const pressVolume = (dir) => {
     if (screen === 'off') return
-    const next = clamp(volume + dir, 0, VOLUME_STEPS)
+    const next = clamp(Math.round((volume + dir * VOLUME_STEP) * 100) / 100, 0, 100)
     setVolume(next)
     setVolumeHud(true)
     later('volume', () => setVolumeHud(false), HUD_MS)
-    setAnnounce(`Volume ${next} of ${VOLUME_STEPS}`)
+    setAnnounce(`Volume ${Math.round(next / VOLUME_STEP)} of 16`)
   }
 
   const toggleSilent = () => {
@@ -701,8 +708,8 @@ export default function ContactDevice({ onNavigate }) {
               setCc={setCc}
               brightness={brightness}
               setBrightness={setBrightness}
-              volume={volume / VOLUME_STEPS}
-              setVolume={(v) => setVolume(Math.round(v * VOLUME_STEPS))}
+              volume={Math.round(volume)}
+              setVolume={setVolume}
               torch={torch}
               setTorch={setTorch}
               silent={silent}
@@ -782,7 +789,7 @@ export default function ContactDevice({ onNavigate }) {
             className="cd-volhud"
             data-show={volumeHud || undefined}
             aria-hidden="true"
-            style={{ '--vol': `${(volume / VOLUME_STEPS) * 100}%` }}
+            style={{ '--vol': `${volume}%` }}
           >
             <span className="cd-volhud-track cd-glass">
               <span className="cd-volhud-fill" />
@@ -801,7 +808,7 @@ export default function ContactDevice({ onNavigate }) {
               if (e.detail === 0) homeTap()
             }}
           />
-          <div className="cd-dim" style={{ opacity: (1 - brightness) * 0.85 }} aria-hidden="true" />
+          <div className="cd-dim" style={{ opacity: (1 - brightness / 100) * 0.85 }} aria-hidden="true" />
           {screen === 'off' && <button type="button" className="cd-sleep" aria-label="Wake the screen" onClick={wake} />}
           <div className="cd-glare" aria-hidden="true" />
         </div>

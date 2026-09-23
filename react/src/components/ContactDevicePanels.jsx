@@ -2,7 +2,7 @@ import Icon from './Icon.jsx'
 import { CellIcon, FLASHLIGHT, Tile } from './ContactDeviceBits.jsx'
 import { appById } from '../data/contactApps.js'
 import { AppScreen } from './ContactDeviceApps.jsx'
-import { clamp } from './deviceGestures.js'
+import SloshGauge from './SloshGauge.jsx'
 
 /** Control Center, Notification Center and the App Switcher — presentational. */
 
@@ -28,39 +28,30 @@ function Toggle({ on, label, onClick, className = '', children }) {
   )
 }
 
-// A vertical slider tile: drag anywhere on it, or use the arrow keys.
-function VSlider({ label, value, onChange, className = '', children }) {
-  const set = (e) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    onChange(clamp(1 - (e.clientY - r.top) / r.height, 0, 1))
-  }
-  const onKeyDown = (e) => {
-    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') onChange(clamp(value + 0.1, 0, 1))
-    else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') onChange(clamp(value - 0.1, 0, 1))
-    else return
-    e.preventDefault()
-  }
+// A tall tile holding a SloshGauge: the level is liquid, so a drag reads as
+// pouring rather than a bar jumping under the finger. The gauge paints itself
+// on its own animation frame; only the integer level goes through React.
+function Gauge({ className, label, value, onChange, children }) {
   return (
-    <div
-      className={`cd-cc-tile cd-cc-slider${className ? ` ${className}` : ''}`}
-      role="slider"
-      tabIndex={0}
-      aria-label={label}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={Math.round(value * 100)}
-      style={{ '--v': `${value * 100}%` }}
-      onPointerDown={(e) => {
-        e.currentTarget.setPointerCapture(e.pointerId)
-        set(e)
-      }}
-      onPointerMove={(e) => {
-        if (e.buttons) set(e)
-      }}
-      onKeyDown={onKeyDown}
-    >
-      <span className="cd-cc-slider-fill" />
-      <span className="cd-cc-slider-icon">{children}</span>
+    <div className={`cd-cc-tile cd-cc-gauge${className ? ` ${className}` : ''}`}>
+      <SloshGauge
+        value={value}
+        onChange={onChange}
+        interactive
+        showValue={false}
+        ticks={0}
+        liquidColor="#f5f5f5"
+        glassColor="transparent"
+        width={62}
+        height={132}
+        viscosity={0.1}
+        tilt={0.35}
+        splash={0.3}
+        ariaLabel={label}
+      />
+      <span className="cd-cc-slider-icon" aria-hidden="true">
+        {children}
+      </span>
     </div>
   )
 }
@@ -115,12 +106,12 @@ export function ControlCenter({
       <Toggle className="cd-cc-tile" on={cc.mirror} label="Screen Mirroring" onClick={() => flip('mirror')}>
         <Icon name="display" />
       </Toggle>
-      <VSlider className="cd-cc-bright" label="Brightness" value={brightness} onChange={setBrightness}>
+      <Gauge className="cd-cc-bright" label="Brightness" value={brightness} onChange={setBrightness}>
         <Icon name="sun" />
-      </VSlider>
-      <VSlider className="cd-cc-vol" label="Volume" value={volume} onChange={setVolume}>
+      </Gauge>
+      <Gauge className="cd-cc-vol" label="Volume" value={volume} onChange={setVolume}>
         <Icon name={volume === 0 ? 'volume-xmark' : 'volume-high'} />
-      </VSlider>
+      </Gauge>
       <Toggle className="cd-cc-tile" on={cc.focus} label="Focus" onClick={() => flip('focus')}>
         <Icon name="moon" />
       </Toggle>

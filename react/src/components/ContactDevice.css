@@ -811,6 +811,8 @@
     margin: calc(var(--px) * -79) 0 0 calc(var(--px) * -59);
     transform-origin: 50% 50%;
     pointer-events: none;
+    /* Driven by the open/close animation only — no tile press transition. */
+    transition: none;
 }
 
 .cd-app-info {
@@ -915,7 +917,6 @@
     z-index: 13;
     background: #000;
     pointer-events: none;
-    transition: opacity 120ms linear;
 }
 
 .cd-sleep {

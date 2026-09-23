@@ -72,8 +72,7 @@
     transform: scale(0.95);
 }
 
-.cd-cc-btn:focus-visible,
-.cd-cc-slider:focus-visible {
+.cd-cc-btn:focus-visible {
     outline: 2px solid #fff;
     outline-offset: 3px;
 }
@@ -167,21 +166,31 @@
 .cd-cc-bright { grid-column: 3; grid-row: 3 / 5; }
 .cd-cc-vol { grid-column: 4; grid-row: 3 / 5; }
 
-.cd-cc-slider {
+.cd-cc-gauge {
     overflow: hidden;
-    align-items: flex-end;
     cursor: ns-resize;
     touch-action: none;
 }
 
-.cd-cc-slider-fill {
+/* The gauge fills its tile and borrows the tile's shape; the tank colour is
+ * the glass underneath, the liquid is plain white. */
+.cd-cc-grid .slosh-gauge {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: var(--v);
+    inset: 0;
+    width: auto;
+    height: auto;
+    border-radius: inherit;
+    background: transparent;
+    color: #fff;
+}
+
+.cd-cc-grid .slosh-gauge:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.cd-cc-grid .slosh-gauge__liquid {
     background: #fff;
-    transition: height 80ms linear;
 }
 
 .cd-cc-slider-icon {
