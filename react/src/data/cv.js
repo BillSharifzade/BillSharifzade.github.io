@@ -76,7 +76,7 @@ export const experience = [
   {
     title: 'Technical Instructor',
     company: 'TechnoHub',
-    date: 'January 2025 - February 2025',
+    date: 'January 2025 - February 2026',
     desc: 'Taught programming, trained corporate teams, and developed software projects for enterprise clients.',
     bullets: [
       ['Curriculum leadership:', 'Mentored cohorts across Python, JavaScript, C, Ruby, and Assembly, from beginner through advanced levels.'],
