@@ -1,7 +1,23 @@
+// Whole calendar months from a to b.
+const monthsBetween = (a, b) =>
+  (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth() - (b.getDate() < a.getDate() ? 1 : 0)
+
+// spent / left / progress measured against the visitor's clock, so a project
+// with a fixed date fills its bar on its own instead of waiting for a re-edit.
+function countdown(start, due, now = new Date()) {
+  const t = Math.min(Math.max(now, start), due)
+  const spent = monthsBetween(start, new Date(t))
+  return {
+    spent: `${spent} mo`,
+    left: t >= due ? 'done' : `~${monthsBetween(start, due) - spent} mo`,
+    progress: (t - start) / (due - start),
+  }
+}
+
 export const wipProjects = [
   {
     name: 'kernel',
-    company: '4Byte · payment systems',
+    company: 'Mintaka · payment systems',
     spent: '15 mo',
     left: '~1 mo',
     progress: 0.94,
@@ -48,9 +64,8 @@ export const wipProjects = [
     name: 'mipe',
     special: true,
     company: 'personal · most important project ever',
-    spent: '18 mo',
-    left: '~9 mo',
-    progress: 0.67,
+    // February 2025 → May 2027
+    ...countdown(new Date(2025, 1, 1), new Date(2027, 4, 1)),
     stack: ['Love language', 'care', 'dates', 'time'],
     desc: 'marrying my sunshine — my sweetest, prettiest, genius, one-in-∞ Bonnie ❤ love you more than Rust, more than a processor loves instructions, memory and electricity.',
   },

@@ -5,7 +5,6 @@ import ProfileCard from './components/ProfileCard.jsx'
 import Folder from './components/Folder.jsx'
 import ContactDevice from './components/ContactDevice.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
-import mainAvatar from './assets/main_img.webp'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
@@ -252,7 +251,6 @@ function App() {
               handle="qwantum"
               status="Online"
               contactText="Contact Me"
-              avatarUrl={mainAvatar}
               showUserInfo={true}
               enableTilt={true}
               enableMobileTilt={true}

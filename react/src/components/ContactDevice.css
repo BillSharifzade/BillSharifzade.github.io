@@ -200,10 +200,17 @@
     width: calc(var(--px) * 46);
     height: calc(var(--px) * 46);
     border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    filter: grayscale(1);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: #000;
+    color: #fff;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.cd-avatar svg {
+    display: block;
+    fill: currentColor;
 }
 
 .cd-status {

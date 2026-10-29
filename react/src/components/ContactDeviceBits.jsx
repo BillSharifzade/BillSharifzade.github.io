@@ -1,6 +1,12 @@
-import mainAvatar from '../assets/main_img.webp'
+import { siArchlinux } from 'simple-icons'
 
 /** Small pieces shared by the phone's screens. */
+
+// simple-icons ships the Arch mark with a ™ as a second subpath; keep the mark.
+const ARCH = {
+  path: siArchlinux.path.slice(0, siArchlinux.path.indexOf('M', 1)),
+  viewBox: '0 0 24 24',
+}
 
 export const FLASHLIGHT =
   'M8 2h8a1 1 0 0 1 1 1v3.2a1 1 0 0 1-.2.6L15 9.4V21a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V9.4L7.2 6.8A1 1 0 0 1 7 6.2V3a1 1 0 0 1 1-1zm4 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'
@@ -23,18 +29,12 @@ export function Tile({ app, className = '' }) {
   )
 }
 
+/** The Arch mark in a round frame, standing in for a profile picture. */
 export function Avatar({ className = '' }) {
   return (
-    <img
-      className={`cd-avatar${className ? ` ${className}` : ''}`}
-      src={mainAvatar}
-      alt=""
-      width="48"
-      height="48"
-      loading="lazy"
-      decoding="async"
-      draggable={false}
-    />
+    <span className={`cd-avatar${className ? ` ${className}` : ''}`}>
+      <Glyph glyph={ARCH} size={0.54} />
+    </span>
   )
 }
 

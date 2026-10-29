@@ -39,8 +39,8 @@ export const experience = [
     ],
   },
   {
-    title: 'Co-Founder, CEO & Team Lead',
-    company: '4Byte',
+    title: 'Founder',
+    company: 'Mintaka',
     date: 'December 2025 - Present',
     type: 'Founder',
     desc: 'Founded and lead a software company building efficient, reliable, and secure solutions with polished UI/UX for B2C, B2B, and B2G across platforms, systems, and SaaS.',
@@ -52,7 +52,7 @@ export const experience = [
     ],
   },
   {
-    title: 'Software Engineer & Backend Architect',
+    title: 'Backend Architect',
     company: 'Koinoti Nav',
     date: 'October 2025 - Present',
     type: 'Engineering',
@@ -107,7 +107,7 @@ export const experience = [
   {
     title: 'Crypto Analyst',
     company: 'International Transactions',
-    date: 'Summer 2023',
+    date: 'June 2023 - August 2023',
     desc: 'Processed and analyzed cryptocurrency transactions between various countries and Tajikistan, identifying financial patterns.',
     bullets: [
       ['Blockchain insight:', 'Developed a nuanced understanding of blockchain architecture and trading ecosystems.'],
@@ -117,7 +117,7 @@ export const experience = [
   {
     title: 'Financial Automation Developer',
     company: 'Micro-Credit Organization',
-    date: 'Summer 2020 - Present',
+    date: 'June 2020 - November 2026',
     type: 'Ongoing',
     desc: 'Developed financial workflow automation systems, maintained existing infrastructure, and optimized operational processes.',
     bullets: [

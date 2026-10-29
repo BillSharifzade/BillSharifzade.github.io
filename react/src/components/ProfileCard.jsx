@@ -25,7 +25,6 @@ const adjust = (value, fromMin, fromMax, toMin, toMax) =>
 const easeInOutCubic = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
 const ProfileCardComponent = ({
-  avatarUrl,
   iconUrl = archPattern,
   grainUrl,
   behindGradient,
@@ -35,7 +34,6 @@ const ProfileCardComponent = ({
   enableTilt = true,
   enableMobileTilt = false,
   mobileTiltSensitivity = 5,
-  miniAvatarUrl,
   name = '',
   title = '',
   handle = '',
@@ -256,37 +254,20 @@ const ProfileCardComponent = ({
       <section ref={cardRef} className="pc-card">
         <div className="pc-inside">
           <div className="pc-grain-overlay" />
-          <div className="pc-icon-overlay" />
           <div className="pc-shine" />
           <div className="pc-glare" />
           <div className="pc-content pc-avatar-content">
             <img
-              className="avatar"
-              src={avatarUrl}
-              alt={`${name || 'User'} avatar`}
+              className="pc-logo"
+              src={iconUrl}
+              alt=""
               loading="eager"
               fetchPriority="high"
               decoding="async"
-              onError={e => {
-                const target = e.target;
-                target.style.display = 'none';
-              }}
             />
             {showUserInfo && (
               <div className="pc-user-info">
                 <div className="pc-user-details">
-                  <div className="pc-mini-avatar">
-                    <img
-                      src={miniAvatarUrl || avatarUrl}
-                      alt={`${name || 'User'} mini avatar`}
-                      loading="lazy"
-                      onError={e => {
-                        const target = e.target;
-                        target.style.opacity = '0.5';
-                        target.src = avatarUrl;
-                      }}
-                    />
-                  </div>
                   <div className="pc-user-text">
                     <div className="pc-handle">@{handle}</div>
                     <div className="pc-status">{status}</div>

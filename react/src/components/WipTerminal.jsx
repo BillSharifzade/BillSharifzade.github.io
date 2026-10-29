@@ -80,15 +80,17 @@ function wipLines() {
   const out = [line(s('current work, closest to shipping first:', 'dim')), blank()]
   wipProjects.forEach((p, i) => {
     if (p.special) {
-      const filled = Math.round(p.progress * 18)
+      // Floored so the bar never reads full (or 100%) while time is still left.
+      const filled = Math.floor(p.progress * 18)
+      const done = p.left === 'done'
       out.push(
         line(s('❤ ', 'love'), s(p.name, 'love-name'), s('  @ ' + p.company, 'love-dim')),
         pre(
           s('  [', 'love-dim'),
           s('♥'.repeat(filled), 'love'),
           s('♡'.repeat(18 - filled), 'love-dim'),
-          s(`] ${Math.round(p.progress * 100)}%`, 'love'),
-          s(` · ${p.spent} in · ${p.left} left · then ∞ together`, 'love-dim')
+          s(`] ${Math.floor(p.progress * 100)}%`, 'love'),
+          s(done ? ` · ${p.spent} · done · now ∞ together` : ` · ${p.spent} in · ${p.left} left · then ∞ together`, 'love-dim')
         ),
         line(s('  stack: ', 'love-dim'), s(p.stack.join(' · '), 'love')),
         line(s('  ' + p.desc, 'love-dim')),
