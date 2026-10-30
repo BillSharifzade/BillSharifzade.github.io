@@ -63,9 +63,11 @@ function useReducedMotion() {
   return reduced
 }
 
-// Ticks on the minute, and only while the phone is actually on screen.
+// Ticks on the minute, and only while the phone is actually on screen. Null
+// until then: the page is pre-rendered at build time, and the build's clock
+// would not match the visitor's when React takes the markup over.
 function useClock(active) {
-  const [now, setNow] = useState(() => new Date())
+  const [now, setNow] = useState(null)
   useEffect(() => {
     if (!active) return
     let id
@@ -136,8 +138,8 @@ export default function ContactDevice({ onNavigate }) {
   const onScreen = useOnScreen(rootRef)
   const reduced = useReducedMotion()
   const now = useClock(onScreen)
-  const timeText = fmtTime.format(now)
-  const dateText = fmtDate.format(now)
+  const timeText = now ? fmtTime.format(now) : ''
+  const dateText = now ? fmtDate.format(now) : ''
 
   const [screen, setScreen] = useState('home') // 'home' | 'lock' | 'off'
   const [launch, setLaunch] = useState(null) // { app, from, el } while an app is open

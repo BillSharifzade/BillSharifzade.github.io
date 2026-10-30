@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 const RANDOM_CHAR_SET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-={}[]<>?/\\|~'
 
@@ -22,6 +22,17 @@ function scramble(text, revealCount) {
   return result
 }
 
+// The scrambled first frame is rendered at build time and again when React
+// hydrates the page, so it has to come out the same both times: seeded by
+// position rather than random. The animation takes over from there.
+function placeholder(text) {
+  let result = ''
+  for (let i = 0; i < text.length; i++) {
+    result += text[i] === ' ' ? ' ' : RANDOM_CHAR_SET[(i * 7919 + text.charCodeAt(i) * 31) % RANDOM_CHAR_SET.length]
+  }
+  return result
+}
+
 export default function DecryptedText({
   text,
   play = true,
@@ -33,7 +44,7 @@ export default function DecryptedText({
 }) {
   const hostRef = useRef(null)
   const outRef = useRef(null)
-  const [initial] = useState(() => (play && !prefersReducedMotion() ? scramble(text, 0) : text))
+  const initial = useMemo(() => (play ? placeholder(text) : text), [text, play])
 
   useEffect(() => {
     const out = outRef.current

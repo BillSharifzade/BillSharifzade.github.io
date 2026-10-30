@@ -140,6 +140,16 @@ nav.scrolled {
     }
 }
 
+/* Sections out of view (usePauseOffscreen) stop their CSS animations: the
+   decorative loops would otherwise keep restyling and relaying out every frame
+   for content nobody can see. */
+[data-offscreen],
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+    animation-play-state: paused !important;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

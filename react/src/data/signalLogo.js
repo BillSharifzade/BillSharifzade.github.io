@@ -1,6 +1,6 @@
-// Signal's mark, lifted from src/assets/signal_logo.svg so the CV exporters
-// can draw it as vector paths (react-pdf) or rasterise it (docx) without an
-// asset import that Node-side consumers of cv.js could not resolve.
+// Signal's mark, lifted from src/assets/signal_logo.svg so cvgen can draw it
+// in the CV files: as vector paths in the PDF, rasterised in the DOCX.
+// scripts/cv-json.mjs reads it in plain Node, so no asset imports here.
 export const SIGNAL_LOGO = {
   viewBox: [0, 0, 160, 160],
   paths: [

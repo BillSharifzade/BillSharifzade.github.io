@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { wipProjects } from '../data/wip.js'
-import { CV_FORMATS } from '../utils/cvExporters.js'
+import { CV_FORMATS, downloadCv } from '../data/cvFormats.js'
 import './WipTerminal.css'
 
 
@@ -14,7 +14,6 @@ const COMMANDS = [
   ...DENIED,
 ]
 const FORMAT_IDS = CV_FORMATS.map((f) => f.id)
-const CV_BASENAME = 'Sharifzoda_Bilol_CV'
 const POWER_STAGE_H = 230
 const MAX_SCROLLBACK = 500
 
@@ -299,7 +298,6 @@ export default function WipTerminal() {
   const powerRef = useRef('on')
   const stickRef = useRef(true)
   const askRef = useRef(false)
-  const exportingRef = useRef(false)
   const hintDoneRef = useRef(false)
   const miscTimersRef = useRef([])
 
@@ -451,23 +449,10 @@ export default function WipTerminal() {
   }
 
 
-  async function runExport(fmt) {
-    if (exportingRef.current) {
-      append([line(s('an export is already running…', 'dim'))])
-      announce('An export is already running.')
-      return
-    }
-    exportingRef.current = true
-    try {
-      await fmt.run()
-      append([line(s('✓ ', 'ok'), s(`download started — ${CV_BASENAME}.${fmt.id}`))])
-      announce(`Download started — ${CV_BASENAME}.${fmt.id}`)
-    } catch {
-      append([line(s(`export failed: ${fmt.label} — try again`, 'err'))])
-      announce(`Export failed: ${fmt.label} — try again.`)
-    } finally {
-      exportingRef.current = false
-    }
+  function runExport(fmt) {
+    downloadCv(fmt)
+    append([line(s('✓ ', 'ok'), s(`download started — ${fmt.file}`))])
+    announce(`Download started — ${fmt.file}`)
   }
 
   function answerFormat(raw) {
@@ -491,7 +476,7 @@ export default function WipTerminal() {
     askRef.current = false
     setAsk(false)
     append(echo)
-    stream([{ line: line(s(`generating ${fmt.label} …`, 'dim')), delay: 80 }], { onDone: () => runExport(fmt) })
+    stream([{ line: line(s(`fetching ${fmt.file} …`, 'dim')), delay: 80 }], { onDone: () => runExport(fmt) })
   }
 
 
@@ -566,7 +551,7 @@ export default function WipTerminal() {
         const fmt = CV_FORMATS.find((f) => f.id === want)
         if (!fmt)
           return [line(s(`download: no such format: ${arg}`, 'err'), s(' — pdf · docx · xlsx · csv · md · txt', 'dim'))]
-        return { lines: [line(s(`generating ${fmt.label} …`, 'dim'))], onDone: () => runExport(fmt) }
+        return { lines: [line(s(`fetching ${fmt.file} …`, 'dim'))], onDone: () => runExport(fmt) }
       }
       case 'exit':
         return [line(s('there is no escape — scroll instead', 'dim'))]

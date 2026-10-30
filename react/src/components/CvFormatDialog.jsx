@@ -1,23 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Icon from './Icon.jsx'
-import { CV_FORMATS } from '../utils/cvExporters.js'
+import { CV_FORMATS, downloadCv } from '../data/cvFormats.js'
 import './CvFormatDialog.css'
 
 function CvFormatDialog({ open, onClose, onDownloaded }) {
-  const [busyFormat, setBusyFormat] = useState(null)
-  const [error, setError] = useState(null)
   const panelRef = useRef(null)
 
   useEffect(() => {
     if (!open) return
-    setError(null)
     const prevFocus = document.activeElement
     panelRef.current?.focus()
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'Tab') {
-        const items = panelRef.current?.querySelectorAll('button:not(:disabled)')
+        const items = panelRef.current?.querySelectorAll('button, a[href]')
         if (!items?.length) return
         const first = items[0]
         const last = items[items.length - 1]
@@ -48,20 +45,15 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
 
   if (!open) return null
 
-  async function handlePick(format) {
-    if (busyFormat) return
-    setBusyFormat(format.id)
-    setError(null)
-    try {
-      await format.run()
-      onDownloaded?.()
-      onClose()
-    } catch (err) {
-      console.error(`Failed to generate CV as ${format.id}`, err)
-      setError(`Couldn't generate the ${format.label} file — check your connection and try again, or reload the page.`)
-    } finally {
-      setBusyFormat(null)
-    }
+  // Each format is a file cvgen built ahead of time, so the links work as
+  // plain links (open in a tab, copy the address). A click starts the download
+  // from a detached link instead, because closing the dialog removes this one
+  // before the browser would follow it.
+  function handlePick(e, format) {
+    e.preventDefault()
+    downloadCv(format)
+    onDownloaded?.()
+    onClose()
   }
 
   return createPortal(
@@ -86,25 +78,19 @@ function CvFormatDialog({ open, onClose, onDownloaded }) {
         <p className="cv-dialog-subtitle">Pick how you'd like the CV delivered</p>
         <div className="cv-dialog-grid">
           {CV_FORMATS.map((format) => (
-            <button
+            <a
               key={format.id}
-              type="button"
-              className={`cv-format-btn${busyFormat === format.id ? ' is-busy' : ''}`}
-              onClick={() => handlePick(format)}
-              disabled={busyFormat !== null}
-              aria-busy={busyFormat === format.id}
+              className="cv-format-btn"
+              href={format.href}
+              download={format.file}
+              onClick={(e) => handlePick(e, format)}
             >
-              {busyFormat === format.id
-                ? <Icon name="spinner" spin />
-                : <Icon name={format.icon} />}
+              <Icon name={format.icon} />
               <span className="cv-format-label">{format.label}</span>
               <span className="cv-format-hint">{format.hint}</span>
-            </button>
+            </a>
           ))}
         </div>
-        {error && (
-          <p className="cv-dialog-error" role="alert">{error}</p>
-        )}
       </div>
     </div>,
     document.body

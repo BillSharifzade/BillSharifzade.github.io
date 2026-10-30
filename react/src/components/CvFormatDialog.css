@@ -102,6 +102,7 @@
     border-radius: 16px;
     color: var(--text-primary);
     font-family: inherit;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
 }
@@ -112,25 +113,15 @@
     transition: transform 0.25s ease;
 }
 
-.cv-format-btn:hover:not(:disabled) {
+.cv-format-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: var(--primary);
     transform: translateY(-4px);
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
 }
 
-.cv-format-btn:hover:not(:disabled) .icon {
+.cv-format-btn:hover .icon {
     transform: scale(1.12);
-}
-
-.cv-format-btn:disabled {
-    opacity: 0.45;
-    cursor: progress;
-}
-
-.cv-format-btn.is-busy {
-    opacity: 1;
-    border-color: var(--primary);
 }
 
 .cv-format-label {
@@ -161,17 +152,6 @@
     .cv-format-btn .icon {
         font-size: 1.6rem;
     }
-}
-
-.cv-dialog-error {
-    margin-top: 16px;
-    padding: 10px 14px;
-    border: 1px solid rgba(248, 113, 113, 0.4);
-    border-radius: 10px;
-    background: rgba(248, 113, 113, 0.08);
-    color: #f8a5a5;
-    font-size: 0.85rem;
-    line-height: 1.5;
 }
 
 .cv-dialog:focus-visible {

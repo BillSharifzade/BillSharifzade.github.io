@@ -9,7 +9,8 @@
  *
  * Two files are emitted:
  *   src/data/icons.js    — icons the page itself renders (in the main bundle)
- *   src/data/cvIcons.js  — icons only the CV exporters draw (in lazy chunks)
+ *   src/data/cvIcons.js  — icons only the CV files draw (never bundled: cvgen
+ *                          reads them at build time via scripts/cv-json.mjs)
  *
  * Run after adding an icon to ICONS below:
  *   npm run icons
@@ -58,7 +59,6 @@ const SETS = {
       mitten: 'mitten',
       route: 'route',
       'shield-alt': 'shield-halved',
-      spinner: 'spinner',
       times: 'xmark',
       'volume-high': 'volume-high',
       'volume-xmark': 'volume-xmark',

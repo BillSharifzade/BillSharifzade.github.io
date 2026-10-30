@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -16,6 +16,7 @@ import {
   certLine,
   dateLine,
 } from './src/data/cv.js'
+import { CV_FORMATS } from './src/data/cvFormats.js'
 
 const SITE = 'https://billsharifzade.github.io/'
 
@@ -27,9 +28,11 @@ function esc(s) {
     .replace(/"/g, '&quot;')
 }
 
-// The app renders client-side, so crawlers and no-JS visitors would otherwise
-// receive an empty <div id="root">. This renders the same cv.js data into a
-// static <noscript> block at build time — real indexable content, no prerenderer.
+// The pre-rendered page (scripts/prerender.mjs) is only the site's first frame:
+// most sections wait for JavaScript to reveal them, and the CV's details live
+// in components that render on demand. This renders the same cv.js data into
+// a static <noscript> block at build time — the full CV as plain, indexable
+// HTML — and hides the pre-rendered app for visitors without JavaScript.
 function renderFallback() {
   const contacts = profile.contacts
     .map((c) => (c.href ? `<a href="${esc(c.href)}">${esc(c.value)}</a>` : esc(contactLine(c))))
@@ -67,6 +70,7 @@ function renderFallback() {
 
   return `<noscript>
   <style>
+    #root{display:none}
     .nojs{max-width:52rem;margin:0 auto;padding:2.5rem 1.25rem;font-family:system-ui,-apple-system,sans-serif;
       line-height:1.6;color:#e8e8ef;background:#0b0b12}
     .nojs a{color:#818cf8}
@@ -202,9 +206,29 @@ function seoFiles() {
   }
 }
 
+// The download links point at files cvgen writes into public/cv/ (npm run cv,
+// which prebuild runs). A missing one would only show up as a 404 for the
+// visitor who clicks it, so fail the build instead.
+function cvDownloads() {
+  return {
+    name: 'cv-downloads',
+    apply: 'build',
+    buildStart() {
+      const here = dirname(fileURLToPath(import.meta.url))
+      const missing = CV_FORMATS.filter((f) => !existsSync(join(here, 'public/cv', f.file)))
+      if (missing.length) {
+        throw new Error(
+          `public/cv/ is missing ${missing.map((f) => f.file).join(', ')} — ` +
+          'run `npm run cv` (needs cargo) before building.'
+        )
+      }
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), seoFallback(), seoFiles()],
+  plugins: [react(), seoFallback(), seoFiles(), cvDownloads()],
   base: '/',
   build: {
     // three.js alone clears the default 500 kB warning, and it is already

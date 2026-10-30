@@ -28,6 +28,19 @@ jobs:
           node-version-file: react/.nvmrc
           cache: npm
           cache-dependency-path: react/package-lock.json
+      # cvgen (Rust) builds the CV downloads before Vite runs (npm's prebuild).
+      # The runner image ships cargo; only the dependency build is worth caching.
+      - name: Cache cvgen build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            cvgen/target/
+          key: cvgen-${{ runner.os }}-${{ hashFiles('cvgen/Cargo.lock') }}
+      - name: Build cvgen
+        working-directory: cvgen
+        run: cargo build --locked
       - name: Install deps
         working-directory: react
         run: npm ci

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo, useState }
 
 import * as THREE from 'three';
 
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { degToRad } from 'three/src/math/MathUtils.js';
 
@@ -76,15 +76,42 @@ const usePageVisible = () => {
   return visible;
 };
 
+// The beams drift slowly, so 30 frames a second reads the same as the
+// display's 60-120 while halving (or quartering) the full-screen shader and
+// the per-frame three.js work. The canvas renders on demand and this asks for
+// a frame at that rate; useFrame's delta keeps the motion speed unchanged.
+const FPS = 30;
+
+const FrameCap = ({ fps }) => {
+  const invalidate = useThree((state) => state.invalidate);
+  useEffect(() => {
+    const interval = 1000 / fps;
+    let raf = 0;
+    let last = -Infinity;
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      // Half a frame of slack, so a 60 Hz display lands on every other frame.
+      if (now - last >= interval - 8) {
+        last = now;
+        invalidate();
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [fps, invalidate]);
+  return null;
+};
+
 const CanvasWrapper = ({ children, reduced, visible }) => (
   <Canvas
     // This is an out-of-focus dark backdrop, so rendering above 1 device pixel
     // per CSS pixel buys nothing visible while costing 2-4x the fragment work
     // on the HiDPI laptops and phones most visitors are on.
     dpr={1}
-    frameloop={reduced || !visible ? 'demand' : 'always'}
+    frameloop="demand"
     className="beams-container"
   >
+    {!reduced && visible && <FrameCap fps={FPS} />}
     {children}
   </Canvas>
 );

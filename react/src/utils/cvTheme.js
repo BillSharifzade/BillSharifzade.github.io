@@ -1,19 +1,16 @@
 /**
- * Design tokens shared by every CV export, so a PDF, a DOCX and a spreadsheet
- * all read as the same document as the site.
+ * Design tokens shared by every CV file, so a PDF, a DOCX and a spreadsheet
+ * all read as the same document as the site. scripts/cv-json.mjs hands them to
+ * cvgen (../cvgen), which builds the files.
  *
  * Colours are the site's own: the terminal palette from WipTerminal.css and
  * the social card (scripts/make-og.mjs), which is the strongest single image
  * of the brand — black ground, JetBrains Mono, green prompt, orange role.
- *
- * Kept free of asset imports so the text-only exporters (txt/md/csv) can share
- * it without dragging font files into their chunks.
  */
 export const CV_THEME = {
+  // The DOCX declares it a fixed-pitch face, so Word substitutes another
+  // monospace on a machine that does not have it installed.
   font: 'JetBrains Mono',
-  // Word substitutes when the face is not installed; these are the closest
-  // metric-compatible monospaces on each platform.
-  fontFallbacks: ['Cascadia Mono', 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Courier New'],
 
   color: {
     bg: '0a0a0c',      // page ground (terminal chrome)
@@ -34,11 +31,3 @@ export const CV_THEME = {
   prompt: { user: 'bill', host: 'coolest_website', path: '~' },
 }
 
-/** '#rrggbb' form for CSS-like consumers (react-pdf). */
-export const hex = (key) => `#${CV_THEME.color[key]}`
-
-/** `bill@coolest_website:~$ cmd` as plain text. */
-export const promptLine = (cmd = '') => {
-  const { user, host, path } = CV_THEME.prompt
-  return `${user}@${host}:${path}$ ${cmd}`.trimEnd()
-}

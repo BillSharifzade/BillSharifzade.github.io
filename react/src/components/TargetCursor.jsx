@@ -128,6 +128,9 @@ const TargetCursor = ({
     };
 
     createSpinTimeline();
+    // Outside its scope the cursor is hidden, and a hidden spin would still
+    // keep GSAP's ticker writing a transform every frame.
+    if (scopeSelector) spinTl.current.pause();
 
     const tickerFn = () => {
       if (!targetCornerPositionsRef.current || !cursorRef.current || !cornersRef.current) {
@@ -172,6 +175,7 @@ const TargetCursor = ({
         if (inScope !== scopeVisibleRef.current) {
           scopeVisibleRef.current = inScope;
           gsap.to(cursor, { autoAlpha: inScope ? 1 : 0, duration: 0.2, overwrite: 'auto' });
+          if (!activeTarget) spinTl.current?.[inScope ? 'play' : 'pause']();
         }
       }
     };
@@ -340,14 +344,19 @@ const TargetCursor = ({
             spinTl.current = gsap
               .timeline({ repeat: -1 })
               .to(cursorRef.current, { rotation: '+=360', duration: spinDuration, ease: 'none' });
-            gsap.to(cursorRef.current, {
-              rotation: normalizedRotation + 360,
-              duration: spinDuration * (1 - normalizedRotation / 360),
-              ease: 'none',
-              onComplete: () => {
-                spinTl.current?.restart();
-              }
-            });
+            if (scopeSelector && !scopeVisibleRef.current) {
+              // Left the target straight out of scope: stay still while hidden.
+              spinTl.current.pause();
+            } else {
+              gsap.to(cursorRef.current, {
+                rotation: normalizedRotation + 360,
+                duration: spinDuration * (1 - normalizedRotation / 360),
+                ease: 'none',
+                onComplete: () => {
+                  spinTl.current?.restart();
+                }
+              });
+            }
           }
           resumeTimeout = null;
         }, 50);

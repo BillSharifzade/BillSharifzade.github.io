@@ -19,12 +19,15 @@ import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import WipTerminal from './components/WipTerminal.jsx'
 import VisitorCounter from './components/VisitorCounter.jsx'
+import { useHydrated } from './utils/useHydrated.js'
+import { usePauseOffscreen } from './utils/usePauseOffscreen.js'
 import './index.css'
 
 // Beams pulls in three.js (~240 kB gzipped) for a decorative backdrop. Holding
 // the import until the browser is idle keeps it from competing with the hero
 // image and first paint; the page reads identically on the solid black body
-// background until it lands.
+// background until it lands. It is never part of the pre-rendered HTML: it
+// mounts only once React has taken the page over.
 const Beams = lazy(() =>
   new Promise((resolve) => {
     const load = () => resolve(import('./components/Beams.jsx'))
@@ -108,6 +111,8 @@ function App() {
   const indicatorRef = useRef(null)
   const navContainerRef = useRef(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const hydrated = useHydrated()
+  usePauseOffscreen('section, footer')
 
   // Scroll drives three purely visual properties. Writing them straight from
   // the scroll event interleaves style writes with the browser's own layout
@@ -174,21 +179,27 @@ function App() {
   return (
     <>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
-        <Suspense fallback={null}>
-          <Beams
-            beamWidth={2}
-            beamHeight={20}
-            beamNumber={20}
-            speed={1.5}
-            noiseIntensity={1.5}
-            scale={0.2}
-            rotation={30}
-          />
-        </Suspense>
+        {hydrated && (
+          <Suspense fallback={null}>
+            <Beams
+              beamWidth={2}
+              beamHeight={20}
+              beamNumber={20}
+              speed={1.5}
+              noiseIntensity={1.5}
+              scale={0.2}
+              rotation={30}
+            />
+          </Suspense>
+        )}
       </div>
       <div className="scroll-indicator" ref={indicatorRef}></div>
 
-      <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
+      {/* Follows the pointer, so it has nothing to show in the pre-rendered
+          HTML — and on touch devices it renders nothing at all. */}
+      {hydrated && (
+        <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
+      )}
 
       <nav ref={(el) => { navRef.current = el; navContainerRef.current = el }}>
         <div className="nav-content">

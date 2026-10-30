@@ -11,6 +11,9 @@ dist
 dist-ssr
 *.local
 
+# Built by cvgen (npm run cv) before every dev and build run
+public/cv/
+
 .vscode/*
 !.vscode/extensions.json
 .idea
