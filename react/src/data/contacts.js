@@ -16,7 +16,7 @@
  * Kept free of asset imports: vite.config.js imports cv.js in plain Node to
  * build the <noscript> fallback, so nothing in this chain may reach for an svg.
  */
-export const channels = [
+const channels = [
   {
     label: 'Email',
     handle: 'sharifzadebilal@gmail.com',

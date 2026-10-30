@@ -23,14 +23,14 @@ import { useHydrated } from './utils/useHydrated.js'
 import { usePauseOffscreen } from './utils/usePauseOffscreen.js'
 import './index.css'
 
-// Beams pulls in three.js (~240 kB gzipped) for a decorative backdrop. Holding
-// the import until the browser is idle keeps it from competing with the hero
-// image and first paint; the page reads identically on the solid black body
-// background until it lands. It is never part of the pre-rendered HTML: it
-// mounts only once React has taken the page over.
-const Beams = lazy(() =>
+// The ASCII backdrop is decorative, so it waits until the browser is idle: its
+// shaders then compile without competing with the hero image and first paint,
+// and the page reads identically on the solid black body background until it
+// lands. It is never part of the pre-rendered HTML: it mounts only once React
+// has taken the page over.
+const GradientASCII = lazy(() =>
   new Promise((resolve) => {
-    const load = () => resolve(import('./components/Beams.jsx'))
+    const load = () => resolve(import('./components/GradientASCII.jsx'))
     if (typeof requestIdleCallback === 'function') requestIdleCallback(load, { timeout: 2000 })
     else setTimeout(load, 200)
   })
@@ -69,11 +69,7 @@ const NAV_LINKS = [
 
 const TYPING_TEXTS = [
   'Backend Architect',
-  'AI Architecture Specialist',
-  'Engineering Team Lead',
-  'Full-Stack Developer',
-  'Systems Engineer',
-  'Tech Innovator',
+  'Founder of Mintaka',
 ]
 
 function TypingSubtitle() {
@@ -181,15 +177,7 @@ function App() {
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
         {hydrated && (
           <Suspense fallback={null}>
-            <Beams
-              beamWidth={2}
-              beamHeight={20}
-              beamNumber={20}
-              speed={1.5}
-              noiseIntensity={1.5}
-              scale={0.2}
-              rotation={30}
-            />
+            <GradientASCII />
           </Suspense>
         )}
       </div>

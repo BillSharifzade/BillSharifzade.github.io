@@ -2,7 +2,7 @@ import { cvContacts } from './contacts.js'
 
 export const profile = {
   name: 'Sharifzoda Bilol',
-  role: 'Backend Architect · AI Architecture Specialist · Full-Stack Developer',
+  role: 'Backend Architect · Founder of Mintaka',
   summary:
     'Backend architect with deep expertise in systems engineering across fintech, high-load platforms, ' +
     'and applied AI. I build robust, maintainable, and efficient solutions, with a focus on low-level ' +
