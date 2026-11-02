@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import DecryptedText from './components/DecryptedText.jsx'
 import Icon from './components/Icon.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
-import Folder from './components/Folder.jsx'
+import FolderFloat from './components/FolderFloat.jsx'
 import ContactDevice from './components/ContactDevice.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
 import BounceCards from './components/BounceCards.jsx'
@@ -45,6 +45,63 @@ const projectPanels = projects.map((p) => ({
   repo: p.repo,
   link: p.href,
 }))
+
+const SKILL_FOLDERS = [
+  {
+    label: 'Rust',
+    icon: 'rust',
+    items: [
+      ['Axum, Actix', 'Expert'],
+      ['Tauri, Ratatui', 'Expert'],
+      ['Tokio', 'Expert'],
+    ],
+  },
+  {
+    label: 'Web',
+    icon: 'js-square',
+    items: [
+      ['React & React Native', 'Expert'],
+      ['Typescript', 'Advanced'],
+      ['NextJS', 'Advanced'],
+    ],
+  },
+  {
+    label: 'Linux',
+    icon: 'linux',
+    items: [
+      ['Arch, Gentoo, Kali', 'Expert'],
+      ['Kernel, Systemd, Syscalls', 'Expert'],
+      ['Unix Philosophy', 'Expert'],
+    ],
+  },
+  {
+    label: 'Python',
+    icon: 'python',
+    items: [
+      ['NumPy/Pandas', 'Advanced'],
+      ['Django & FastAPI', 'Advanced'],
+      ['TensorFlow', 'Advanced'],
+    ],
+  },
+  {
+    label: 'Security & Crypto',
+    icon: 'shield-alt',
+    items: [
+      ['Cybersecurity, AppSec', 'Intermediate'],
+      ['Cryptography', 'Intermediate'],
+      ['Network Security', 'Intermediate'],
+    ],
+  },
+  {
+    label: 'Low-level',
+    icon: 'microchip',
+    items: [
+      ['C (OpenGL, Vulkan)', 'Advanced'],
+      ['Zig', 'Intermediate'],
+      ['Assembly', 'Basic'],
+    ],
+  },
+]
 
 function scrollToTarget(target) {
   if (!target) return
@@ -287,72 +344,9 @@ function App() {
         <div className="container">
           <SectionTitle text="My skills" />
           <div className="folders-grid">
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Rust"
-              icon="rust"
-              items={[
-                <div className="skill-item" key="a1"><span>Axum, Actix</span><span>Expert</span></div>,
-                <div className="skill-item" key="a2"><span>Tauri, Ratatui</span><span>Expert</span></div>,
-                <div className="skill-item" key="a3"><span>Tokio</span><span>Expert</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Web"
-              icon="js-square"
-              items={[
-                <div className="skill-item" key="w1"><span>React & React Native</span><span>Expert</span></div>,
-                <div className="skill-item" key="w2"><span>Typescript</span><span>Advanced</span></div>,
-                <div className="skill-item" key="w3"><span>NextJS</span><span>Advanced</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Linux"
-              icon="linux"
-              items={[
-                <div className="skill-item" key="l1"><span>Arch, Gentoo, Kali</span><span>Expert</span></div>,
-                <div className="skill-item" key="l2"><span>Kernel, Systemd, Syscalls</span><span>Expert</span></div>,
-                <div className="skill-item" key="l3"><span>Unix Philosophy</span><span>Expert</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Python"
-              icon="python"
-              items={[
-                <div className="skill-item" key="p1"><span>NumPy/Pandas</span><span>Advanced</span></div>,
-                <div className="skill-item" key="p2"><span>Django & FastAPI</span><span>Advanced</span></div>,
-                <div className="skill-item" key="p3"><span>TensorFlow</span><span>Advanced</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Security & Crypto"
-              icon="shield-alt"
-              items={[
-                <div className="skill-item" key="c1"><span>Cybersecurity, AppSec</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="c2"><span>Cryptography</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="c3"><span>Network Security</span><span>Intermediate</span></div>,
-              ]}
-            />
-            <Folder
-              size={1.35}
-              color="#2d2d2d"
-              label="Low-level"
-              icon="microchip"
-              items={[
-                <div className="skill-item" key="s1"><span>C (OpenGL, Vulkan)</span><span>Advanced</span></div>,
-                <div className="skill-item" key="s2"><span>Zig</span><span>Intermediate</span></div>,
-                <div className="skill-item" key="s3"><span>Assembly</span><span>Basic</span></div>,
-              ]}
-            />
+            {SKILL_FOLDERS.map((folder) => (
+              <FolderFloat key={folder.label} {...folder} />
+            ))}
           </div>
 
           <div className="current-stack-wrapper" style={{ marginTop: '40px', textAlign: 'center' }}>

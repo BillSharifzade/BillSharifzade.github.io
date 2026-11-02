@@ -257,21 +257,6 @@ nav.scrolled {
 }
 
 
-.skill-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-.skill-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
 .achievement-label {
     color: var(--primary);
     font-weight: 600;
