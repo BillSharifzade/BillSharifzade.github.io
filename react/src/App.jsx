@@ -8,6 +8,7 @@ import TargetCursor from './components/TargetCursor.jsx'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
 import { projects } from './data/cv.js'
+import { SKILL_FOLDERS } from './data/skillFolders.js'
 import { projectCovers } from './data/projectCovers.js'
 import { resolveIcons } from './data/projectIcons.js'
 import AccordionGallery from './components/AccordionGallery.jsx'
@@ -45,63 +46,6 @@ const projectPanels = projects.map((p) => ({
   repo: p.repo,
   link: p.href,
 }))
-
-const SKILL_FOLDERS = [
-  {
-    label: 'Rust',
-    icon: 'rust',
-    items: [
-      ['Axum, Actix', 'Expert'],
-      ['Tauri, Ratatui', 'Expert'],
-      ['Tokio', 'Expert'],
-    ],
-  },
-  {
-    label: 'Web',
-    icon: 'js-square',
-    items: [
-      ['React & React Native', 'Expert'],
-      ['Typescript', 'Advanced'],
-      ['NextJS', 'Advanced'],
-    ],
-  },
-  {
-    label: 'Linux',
-    icon: 'linux',
-    items: [
-      ['Arch, Gentoo, Kali', 'Expert'],
-      ['Kernel, Systemd, Syscalls', 'Expert'],
-      ['Unix Philosophy', 'Expert'],
-    ],
-  },
-  {
-    label: 'Python',
-    icon: 'python',
-    items: [
-      ['NumPy/Pandas', 'Advanced'],
-      ['Django & FastAPI', 'Advanced'],
-      ['TensorFlow', 'Advanced'],
-    ],
-  },
-  {
-    label: 'Security & Crypto',
-    icon: 'shield-alt',
-    items: [
-      ['Cybersecurity, AppSec', 'Intermediate'],
-      ['Cryptography', 'Intermediate'],
-      ['Network Security', 'Intermediate'],
-    ],
-  },
-  {
-    label: 'Low-level',
-    icon: 'microchip',
-    items: [
-      ['C (OpenGL, Vulkan)', 'Advanced'],
-      ['Zig', 'Intermediate'],
-      ['Assembly', 'Basic'],
-    ],
-  },
-]
 
 function scrollToTarget(target) {
   if (!target) return

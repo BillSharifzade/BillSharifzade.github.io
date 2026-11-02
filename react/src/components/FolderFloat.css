@@ -1,18 +1,16 @@
 .folder-float {
-  --ff-w: 200px;
-  --ff-h: 148px;
+  --ff-w: 220px;
+  --ff-h: 156px;
   --ff-r: 14px;
   --ff-tab: 14px;
   /* The site's black, white and silver. */
   --ff-back: #262626;
   --ff-front: #3a3a3a;
-  --ff-paper: #c0c0c0;
   --ff-item: #f2f2f2;
   --ff-item-ink: #111111;
   --ff-label: #f5f5f5;
-  /* How far the flap tilts toward you: closed, under the cursor, open. */
+  /* How far the flap tilts toward you, closed and open. */
   --ff-rest: 16deg;
-  --ff-peek: 24deg;
   --ff-angle: 34deg;
   --ff-open: 520ms;
   --ff-close: 312ms;
@@ -44,6 +42,8 @@
   height: var(--ff-h);
 }
 
+/* Back to front: the back panel, the sheets, the pills, the flap, and the
+   button over all of it. */
 .folder-float__back {
   position: absolute;
   inset: 0;
@@ -65,20 +65,32 @@
   background: inherit;
 }
 
+/* One sheet per skill, peeking out of the closed folder. Opening lifts each
+   out as its pill appears; closing puts it back once its pill is inside. */
 .folder-float__paper {
   position: absolute;
-  top: 10%;
   z-index: 1;
-  right: 8%;
-  left: 8%;
-  height: 50%;
+  top: calc(5% + var(--i) * 6%);
+  right: calc(12% - var(--i) * 3%);
+  left: calc(9% + var(--i) * 2%);
+  height: 55%;
   border-radius: 6px;
-  background: var(--ff-paper);
-  opacity: 0;
-  transform: translateY(10px);
+  background: var(--shade);
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.25);
+  transform: rotate(var(--turn));
+  pointer-events: none;
   transition:
-    transform var(--ff-close) var(--ff-ease-out),
-    opacity var(--ff-close) ease;
+    transform 240ms var(--ff-ease-out),
+    opacity 240ms ease;
+  transition-delay: calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5 + var(--ff-close) * 0.6);
+}
+
+.folder-float[data-open] .folder-float__paper {
+  opacity: 0;
+  transform: translateY(-14px) rotate(var(--turn));
+  transition:
+    transform 200ms var(--ff-ease-out) calc(var(--i) * var(--ff-stagger)),
+    opacity 160ms ease calc(var(--i) * var(--ff-stagger) + 40ms);
 }
 
 .folder-float__front {
@@ -86,13 +98,14 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 5px;
+  align-items: flex-start;
+  gap: 6px;
   height: 76%;
-  padding: 14px 16px;
+  padding: 14px 18px 16px;
   box-sizing: border-box;
   border-radius: var(--ff-r);
   background: linear-gradient(180deg, color-mix(in srgb, var(--ff-front) 92%, #fff), var(--ff-front) 60%);
@@ -103,16 +116,20 @@
   transition: transform var(--ff-open) var(--ff-ease-out);
 }
 
+.folder-float__icon {
+  margin-bottom: 2px;
+  font-size: 26px;
+}
+
 .folder-float__label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 
 .folder-float__sub {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.55;
 }
 
@@ -123,7 +140,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 3;
+  z-index: 4;
   margin: 0;
   padding: 0;
   border: 0;
@@ -139,34 +156,30 @@
   outline-offset: 6px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .folder-float:not([data-open]):hover .folder-float__front {
-    transform: perspective(600px) rotateX(calc(-1 * var(--ff-peek)));
-  }
-}
-
 .folder-float[data-open] .folder-float__front {
   transform: perspective(600px) rotateX(calc(-1 * var(--ff-angle)));
-}
-
-.folder-float[data-open] .folder-float__paper {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    transform var(--ff-open) var(--ff-ease-out),
-    opacity 200ms ease;
 }
 
 .folder-float__items {
   position: absolute;
   top: var(--ff-tab);
   left: 50%;
-  z-index: 1;
+  z-index: 2;
   width: 0;
   height: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* The space the pills cover, so the mouse can reach them without leaving. */
+.folder-float[data-open] .folder-float__items::before {
+  content: '';
+  position: absolute;
+  top: var(--ff-cloud-y);
+  left: var(--ff-cloud-x);
+  width: var(--ff-cloud-w);
+  height: var(--ff-cloud-h);
 }
 
 /* Closing reverses the order: the last pill out is the first back in. */
@@ -177,48 +190,64 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 34px;
+  height: 36px;
   padding: 0 14px;
   box-sizing: border-box;
-  border-radius: 17px;
+  border-radius: 18px;
   background: var(--ff-item);
   color: var(--ff-item-ink);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   opacity: 0;
   transform: translate(-50%, 44px) scale(0.6);
   pointer-events: none;
   transition:
     transform var(--ff-close) var(--ff-ease-out) calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5),
-    opacity 160ms ease calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5 + var(--ff-close) * 0.45);
+    opacity 160ms ease calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5 + var(--ff-close) * 0.45),
+    scale 160ms var(--ff-ease-out);
 }
 
 .folder-float[data-open] .folder-float__item {
   opacity: 1;
-  transform: translate(calc(-50% + var(--x)), var(--y)) rotate(var(--r)) scale(1);
+  transform: translate(calc(-50% + var(--x)), var(--y)) rotate(var(--r)) scale(var(--s));
+  pointer-events: auto;
   transition:
     transform var(--ff-open) var(--ff-spring) calc(var(--i) * var(--ff-stagger)),
-    opacity 160ms ease calc(var(--i) * var(--ff-stagger));
+    opacity 160ms ease calc(var(--i) * var(--ff-stagger)),
+    scale 160ms var(--ff-ease-out);
 }
 
-.folder-float__level {
-  font-size: 11px;
-  opacity: 0.6;
+@media (hover: hover) and (pointer: fine) {
+  .folder-float[data-open] .folder-float__item:hover {
+    scale: 1.06;
+  }
+}
+
+.folder-float__logos {
+  display: flex;
+  gap: 4px;
+}
+
+.folder-float__logos svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .folder-float__front,
-  .folder-float__paper {
-    transition: opacity 200ms ease;
+  .folder-float__front {
+    transition: none;
   }
 
-  .folder-float:not([data-open]):hover .folder-float__front,
   .folder-float[data-open] .folder-float__front {
     transform: perspective(600px) rotateX(calc(-1 * var(--ff-rest)));
   }
 
-  .folder-float__paper {
-    transform: none !important;
+  .folder-float__paper,
+  .folder-float[data-open] .folder-float__paper {
+    transform: rotate(var(--turn));
+    transition: opacity 200ms ease;
   }
 
   .folder-float__item {
