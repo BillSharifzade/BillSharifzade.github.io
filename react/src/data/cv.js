@@ -32,6 +32,7 @@ export const experience = [
     date: 'January 2026 - Present',
     type: 'Leadership',
     desc: 'Leading technical enablement and architecture for enterprise and government-scale systems, from corporate training to designing large-scale software from the ground up.',
+    summary: 'Leading a department showed me that architecture is as much about people as about systems. Training teams, auditing mission-critical software and aligning stakeholders across borders sharpened how I explain hard technical decisions and back them with evidence.',
     bullets: [
       ['Corporate training:', 'Deliver corporate training on Unix philosophy, cybersecurity, and IT fundamentals across internal teams.'],
       ['Architecture:', 'Design and architect large-scale software systems, author technical specifications, and audit closed, mission-critical software.'],
@@ -44,6 +45,7 @@ export const experience = [
     date: 'December 2025 - Present',
     type: 'Founder',
     desc: 'Founded and lead a software company building efficient, reliable, and secure solutions with polished UI/UX for B2C, B2B, and B2G across platforms, systems, and SaaS.',
+    summary: 'Founding Mintaka made me answerable for every layer at once: architecture, delivery, clients and the team. It turned performance work into a discipline of measuring before changing anything, and taught me that building engineers matters as much as building software.',
     bullets: [
       ['Performance engineering:', 'Refactored the platform for the state-owned enterprise Smart City, improving latency and throughput 50–70× — every change load-tested against production with Grafana k6.'],
       ['Constrained environments:', 'Optimized architecture, payload sizes, and network behaviour for low-end Android devices and the unstable, low-bandwidth connections common across the region.'],
@@ -57,6 +59,7 @@ export const experience = [
     date: 'October 2025 - Present',
     type: 'Engineering',
     desc: 'Build performant, secure, and scalable software with Rust and Next.js. Design high-load architectures for modern systems.',
+    summary: 'Designing high-load systems around real enterprise processes showed me how much value well-built automation unlocks. Shipping a hardened Linux distribution deepened my conviction that security starts at the kernel, not at the firewall.',
     bullets: [
       ['Business automation:', 'Built 10+ large-scale systems automating core business processes for enterprise clients, reducing manual work by up to 80%.'],
       ['HR automation:', 'Led end-to-end optimization of the hiring platform, automating pipelines with AI-driven screening and onboarding flows that reduced hiring time from days to hours.'],
@@ -68,6 +71,7 @@ export const experience = [
     company: 'Milli Eats',
     date: 'June 2025 - January 2026',
     desc: 'Built a cross-platform mobile delivery app on a three-sided marketplace architecture (customer, courier, vendor), focused on performance and scalability.',
+    summary: 'A three-sided marketplace taught me to think in real time, with customers, couriers and vendors all waiting on the same data. It made me fluent in designing for latency, unreliable mobile networks and native platforms together.',
     bullets: [
       ['High-load design:', 'Delivered a secure, high-performance architecture that improved delivery speeds by over 70% versus the prior system.'],
       ['Realtime stack:', 'Implemented GPS tracking and real-time update services with first-class native support on iOS and Android.'],
@@ -78,6 +82,7 @@ export const experience = [
     company: 'TechnoHub',
     date: 'January 2025 - February 2026',
     desc: 'Taught programming, trained corporate teams, and developed software projects for enterprise clients.',
+    summary: 'Teaching everything from Assembly to AI forced me to explain fundamentals precisely, and that precision now shapes how I write code and documentation. Training corporate teams showed me how technology actually changes the way an organisation works.',
     bullets: [
       ['Curriculum leadership:', 'Mentored cohorts across Python, JavaScript, C, Ruby, and Assembly, from beginner through advanced levels.'],
       ['Enterprise enablement:', 'Trained 55 Group, TGEM, Avesto, Koinoti Nav, and others to embed AI tooling into daily operations.'],
@@ -89,6 +94,7 @@ export const experience = [
     company: 'TAG Marketeer Agency',
     date: 'February 2025 - March 2025',
     desc: 'Implemented AI solutions and automated marketing workflows, optimizing business processes through intelligent automation.',
+    summary: 'Turning months of manual work into a single day showed me how quickly well-aimed automation pays for itself. It grounded my AI work in measurable business outcomes rather than demos.',
     bullets: [
       ['Data intelligence:', 'Built an AI product that analyzes large datasets into statistical, analytical, and predictive dashboards — replacing weekly manual reporting with live views and cutting reporting-to-decision time ~100×.'],
       ['Throughput gains:', 'Reduced multi-month manual workflows to a single day through targeted automation.'],
@@ -99,6 +105,7 @@ export const experience = [
     company: 'Founders School Bootcamp',
     date: 'Autumn 2024 - Winter 2024',
     desc: 'Developed a startup concept, networked with industry experts, and gained entrepreneurial experience in tech innovation.',
+    summary: 'A product that never launched still taught me more than many that did: how markets, persuasion and management really work. I left with a founder\'s resilience and lasting lessons from the mentors I worked with.',
     bullets: [
       ['Resilience:', 'Although the product never launched, turned the experience into deep lessons across social engineering, marketing, and business management.'],
       ['Leadership growth:', 'Strengthened leadership, negotiation, and networking skills while collaborating with influential mentors.'],
@@ -109,6 +116,7 @@ export const experience = [
     company: 'International Transactions',
     date: 'June 2023 - August 2023',
     desc: 'Processed and analyzed cryptocurrency transactions between various countries and Tajikistan, identifying financial patterns.',
+    summary: 'Analysing cross-border crypto flows trained my eye for patterns in noisy financial data. It gave me a working understanding of blockchain systems from the transaction level up.',
     bullets: [
       ['Blockchain insight:', 'Developed a nuanced understanding of blockchain architecture and trading ecosystems.'],
       ['Pattern discovery:', 'Identified actionable trading patterns to guide cross-border transaction strategies.'],
@@ -120,6 +128,7 @@ export const experience = [
     date: 'June 2020 - November 2026',
     type: 'Ongoing',
     desc: 'Developed financial workflow automation systems, maintained existing infrastructure, and optimized operational processes.',
+    summary: 'Years of automating a regulated financial business taught me that correctness and auditability come first. Writing scoring models and reports that auditors rely on made me careful, exact and pragmatic.',
     bullets: [
       ['Scoring models:', 'Authored 15+ mathematical formulas powering a robust, secure microcredit evaluation engine.'],
       ['Regulatory reporting:', 'Delivered automated reporting and analytics that satisfy stringent audit requirements, cutting regulatory report preparation ~1000× — from multi-day manual compilation to minutes.'],

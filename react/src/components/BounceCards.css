@@ -5,63 +5,150 @@
     align-items: center;
 }
 
+/* The first card sits on top and each next one tucks under it; the card in
+   hand comes to the front. */
 .card {
     position: absolute;
-    width: 200px;
+    z-index: var(--z);
+    width: 160px;
     aspect-ratio: 1;
-    border: 5px solid rgba(225, 228, 234, 0.3);
     border-radius: 25px;
-    overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(160deg, #161616, #090909);
+    outline: none;
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 768px) {
-    .card {
-        width: 150px;
-        border-width: 3px;
-        border-radius: 15px;
-    }
+.card[data-phase='charging'],
+.card[data-phase='revealed'] {
+    z-index: 50;
 }
 
-@media (max-width: 480px) {
-    .card {
-        width: 120px;
-    }
-}
-
-.card .image {
+/* The border, and the timer that fills it while the card is held. */
+.card-ring {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    overflow: visible;
+    pointer-events: none;
 }
 
-.card--icon {
-    width: 160px;
+.card-ring path {
+    fill: none;
+    stroke-width: 5;
+}
+
+.card-ring__track {
+    stroke: rgba(225, 228, 234, 0.3);
+}
+
+.card-ring__fill {
+    stroke: #ffffff;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    opacity: 0;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.55));
+    transition: stroke-dashoffset 260ms ease-out, opacity 260ms ease-out;
+}
+
+.card[data-phase='charging'] .card-ring__fill,
+.card[data-phase='revealed'] .card-ring__fill {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transition: stroke-dashoffset 2000ms linear, opacity 120ms ease-out;
+}
+
+.card:focus-visible .card-ring__track {
+    stroke: rgba(255, 255, 255, 0.6);
+}
+
+/* Logo and info share the card; the swap blurs one out as the other settles in. */
+.card-face {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background: linear-gradient(160deg, #161616, #090909);
+    border-radius: inherit;
+    transition:
+        opacity 320ms ease,
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+        filter 320ms ease;
 }
 
-.card--icon .tech-icon {
+.card-face--logo {
+    gap: 12px;
+}
+
+.card-face--logo .tech-icon {
     width: 52%;
     height: 52%;
 }
 
-.card--icon .tech-icon-label {
+.tech-icon-label {
     color: rgba(255, 255, 255, 0.75);
     font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.05em;
 }
 
-@media (max-width: 768px) {
-    .card--icon {
-        width: 160px;
-        border-width: 5px;
-        border-radius: 25px;
+.card-face--info {
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 18px 16px 18px;
+    text-align: left;
+    opacity: 0;
+    transform: scale(1.08);
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.card[data-phase='revealed'] .card-face--logo {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(8px);
+}
+
+.card[data-phase='revealed'] .card-face--info {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+    transition-delay: 90ms;
+}
+
+.card-info__tech {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.card-info__headline {
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.card-info__detail {
+    color: #c0c0c0;
+    font-size: 0.7rem;
+    line-height: 1.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-face,
+    .card[data-phase='revealed'] .card-face--logo,
+    .card[data-phase='revealed'] .card-face--info {
+        transform: none;
+        filter: none;
+        transition: opacity 200ms ease;
     }
 }
 

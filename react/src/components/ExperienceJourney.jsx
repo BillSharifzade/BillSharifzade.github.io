@@ -173,6 +173,12 @@ function ExperienceJourney() {
                       </li>
                     ))}
                   </ul>
+                  {exp.summary && (
+                    <div className="journey-summary">
+                      <span className="journey-summary-label">What it gave me</span>
+                      <p>{exp.summary}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

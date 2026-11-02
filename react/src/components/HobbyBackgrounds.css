@@ -12,16 +12,113 @@
     z-index: 1;
 }
 
+/* Text on the left, the hobby's animated figure framed on the right, and the
+   hobby's word set large and hollow behind it all. */
+.scroll-stack-card.hobby-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: 2.2rem;
+    height: 21rem;
+    padding: 2.2rem;
+    background:
+        radial-gradient(120% 90% at 0% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
+        linear-gradient(145deg, #151515, #0b0b0b);
+}
+
+.hobby-word {
+    position: absolute;
+    left: 1.6rem;
+    bottom: -1.9rem;
+    z-index: 0;
+    color: transparent;
+    font-size: 7.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* The figure: a dot grid under a soft light, with crop marks in the corners. */
+.hobby-plate {
+    position: relative;
+    z-index: 1;
+    align-self: stretch;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    background:
+        linear-gradient(#ffffff, #ffffff) 12px 12px / 12px 1px no-repeat,
+        linear-gradient(#ffffff, #ffffff) 12px 12px / 1px 12px no-repeat,
+        linear-gradient(#ffffff, #ffffff) calc(100% - 12px) calc(100% - 12px) / 12px 1px no-repeat,
+        linear-gradient(#ffffff, #ffffff) calc(100% - 12px) calc(100% - 12px) / 1px 12px no-repeat,
+        radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.09), transparent 62%),
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1.4px) 0 0 / 16px 16px,
+        #060606;
+}
+
+.hobby-caption {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 12px;
+    z-index: 1;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.hobby-card .hobby-chip .icon {
+    display: inline-grid;
+    place-items: center;
+    box-sizing: content-box;
+    margin-left: -8px;
+    padding: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #000000;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .scroll-stack-card.hobby-card {
+        grid-template-columns: 1fr;
+        gap: 1.4rem;
+        height: auto;
+        padding: 1.2rem 1.2rem 1.8rem;
+    }
+
+    .hobby-plate {
+        order: -1;
+        height: 170px;
+    }
+
+    .hobby-word {
+        left: 1rem;
+        bottom: -1.1rem;
+        font-size: 4.2rem;
+    }
+}
+
 
 .galaxy {
     position: absolute;
     top: 50%;
-    right: -40px;
-    width: 300px;
-    height: 300px;
-    margin-top: -150px;
+    left: 50%;
+    width: 360px;
+    height: 360px;
+    margin: -184px 0 0 -180px;
     animation: galaxySpin 70s linear infinite;
-    opacity: 0.5;
+    opacity: 0.9;
 }
 
 @keyframes galaxySpin {
@@ -67,11 +164,13 @@
 
 .gr-formula {
     position: absolute;
-    left: 3rem;
-    bottom: 1.6rem;
-    font-size: 1.05rem;
+    top: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.82rem;
     letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.5);
     white-space: nowrap;
 }
 
@@ -90,7 +189,7 @@
     right: 12%;
     width: 74px;
     height: 74px;
-    color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.5);
     animation: crosshairDrift 11s ease-in-out infinite;
 }
 
@@ -123,8 +222,9 @@
 
 .knight-scene {
     position: absolute;
-    right: 20%;
-    bottom: 1.1rem;
+    left: 50%;
+    bottom: 2.4rem;
+    margin-left: -48px;
     width: 96px;
     height: 100px;
 }
@@ -137,7 +237,7 @@
     bottom: 24px;
     text-align: center;
     font-size: 2.4rem;
-    color: rgba(255, 255, 255, 0.26);
+    color: rgba(255, 255, 255, 0.75);
     animation: knightStomp 2.8s cubic-bezier(0.34, 0, 0.64, 1) infinite;
     transform-origin: bottom center;
 }
@@ -206,8 +306,8 @@
 .scarf {
     position: absolute;
     top: 0;
-    bottom: 0;
-    right: 14%;
+    bottom: 2.2rem;
+    right: 18%;
     width: 64px;
 }
 
@@ -356,7 +456,7 @@
 
 .float-note {
     position: absolute;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.6);
     font-size: 1.5rem;
     opacity: 0;
     animation: noteRise 7s ease-in-out infinite;
@@ -420,13 +520,13 @@
 .book {
     position: absolute;
     top: 50%;
-    right: 8%;
+    left: 50%;
     width: 220px;
     height: 140px;
-    margin-top: -70px;
+    margin: -84px 0 0 -110px;
     perspective: 900px;
     perspective-origin: 50% 45%;
-    opacity: 0.32;
+    opacity: 0.8;
 }
 
 .book-page {
@@ -567,19 +667,14 @@
 
 @media (max-width: 768px) {
     .galaxy {
-        width: 220px;
-        height: 220px;
-        margin-top: -110px;
-        right: -70px;
-        opacity: 0.35;
+        width: 250px;
+        height: 250px;
+        margin: -125px 0 0 -125px;
     }
 
     .gr-formula {
-        left: 0;
-        right: 0;
-        bottom: 0.55rem;
-        text-align: center;
-        font-size: 0.72rem;
+        top: 10px;
+        font-size: 0.7rem;
     }
 
     .fps-crosshair {
@@ -590,10 +685,10 @@
     }
 
     .knight-scene {
-        right: 2%;
-        bottom: 0.7rem;
+        bottom: 1.9rem;
         width: 68px;
         height: 72px;
+        margin-left: -34px;
     }
 
     .knight-piece {
@@ -607,17 +702,15 @@
     }
 
     .book {
-        width: 130px;
-        height: 86px;
-        margin-top: -43px;
-        right: -34px;
-        opacity: 0.22;
+        width: 150px;
+        height: 96px;
+        margin: -58px 0 0 -75px;
     }
 
     .scarf {
-        right: 0;
+        right: 14%;
+        bottom: 1.8rem;
         width: 40px;
-        opacity: 0.55;
     }
 
     .float-note {
