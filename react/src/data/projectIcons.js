@@ -13,6 +13,9 @@ import {
   siC,
   siLinux,
   siDocker,
+  siBun,
+  siNatsdotio,
+  siKotlin,
 } from 'simple-icons'
 
 const SOURCE = {
@@ -30,6 +33,9 @@ const SOURCE = {
   siC,
   siLinux,
   siDocker,
+  siBun,
+  siNatsdotio,
+  siKotlin,
 }
 
 export const projectIcons = Object.fromEntries(

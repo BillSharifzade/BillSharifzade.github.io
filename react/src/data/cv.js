@@ -140,7 +140,71 @@ export function dateLine(exp) {
   return exp.type ? `${exp.date} · ${exp.type}` : exp.date
 }
 
+// Ordered by impact: revenue and users first.
 export const projects = [
+  {
+    name: 'Competency Matrix Platform',
+    href: 'https://github.com/BillSharifzade/HR_Progress',
+    repo: 'HR_Progress',
+    cover: 'hr-progress',
+    icons: ['siGo', 'siPostgresql', 'siReact', 'siTypescript'],
+    stack: 'Go (chi) \u00b7 PostgreSQL \u00b7 React \u00b7 TypeScript',
+    blurb:
+      'Multi-assessor scoring against a per-grade competency matrix, turning the resulting gaps into Individual '
+      + 'Development Plans with preceptor matching and predicted-improvement tracking.',
+    desc:
+      'Workforce development system for a large corporation: assessments scored by multiple assessors, a '
+      + 'competency matrix with per-grade and per-department minimum thresholds, and Individual Development '
+      + 'Plans generated from the resulting gaps \u2014 including preceptor matching and predicted-improvement '
+      + 'tracking. Built to stay extensible as competencies change.',
+  },  {
+    name: 'Recruitment Automation Platform',
+    href: 'https://github.com/BillSharifzade/Rust-Screenx-HR-Automatization',
+    repo: 'Rust-Screenx-HR-Automatization',
+    cover: 'screenx',
+    icons: ['siRust', 'siPostgresql', 'siNextdotjs', 'siTelegram'],
+    stack: 'Rust (Axum, Tokio, SQLx) \u00b7 PostgreSQL \u00b7 Next.js \u00b7 Telegram Mini App \u00b7 OpenAI',
+    blurb:
+      'Carries a candidate from registration through AI-generated testing to hire across an HR/ERP system, a '
+      + 'Telegram bot and a Mini App, with background workers driving the AI queue and deadlines.',
+    desc:
+      'Recruitment platform bridging a corporate HR/ERP system, a Telegram bot, and a Telegram Mini App, '
+      + 'automating the candidate lifecycle from registration through AI-generated testing to hire. Background '
+      + 'workers drive the AI queue, webhook delivery, and deadline checks behind Argon2 + JWT auth and '
+      + 'per-route rate limiting.',
+  },  {
+    name: 'TEK Electrical Marketplace',
+    href: 'https://github.com/BillSharifzade/tek',
+    repo: 'tek',
+    cover: 'tek',
+    icons: ['siRust', 'siPostgresql', 'siNextdotjs', 'siBun'],
+    stack: 'Rust (Axum, Tokio, SQLx) \u00b7 PostgreSQL \u00b7 Next.js \u00b7 React \u00b7 Bun',
+    blurb:
+      'Online store and corporate site for an electrical-equipment supplier: per-account pricing, product variants '
+      + 'on several axes, B2B invoicing, and orders synced to 1C and the CRM.',
+    desc:
+      'Marketplace and corporate website for the electrical-equipment supplier \u0422\u042d\u041a (tec.tj): a Rust/Axum API with '
+      + 'per-account discount and cashback rules, multi-axis product variants with their own URLs and stock, cart '
+      + 'estimates in Excel, B2B invoicing, a manager panel, catalogue import from 1C exports, and CRM, 1C and e-mail '
+      + 'delivery through a transactional outbox. Catalogue listings serve ~30,000 rps (p99 14 ms) in load tests.',
+  },
+  {
+    name: 'Payment System',
+    href: 'https://github.com/BillSharifzade/payment_system',
+    repo: 'payment_system',
+    cover: 'payment',
+    icons: ['siRust', 'siPostgresql', 'siNatsdotio', 'siKotlin'],
+    stack: 'Rust (axum, SQLx) \u00b7 PostgreSQL \u00b7 NATS JetStream \u00b7 Redis \u00b7 Kotlin (Compose) \u00b7 React',
+    blurb:
+      'A double-entry e-money core: integer money, idempotent transfers, tamper-evident ledger checkpoints and '
+      + 'fingerprint payments, with an Android wallet and an admin console.',
+    desc:
+      'E-money backend on a double-entry ledger: currency-safe integer money with no floats, row-locked concurrent '
+      + 'posting in PostgreSQL, idempotency keys that become transaction ids so a retry never posts twice, SHA-256 '
+      + 'Merkle trees signed with Ed25519 for tamper-evident checkpoints, reconciliation, and an outbox relayed to NATS '
+      + 'JetStream. Supports fingerprint payments with AES-GCM-sealed templates, and ships a Kotlin/Jetpack Compose '
+      + 'customer app and a React admin console. In alpha.',
+  },
   {
     name: 'Multi-Protocol API Framework',
     href: 'https://github.com/BillSharifzade/rs-apilib',
@@ -157,71 +221,7 @@ export const projects = [
       + 'schema IR, one validation pass and one error taxonomy. Ships a hand-written GraphQL parser with SDL and '
       + 'introspection, WSDL and OpenAPI 3.1 generation, and derive macros, on a default build of 61 crates with '
       + 'zero *-sys dependencies.',
-  },
-  {
-    name: 'Recruitment Automation Platform',
-    href: 'https://github.com/BillSharifzade/Rust-Screenx-HR-Automatization',
-    repo: 'Rust-Screenx-HR-Automatization',
-    cover: 'screenx',
-    icons: ['siRust', 'siPostgresql', 'siNextdotjs', 'siTelegram'],
-    stack: 'Rust (Axum, Tokio, SQLx) \u00b7 PostgreSQL \u00b7 Next.js \u00b7 Telegram Mini App \u00b7 OpenAI',
-    blurb:
-      'Carries a candidate from registration through AI-generated testing to hire across an HR/ERP system, a '
-      + 'Telegram bot and a Mini App, with background workers driving the AI queue and deadlines.',
-    desc:
-      'Recruitment platform bridging a corporate HR/ERP system, a Telegram bot, and a Telegram Mini App, '
-      + 'automating the candidate lifecycle from registration through AI-generated testing to hire. Background '
-      + 'workers drive the AI queue, webhook delivery, and deadline checks behind Argon2 + JWT auth and '
-      + 'per-route rate limiting.',
-  },
-  {
-    name: 'Competency Matrix Platform',
-    href: 'https://github.com/BillSharifzade/HR_Progress',
-    repo: 'HR_Progress',
-    cover: 'hr-progress',
-    icons: ['siGo', 'siPostgresql', 'siReact', 'siTypescript'],
-    stack: 'Go (chi) \u00b7 PostgreSQL \u00b7 React \u00b7 TypeScript',
-    blurb:
-      'Multi-assessor scoring against a per-grade competency matrix, turning the resulting gaps into Individual '
-      + 'Development Plans with preceptor matching and predicted-improvement tracking.',
-    desc:
-      'Workforce development system for a large corporation: assessments scored by multiple assessors, a '
-      + 'competency matrix with per-grade and per-department minimum thresholds, and Individual Development '
-      + 'Plans generated from the resulting gaps \u2014 including preceptor matching and predicted-improvement '
-      + 'tracking. Built to stay extensible as competencies change.',
-  },
-  {
-    name: 'Async Kafka Client',
-    href: 'https://github.com/BillSharifzade/rs-rdkafka',
-    repo: 'rs-rdkafka',
-    cover: 'rdkafka',
-    icons: ['siRust', 'siApachekafka', 'siC'],
-    stack: 'Rust (Tokio, futures) \u00b7 librdkafka \u00b7 C bindings',
-    blurb:
-      'The fully asynchronous Apache Kafka client for Rust, kept '
-      + 'in-tree with its rdkafka-sys binding layer.',
-    desc:
-      'The fully asynchronous, futures-enabled Apache Kafka client '
-      + 'for Rust built on librdkafka: futures-based producers and stream consumers, admin and transaction APIs, '
-      + 'consumer-group and metadata access, and a mocking layer \u2014 maintained in-tree alongside the rdkafka-sys '
-      + 'C bindings.',
-  },
-  {
-    name: 'Process Viewer CLI',
-    href: 'https://github.com/BillSharifzade/rs-procs',
-    repo: 'rs-procs',
-    cover: 'procs',
-    icons: ['siRust', 'siLinux', 'siDocker'],
-    stack: 'Rust (clap) \u00b7 Linux / macOS / FreeBSD / Windows \u00b7 Docker',
-    blurb:
-      'A modern ps replacement with tree views, Docker resolution and '
-      + 'TOML-configured columns across four OS backends.',
-    desc:
-      'A modern replacement for ps written in Rust: tree and multi-column '
-      + 'process views, Docker container resolution, per-process I/O and TCP/UDP port columns, and a '
-      + 'TOML-configured column set with separate Linux, macOS, FreeBSD and Windows backends.',
-  },
-]
+  },]
 
 export function projectRepoLine(p) {
   return `github.com/BillSharifzade/${p.repo}`

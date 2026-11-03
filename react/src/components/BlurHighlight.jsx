@@ -52,13 +52,20 @@ export default function BlurHighlight({ text, className = '', ...rest }) {
     if (!el || typeof IntersectionObserver === 'undefined') return
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     el.dataset.state = 'armed'
+    let first = true
     const io = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return
+        const { boundingClientRect: r, intersectionRatio } = entries[entries.length - 1]
+        // Text already on screen when the page loads plays straight away, rather
+        // than sit blank at the fold until the first scroll; the rest waits for
+        // a quarter of itself to come into view.
+        const go = first ? r.top < window.innerHeight && r.bottom > 0 : intersectionRatio >= 0.25
+        first = false
+        if (!go) return
         io.disconnect()
         el.dataset.state = 'in'
       },
-      { threshold: 0.25, rootMargin: '0px 0px -12% 0px' }
+      { threshold: [0, 0.25], rootMargin: '0px 0px -12% 0px' }
     )
     io.observe(el)
     return () => {

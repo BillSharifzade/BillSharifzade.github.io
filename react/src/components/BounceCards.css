@@ -65,7 +65,8 @@
     stroke: rgba(255, 255, 255, 0.6);
 }
 
-/* Logo and info share the card; the swap blurs one out as the other settles in. */
+/* Logo and info share the card. On the reveal the logo shrinks into the top
+   right corner and stays there, while the info blurs in under it. */
 .card-face {
     position: absolute;
     inset: 0;
@@ -87,6 +88,7 @@
 .card-face--logo .tech-icon {
     width: 52%;
     height: 52%;
+    transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tech-icon-label {
@@ -94,6 +96,11 @@
     font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.05em;
+    line-height: 16px;
+    transition:
+        opacity 240ms ease,
+        transform 320ms ease,
+        filter 240ms ease;
 }
 
 .card-face--info {
@@ -108,10 +115,16 @@
     pointer-events: none;
 }
 
-.card[data-phase='revealed'] .card-face--logo {
+/* From the middle of the logo column (83px logo, 12px gap, 16px label, so its
+   centre is 66px down) to a 27px badge 14px in from the top-right corner. */
+.card[data-phase='revealed'] .card-face--logo .tech-icon {
+    transform: translate(53px, -38px) scale(0.32);
+}
+
+.card[data-phase='revealed'] .tech-icon-label {
     opacity: 0;
-    transform: scale(0.82);
-    filter: blur(8px);
+    transform: translateY(6px);
+    filter: blur(4px);
 }
 
 .card[data-phase='revealed'] .card-face--info {
@@ -144,11 +157,15 @@
 
 @media (prefers-reduced-motion: reduce) {
     .card-face,
-    .card[data-phase='revealed'] .card-face--logo,
-    .card[data-phase='revealed'] .card-face--info {
+    .card[data-phase='revealed'] .card-face--info,
+    .card[data-phase='revealed'] .tech-icon-label {
         transform: none;
         filter: none;
         transition: opacity 200ms ease;
+    }
+
+    .card-face--logo .tech-icon {
+        transition: none;
     }
 }
 

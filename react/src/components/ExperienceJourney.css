@@ -183,53 +183,124 @@
     overflow: hidden;
 }
 
-.journey-desc {
-    margin-top: 16px;
-    color: var(--text-secondary);
-    font-size: 0.92rem;
-    line-height: 1.55;
-}
-
-.journey-achievements {
-    margin-top: 14px;
-    padding-left: 0;
-    list-style: none;
+.journey-card-body-inner {
     display: grid;
     gap: 10px;
 }
 
-.journey-achievements li {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 12px 16px;
-    color: var(--text-secondary);
-    font-size: 0.88rem;
-    line-height: 1.5;
+.journey-card-body-inner > :first-child {
+    margin-top: 18px;
 }
 
-/* The role in hindsight: set apart from the facts above by a rule, not a box. */
-.journey-summary {
-    margin-top: 16px;
-    padding: 2px 0 2px 16px;
-    border-left: 2px solid rgba(255, 255, 255, 0.55);
+.journey-achievements {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-.journey-summary-label {
+/* Every inner block reads the same way: an icon tile, a short label, then
+   the text at a comfortable size and line height. */
+.journey-block {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 14px 16px 15px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.journey-block__icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e8e8e8;
+    font-size: 0.86rem;
+}
+
+.journey-block__body {
+    min-width: 0;
+}
+
+.journey-block__label {
     display: block;
-    margin-bottom: 6px;
-    color: rgba(255, 255, 255, 0.5);
+    margin: 1px 0 5px;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+}
+
+.journey-block__body p {
+    margin: 0;
+    color: #bdbdbd;
+    font-size: 0.86rem;
+    line-height: 1.7;
+    text-wrap: pretty;
+}
+
+/* The role itself, before the highlights: no box, so it reads as the lead. */
+.journey-block--overview {
+    padding: 0 2px 4px 0;
+    border: none;
+    background: none;
+}
+
+.journey-block--overview .journey-block__body p {
+    color: #d6d6d6;
+    font-size: 0.9rem;
+}
+
+/* The role in hindsight: lit a little brighter than the facts above it. */
+.journey-block--summary {
+    border-color: rgba(255, 255, 255, 0.2);
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.09), transparent 60%),
+        rgba(255, 255, 255, 0.03);
+}
+
+.journey-block--summary .journey-block__icon {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #000000;
+}
+
+.journey-block--summary .journey-block__label {
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.68rem;
-    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
-.journey-summary p {
-    margin: 0;
-    color: #e8e8e8;
-    font-size: 0.9rem;
-    line-height: 1.6;
+.journey-block--summary .journey-block__body p {
+    color: #ececec;
+}
+
+/* Opening a card settles its blocks in one after another. */
+.journey-card.is-open .journey-block {
+    animation: journey-block-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.08s + var(--k, 0) * 0.055s);
+}
+
+@keyframes journey-block-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .journey-card.is-open .journey-block {
+        animation: none;
+    }
 }
 
 @media (max-width: 900px) {
@@ -284,12 +355,26 @@
         height: 34px;
     }
 
-    .journey-achievements li {
-        padding: 10px 12px;
-        font-size: 0.82rem;
+    .journey-block {
+        grid-template-columns: 30px 1fr;
+        gap: 11px;
+        padding: 12px 12px 13px 11px;
     }
 
-    .journey-summary p {
-        font-size: 0.84rem;
+    .journey-block--overview {
+        padding: 0 0 4px;
+    }
+
+    .journey-block__icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        font-size: 0.78rem;
+    }
+
+    .journey-block__body p,
+    .journey-block--overview .journey-block__body p {
+        font-size: 0.82rem;
+        line-height: 1.65;
     }
 }

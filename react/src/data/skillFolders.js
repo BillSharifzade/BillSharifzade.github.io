@@ -1,11 +1,13 @@
 // The "My skills" folders (components/FolderFloat.jsx). Each skill is a pill
 // with the logos named here (keys of SKILL_LOGOS in skillLogos.js).
 // `arrangements` is how a folder's pills settle when it opens, in order of
-// preference: the first that fits the screen wins.
+// preference: the first that fits the screen wins. `favourite` puts a star on
+// the folder: the main things.
 export const SKILL_FOLDERS = [
   {
     label: 'Rust',
     icon: 'rust',
+    favourite: true,
     arrangements: ['arch', 'stairs-left'],
     items: [
       { name: 'Axum, Actix', logos: ['actix'] },
@@ -26,6 +28,7 @@ export const SKILL_FOLDERS = [
   {
     label: 'Linux',
     icon: 'linux',
+    favourite: true,
     arrangements: ['zigzag'],
     items: [
       { name: 'Arch, Gentoo, Kali', logos: ['archlinux', 'gentoo', 'kalilinux'] },

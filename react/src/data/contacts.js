@@ -5,7 +5,7 @@
  * exports and the crawler fallback, in the contact section's component, and
  * again inline in App.jsx for the mobile contact grid. Changing a handle meant
  * remembering all three, and nothing caught it when one drifted. Today the
- * page reads them once, through contactApps.js, for the phone's app icons.
+ * page reads them once, for the contact links (ContactLinks.jsx).
  *
  * Listed in the order the site shows them. `handle` is what the page displays;
  * `cvValue` is the longer form the CV prints when the two differ (a CV is read
@@ -16,7 +16,7 @@
  * Kept free of asset imports: vite.config.js imports cv.js in plain Node to
  * build the <noscript> fallback, so nothing in this chain may reach for an svg.
  */
-const channels = [
+export const channels = [
   {
     label: 'Email',
     handle: 'sharifzadebilal@gmail.com',

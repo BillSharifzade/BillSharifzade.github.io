@@ -218,7 +218,7 @@ function useLogos() {
 
 // `items` are { name, logos } with logos named as in skillLogos.js. Keep the
 // array stable between renders: a new one means measuring the pills again.
-export default function FolderFloat({ label, icon, items, arrangements = [] }) {
+export default function FolderFloat({ label, icon, items, arrangements = [], favourite = false }) {
   const [open, setOpen] = useState(false);
   const [widths, setWidths] = useState([]);
   const [room, setRoom] = useState({ left: ROOM, right: ROOM });
@@ -342,6 +342,11 @@ export default function FolderFloat({ label, icon, items, arrangements = [] }) {
           />
         ))}
         <span className="folder-float__front" aria-hidden="true">
+          {favourite && (
+            <svg className="folder-float__star" viewBox="0 0 24 24">
+              <path d="M12 2.6l2.83 5.73 6.32.92-4.57 4.46 1.08 6.3L12 17.03l-5.66 2.98 1.08-6.3-4.57-4.46 6.32-.92z" />
+            </svg>
+          )}
           {icon && <Icon name={icon} className="folder-float__icon" />}
           <span className="folder-float__label">{label}</span>
           <span className="folder-float__sub">
@@ -353,7 +358,7 @@ export default function FolderFloat({ label, icon, items, arrangements = [] }) {
           className="folder-float__trigger"
           aria-expanded={open}
           aria-controls={listId}
-          aria-label={`${label} skills`}
+          aria-label={`${label} skills${favourite ? ', favourite' : ''}`}
           onClick={e => {
             // A mouse opens the folder by hovering it, so its click only
             // reopens one closed with Escape. Taps and keys toggle it.

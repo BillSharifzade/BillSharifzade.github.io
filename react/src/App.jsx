@@ -3,7 +3,7 @@ import BlurHighlight from './components/BlurHighlight.jsx'
 import Icon from './components/Icon.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import FolderFloat from './components/FolderFloat.jsx'
-import ContactDevice from './components/ContactDevice.jsx'
+import ContactLinks from './components/ContactLinks.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
@@ -16,6 +16,7 @@ import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
 import VariableProximity from './components/VariableProximity.jsx'
 import './components/HobbyBackgrounds.css'
+import { CosmosArt, CraftArt, StrategyArt, WordsArt } from './components/HobbyArt.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
 import ScrollStack, { ScrollStackItem } from './components/ScrollStack.jsx'
 import WipTerminal from './components/WipTerminal.jsx'
@@ -43,7 +44,7 @@ const showcaseProjects = projects.map((p) => ({
   href: p.href,
   stack: p.stack,
   blurb: p.blurb,
-  images: projectCovers[p.cover],
+  images: projectCovers[p.cover].map((img) => (typeof img === 'string' ? { src: img } : img)),
   icons: resolveIcons(p.icons),
 }))
 
@@ -261,7 +262,7 @@ function App() {
             <TypingSubtitle />
           </div>
           <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '660px', fontSize: '1.18rem', lineHeight: 1.75 }}>
-            I create high-performance, scalable and secure software solutions. Using modern technologies, optimized algorithms and structures in terms of system design, paralelisms and architecting down to the smallest details. And making sure that my team does the same.
+            <BlurHighlight text="I create [[high-performance, scalable and secure]] software solutions. Using modern technologies, optimized algorithms and structures in terms of [[system design]], parallelism and architecting down to the [[smallest details]]. And making sure that [[my team does the same]]." />
           </p>
         </div>
       </section>
@@ -351,44 +352,7 @@ function App() {
                 </div>
               </div>
               <figure className="hobby-plate" aria-hidden="true">
-                <div className="hobby-bg hobby-bg--cosmos">
-                  <svg className="galaxy" viewBox="0 0 300 300">
-                    <defs>
-                      <radialGradient id="galaxyCore">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0.85)" />
-                        <stop offset="45%" stopColor="rgba(255,255,255,0.28)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                      </radialGradient>
-                    </defs>
-                    <circle cx="150" cy="150" r="36" fill="url(#galaxyCore)" />
-                    {}
-                    <path className="galaxy-arm-glow" d="M 157.4 154.7 L 156.9 155.9 L 156.1 157.1 L 155.1 158.2 L 153.9 159.2 L 152.5 160.1 L 150.8 160.8 L 149.0 161.3 L 147.1 161.5 L 145.0 161.5 L 142.9 161.2 L 140.7 160.5 L 138.6 159.6 L 136.6 158.3 L 134.8 156.6 L 133.1 154.7 L 131.7 152.4 L 130.7 149.9 L 130.1 147.1 L 129.9 144.1 L 130.2 141.0 L 131.0 137.9 L 132.5 134.7 L 134.5 131.7 L 137.0 128.8 L 140.2 126.2 L 143.9 124.0 L 148.1 122.2 L 152.8 121.0 L 157.8 120.4 L 163.1 120.5 L 168.6 121.4 L 174.1 123.1 L 179.5 125.6 L 184.6 129.0 L 189.4 133.2 L 193.6 138.3 L 197.0 144.2 L 199.6 150.8 L 201.2 157.9 L 201.6 165.6 L 200.7 173.5 L 198.5 181.6 L 194.8 189.7 L 189.6 197.5 L 182.9 204.8 L 174.7 211.4 L 165.1 217.1 L 154.2 221.5 L 142.2 224.6 L 129.3 226.0" />
-                    <path className="galaxy-arm-line" d="M 157.4 154.7 L 156.9 155.9 L 156.1 157.1 L 155.1 158.2 L 153.9 159.2 L 152.5 160.1 L 150.8 160.8 L 149.0 161.3 L 147.1 161.5 L 145.0 161.5 L 142.9 161.2 L 140.7 160.5 L 138.6 159.6 L 136.6 158.3 L 134.8 156.6 L 133.1 154.7 L 131.7 152.4 L 130.7 149.9 L 130.1 147.1 L 129.9 144.1 L 130.2 141.0 L 131.0 137.9 L 132.5 134.7 L 134.5 131.7 L 137.0 128.8 L 140.2 126.2 L 143.9 124.0 L 148.1 122.2 L 152.8 121.0 L 157.8 120.4 L 163.1 120.5 L 168.6 121.4 L 174.1 123.1 L 179.5 125.6 L 184.6 129.0 L 189.4 133.2 L 193.6 138.3 L 197.0 144.2 L 199.6 150.8 L 201.2 157.9 L 201.6 165.6 L 200.7 173.5 L 198.5 181.6 L 194.8 189.7 L 189.6 197.5 L 182.9 204.8 L 174.7 211.4 L 165.1 217.1 L 154.2 221.5 L 142.2 224.6 L 129.3 226.0" />
-                    <path className="galaxy-arm-glow" d="M 142.6 145.3 L 143.1 144.1 L 143.9 142.9 L 144.9 141.8 L 146.1 140.8 L 147.5 139.9 L 149.2 139.2 L 151.0 138.7 L 152.9 138.5 L 155.0 138.5 L 157.1 138.8 L 159.3 139.5 L 161.4 140.4 L 163.4 141.7 L 165.2 143.4 L 166.9 145.3 L 168.3 147.6 L 169.3 150.1 L 169.9 152.9 L 170.1 155.9 L 169.8 159.0 L 169.0 162.1 L 167.5 165.3 L 165.5 168.3 L 163.0 171.2 L 159.8 173.8 L 156.1 176.0 L 151.9 177.8 L 147.2 179.0 L 142.2 179.6 L 136.9 179.5 L 131.4 178.6 L 125.9 176.9 L 120.5 174.4 L 115.4 171.0 L 110.6 166.8 L 106.4 161.7 L 103.0 155.8 L 100.4 149.2 L 98.8 142.1 L 98.4 134.4 L 99.3 126.5 L 101.5 118.4 L 105.2 110.3 L 110.4 102.5 L 117.1 95.2 L 125.3 88.6 L 134.9 82.9 L 145.8 78.5 L 157.8 75.4 L 170.7 74.0" />
-                    <path className="galaxy-arm-line" d="M 142.6 145.3 L 143.1 144.1 L 143.9 142.9 L 144.9 141.8 L 146.1 140.8 L 147.5 139.9 L 149.2 139.2 L 151.0 138.7 L 152.9 138.5 L 155.0 138.5 L 157.1 138.8 L 159.3 139.5 L 161.4 140.4 L 163.4 141.7 L 165.2 143.4 L 166.9 145.3 L 168.3 147.6 L 169.3 150.1 L 169.9 152.9 L 170.1 155.9 L 169.8 159.0 L 169.0 162.1 L 167.5 165.3 L 165.5 168.3 L 163.0 171.2 L 159.8 173.8 L 156.1 176.0 L 151.9 177.8 L 147.2 179.0 L 142.2 179.6 L 136.9 179.5 L 131.4 178.6 L 125.9 176.9 L 120.5 174.4 L 115.4 171.0 L 110.6 166.8 L 106.4 161.7 L 103.0 155.8 L 100.4 149.2 L 98.8 142.1 L 98.4 134.4 L 99.3 126.5 L 101.5 118.4 L 105.2 110.3 L 110.4 102.5 L 117.1 95.2 L 125.3 88.6 L 134.9 82.9 L 145.8 78.5 L 157.8 75.4 L 170.7 74.0" />
-                    {}
-                    <g className="galaxy-stars">
-                      <circle cx="125.8" cy="143.0" r="1.8" />
-                      <circle cx="138.2" cy="127.1" r="1.9" className="tw" />
-                      <circle cx="168.4" cy="117.0" r="1.1" />
-                      <circle cx="198.7" cy="133.2" r="1.4" className="tw" />
-                      <circle cx="203.8" cy="163.6" r="1.4" />
-                      <circle cx="182.6" cy="190.5" r="1.0" className="tw" />
-                      <circle cx="157.1" cy="220.3" r="1.1" />
-                      <circle cx="154.1" cy="138.9" r="1.8" />
-                      <circle cx="165.1" cy="137.0" r="1.9" className="tw" />
-                      <circle cx="165.7" cy="175.4" r="1.4" />
-                      <circle cx="127.4" cy="178.2" r="1.3" className="tw" />
-                      <circle cx="111.8" cy="168.8" r="1.3" />
-                      <circle cx="101.0" cy="127.4" r="1.6" className="tw" />
-                      <circle cx="112.8" cy="110.4" r="1.7" />
-                      <circle cx="142.4" cy="76.7" r="1.5" className="tw" />
-                    </g>
-                  </svg>
-                  <div className="gr-formula">
-                    R<sub>μν</sub> − ½Rg<sub>μν</sub> + Λg<sub>μν</sub> = <span className="gr-frac">8πG⁄c⁴</span>T<sub>μν</sub>
-                  </div>
-                </div>
+                <CosmosArt />
                 <figcaption className="hobby-caption">Spiral galaxy · field equations</figcaption>
               </figure>
             </ScrollStackItem>
@@ -403,21 +367,8 @@ function App() {
                 </div>
               </div>
               <figure className="hobby-plate" aria-hidden="true">
-                <div className="hobby-bg hobby-bg--strategy">
-                  <svg className="fps-crosshair" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="26" fill="none" stroke="currentColor" strokeWidth="2" />
-                    <circle cx="40" cy="40" r="2.5" fill="currentColor" />
-                    <line x1="40" y1="2" x2="40" y2="22" stroke="currentColor" strokeWidth="2" />
-                    <line x1="40" y1="58" x2="40" y2="78" stroke="currentColor" strokeWidth="2" />
-                    <line x1="2" y1="40" x2="22" y2="40" stroke="currentColor" strokeWidth="2" />
-                    <line x1="58" y1="40" x2="78" y2="40" stroke="currentColor" strokeWidth="2" />
-                  </svg>
-                  <div className="knight-scene">
-                    <Icon name="chess-knight" className="knight-piece" />
-                    <span className="knight-board"></span>
-                  </div>
-                </div>
-                <figcaption className="hobby-caption">Knight on the board · crosshair</figcaption>
+                <StrategyArt />
+                <figcaption className="hobby-caption">A knight’s circuit · crosshair lock</figcaption>
               </figure>
             </ScrollStackItem>
             <ScrollStackItem itemClassName="hobby-card">
@@ -431,19 +382,8 @@ function App() {
                 </div>
               </div>
               <figure className="hobby-plate" aria-hidden="true">
-                <div className="hobby-bg hobby-bg--craft">
-                  <div className="scarf">
-                    <span className="scarf-strip"></span>
-                    <span className="scarf-needle"></span>
-                    <span className="scarf-needle scarf-needle--2"></span>
-                  </div>
-                  <span className="float-note float-note--1">♪</span>
-                  <span className="float-note float-note--2">♫</span>
-                  <span className="float-note float-note--3">♩</span>
-                  <span className="float-note float-note--4">♬</span>
-                  <span className="float-note float-note--5">♪</span>
-                </div>
-                <figcaption className="hobby-caption">Scarf on the needles · melody</figcaption>
+                <CraftArt />
+                <figcaption className="hobby-caption">A strum · a scarf, row by row</figcaption>
               </figure>
             </ScrollStackItem>
             <ScrollStackItem itemClassName="hobby-card">
@@ -457,17 +397,8 @@ function App() {
                 </div>
               </div>
               <figure className="hobby-plate" aria-hidden="true">
-                <div className="hobby-bg hobby-bg--words">
-                  <div className="book">
-                    <span className="book-page book-page--left"></span>
-                    <span className="book-page book-page--right"></span>
-                    <span className="book-flip book-flip--1"></span>
-                    <span className="book-flip book-flip--2"></span>
-                    <span className="book-flip book-flip--3"></span>
-                    <span className="book-spine"></span>
-                  </div>
-                </div>
-                <figcaption className="hobby-caption">An open book, pages turning</figcaption>
+                <WordsArt />
+                <figcaption className="hobby-caption">Socrates, typed · pages turning</figcaption>
               </figure>
             </ScrollStackItem>
           </ScrollStack>
@@ -477,7 +408,7 @@ function App() {
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
-          <ContactDevice onNavigate={(hash) => scrollToTarget(document.querySelector(hash))} />
+          <ContactLinks />
         </div>
       </section>
 

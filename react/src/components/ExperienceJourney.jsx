@@ -18,6 +18,51 @@ const COMPANY_LOGOS = {
   'Founders School Bootcamp': foundersLogo,
 }
 
+// An icon for each highlight, by its label in cv.js. The labels are shared
+// with the CV exports, whose bullets are plain [label, text] pairs, so the
+// icons live here, on the site's side.
+const BULLET_ICONS = {
+  'Corporate training': 'chalkboard-user',
+  Architecture: 'sitemap',
+  'International reach': 'globe',
+  'Performance engineering': 'gauge-high',
+  'Constrained environments': 'mobile-screen-button',
+  'Product breadth': 'layer-group',
+  Leadership: 'users',
+  'Leadership growth': 'arrow-trend-up',
+  'Business automation': 'gears',
+  'HR automation': 'user-gear',
+  'Secure platforms': 'shield-alt',
+  'High-load design': 'server',
+  'Realtime stack': 'bolt',
+  'Throughput gains': 'gauge-high',
+  Resilience: 'life-ring',
+  'Regulatory reporting': 'scale-balanced',
+  'Scoring models': 'chart-line',
+  'Data intelligence': 'database',
+  'Pattern discovery': 'magnifying-glass-chart',
+  'Blockchain insight': 'cubes',
+  'Enterprise enablement': 'building',
+  'Curriculum leadership': 'graduation-cap',
+  'Community impact': 'people-group',
+}
+
+const plain = (label) => label.replace(/:\s*$/, '')
+
+function Block({ icon, label, children, className = '', order, as: Tag = 'div' }) {
+  return (
+    <Tag className={`journey-block${className ? ` ${className}` : ''}`} style={{ '--k': order }}>
+      <span className="journey-block__icon" aria-hidden="true">
+        <Icon name={icon} />
+      </span>
+      <div className="journey-block__body">
+        <span className="journey-block__label">{label}</span>
+        <p>{children}</p>
+      </div>
+    </Tag>
+  )
+}
+
 function monogram(company) {
   const words = company.split(/[\s-]+/).filter(Boolean)
   const letters = words.length > 1 ? words.slice(0, 2).map((w) => w[0]) : words[0].slice(0, 2)
@@ -165,19 +210,31 @@ function ExperienceJourney() {
               </div>
               <div className="journey-card-body">
                 <div className="journey-card-body-inner">
-                  <p className="journey-desc">{exp.desc}</p>
+                  <Block icon="briefcase" label="The role" className="journey-block--overview" order={0}>
+                    {exp.desc}
+                  </Block>
                   <ul className="journey-achievements">
-                    {exp.bullets.map(([label, text]) => (
-                      <li key={label}>
-                        <span className="achievement-label">{label}</span> {text}
-                      </li>
+                    {exp.bullets.map(([label, text], k) => (
+                      <Block
+                        key={label}
+                        as="li"
+                        icon={BULLET_ICONS[plain(label)] ?? 'circle-check'}
+                        label={plain(label)}
+                        order={k + 1}
+                      >
+                        {text}
+                      </Block>
                     ))}
                   </ul>
                   {exp.summary && (
-                    <div className="journey-summary">
-                      <span className="journey-summary-label">What it gave me</span>
-                      <p>{exp.summary}</p>
-                    </div>
+                    <Block
+                      icon="seedling"
+                      label="What it gave me"
+                      className="journey-block--summary"
+                      order={exp.bullets.length + 1}
+                    >
+                      {exp.summary}
+                    </Block>
                   )}
                 </div>
               </div>

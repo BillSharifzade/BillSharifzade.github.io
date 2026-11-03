@@ -121,6 +121,35 @@
   font-size: 26px;
 }
 
+/* The favourites' star: pinned to the flap's corner, with a glint that
+   crosses it now and then. */
+.folder-float__star {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 17px;
+  height: 17px;
+  overflow: visible;
+  fill: #ffffff;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.55));
+  transform-origin: 50% 55%;
+  animation: ff-star 5.5s ease-in-out infinite;
+}
+
+@keyframes ff-star {
+  0%,
+  86%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.92;
+  }
+
+  91% {
+    transform: scale(1.22) rotate(18deg);
+    opacity: 1;
+  }
+}
+
 .folder-float__label {
   font-size: 18px;
   font-weight: 700;
@@ -238,6 +267,10 @@
 @media (prefers-reduced-motion: reduce) {
   .folder-float__front {
     transition: none;
+  }
+
+  .folder-float__star {
+    animation: none;
   }
 
   .folder-float[data-open] .folder-float__front {

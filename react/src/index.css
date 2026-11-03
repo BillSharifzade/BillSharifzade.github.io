@@ -257,15 +257,6 @@ nav.scrolled {
 }
 
 
-.achievement-label {
-    color: var(--primary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-right: 8px;
-    display: inline-block;
-}
-
 
 .footer {
     position: relative;
@@ -316,15 +307,24 @@ nav.scrolled {
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, color 0.3s ease;
 }
 
-.download-cv-btn:hover:not(:disabled) {
-    background: var(--primary);
-    color: #000;
-    border-color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(129, 140, 248, 0.22);
+.download-cv-btn__label {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1.4;
+    margin: -0.2em 0;
+}
+
+.download-cv-btn:hover:not(:disabled),
+.download-cv-btn:focus-visible {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.download-cv-btn:hover:not(:disabled) .nav-link-roll,
+.download-cv-btn:focus-visible .nav-link-roll {
+    transform: translateY(-100%);
 }
 
 .download-cv-btn:disabled {

@@ -1,51 +1,53 @@
 # Site update — task list
 
-Requested 2026-11-02. Done top to bottom; each task is ticked once it builds and
-has been checked in the browser.
+Requested 2026-11-02 (second batch; the first one is in git history). Done top to
+bottom; each task is ticked once it builds and has been checked in the browser.
 
-## 1. About Me — blur-in highlight instead of the decrypt animation
-- [x] React Bits Pro's "Blur Highlight" needs a paid licence key (`REACTBITS_LICENSE_KEY`,
-      not set here) and Tailwind + shadcn, which the site doesn't use. Build our own
-      `BlurHighlight` in plain CSS instead: words blur in as the paragraph scrolls into
-      view, then the key phrases light up.
-- [x] Mark the important phrases in both About paragraphs.
-- [x] Remove `DecryptedText` (used nowhere else).
-- [x] Text stays in the pre-rendered HTML; reduced motion shows it at once.
+## 1. Hero — a new opening instead of the profile card
+- [ ] Talk it through first: proposals go to the user, nothing is built yet. (Waiting on the user.)
 
-## 2. Current Stack — card order
-- [x] Rust is the first card and sits on top; each next card tucks under the one before
-      (today the last card, GitLab, is on top).
+## 2. Header — Download CV hover
+- [x] Drop the particle burst and the white fill on hover.
+- [x] Hover and focus behave like the other header links (the label rolls up).
 
-## 3. Current Stack — hold to reveal
-- [x] Hovering a card for 2 s fills its border like a timer.
-- [x] When the border is full, the logo gives way to a word and a one-line description
-      of the technology, with a soft blur/scale crossfade.
-- [x] Leaving early resets the timer; leaving after the reveal returns to the logo.
-- [x] Touch: a tap starts the same timer. Reduced motion: no fill animation, instant swap.
-- [x] A hovered card comes to the top of the stack.
+## 3. Skills — favourite folders
+- [x] A small star on the Rust and Linux folders marks them as the main ones.
 
-## 4. Selected Projects — new, fast showcase
-- [x] Replace `AccordionGallery` (lags: it animates `flex-grow`, width, height, padding
-      and a grayscale filter every frame, under a backdrop blur).
-- [x] New component: a repository index on the left, a window on the right showing the
-      selected project's screenshots, stack, summary and GitHub link. A scan line sweeps
-      the window when the project changes.
-- [x] Only opacity and transform animate; no layout work while switching.
-- [x] Hover, focus, click and arrow keys select; proper tab semantics.
-- [x] Phones: every project as its own card, no hover needed.
-- [x] Delete `AccordionGallery.jsx` / `.css`.
+## 4. Current Stack — logo stays after the reveal
+- [x] Once a card turns into its headline, the logo shrinks into the top-right
+      corner instead of disappearing.
 
-## 5. Professional Journey — summaries
-- [x] Add a short summary to every experience: what the role gave me, in professional
-      first-person words (`summary` in `cv.js`; site only, the CV files don't change).
-- [x] Show it in each card as its own section.
+## 5. Selected Projects
+- [x] Sidebar as tall as the window, with more in it: all repositories, star on
+      GitHub, live sites.
+- [x] Window title bar: grey minimise / maximise / close buttons.
+- [x] Projects in Progress terminal: grey buttons and grey text except the user's
+      own; the title text white and clear; no collision with the section heading on
+      phones.
+- [x] Remove the Async Kafka Client and Process Viewer CLI; add payment_system and
+      tek; order by impact.
+- [x] Screenshots of tek and payment_system (desktop and phone), taken from the
+      projects running locally; delete the two covers nobody uses any more.
+- [x] "Impact" button: the project window turns into a bento of impact figures, in
+      the same size, and back.
+      - Multi-Protocol API Framework: open source, 239 users, helps people build backends.
+      - Recruitment: $10k+ a month, 10+ companies.
+      - Competency Matrix: $35k+ a month, 25+ companies.
+      - Payment System: alpha; potential beyond the usual scale.
+      - tek: 1,000+ electricians; revenue is private to the company.
+- [x] Live sites: a compact list with short descriptions, plus "infinite romantic
+      websites for my future wife", highlighted in the footer's colour.
 
-## 6. Beyond the Code — richer cards
-- [x] Give each hobby card a real visual: a framed "plate" for the existing animated
-      artwork, a large outlined word behind the content, captions, better chips.
-- [x] Stay CSS-only and keep pausing animations offscreen; check phones.
+## 6. Professional Journey — easier reading
+- [x] Comfortable line length, spacing and hierarchy in the expanded card.
+- [x] Icons for the summary block and the other inner blocks.
 
-## 7. Verify
-- [x] Lint, full build, bundle sizes compared with before (index 82.7 kB gz).
-- [x] Screenshots at desktop and phone widths; no console or hydration errors.
-- [x] Update the README and notes where the components changed.
+## 7. Beyond the Code — animations
+- [x] Rebuild the artwork animations to look realistic and refined, while staying
+      cheap (transform/opacity only, paused off screen, reduced motion respected).
+
+## 8. Contact — remove the phone
+- [x] Remove the phone mockup and its code; leave a clean section for what comes next.
+
+## 9. Verify
+- [x] Lint, build, pre-render; desktop and phone checks; no console errors.
