@@ -1,0 +1,1302 @@
+/* The opening. States live on .hx[data-boot] (the console):
+     (none)  the pre-rendered frame: a kernel image loading, before React runs
+     run     the log is printing and the board powers on part by part
+     done    the log has cleared to the overview and traffic flows
+   Everything that moves is opacity or transform. */
+
+.hx {
+  --hx-white: #f4f4f4;
+  --hx-silver: #bdbdbd;
+  --hx-dim: #6d6d6d;
+  --hx-rule: rgba(255, 255, 255, 0.13);
+  --hx-row: 1.72em;
+  --hx-rows: 7;
+  --hx-part: 156px;
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(100px, 13vh, 124px) 0 clamp(28px, 6vh, 64px);
+}
+
+.hx::before {
+  /* A soft shade under the text and the board, so the backdrop never fights them. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 60% at 22% 46%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3) 66%, transparent 86%),
+    radial-gradient(40% 56% at 72% 48%, rgba(0, 0, 0, 0.7), transparent 80%);
+}
+
+.hx__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
+  grid-template-areas:
+    'head rig'
+    'tty rig'
+    'pitch rig'
+    'actions rig';
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: clamp(32px, 4.4vw, 68px);
+  width: min(1240px, 100% - 80px);
+  margin: 0 auto;
+}
+
+/* ---- Name ---------------------------------------------------------------- */
+
+.hx__head {
+  grid-area: head;
+}
+
+.hx__prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  color: #8d8d8d;
+  text-shadow: 0 0 10px #000, 0 0 4px #000;
+}
+
+.hx__prompt span {
+  color: #d6d6d6;
+}
+
+.hx__arch {
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--hx-white);
+}
+
+.hx__name {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: clamp(2.6rem, min(5.6vw, 9.6vh), 5.2rem);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  color: var(--hx-white);
+}
+
+.hx__last {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.32em;
+}
+
+.hx__hollow {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.82);
+}
+
+.hx__role {
+  font-size: clamp(0.92rem, 1.2vw, 1.06rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--hx-silver);
+  white-space: nowrap;
+}
+
+.hx__role i {
+  font-style: normal;
+  color: var(--hx-dim);
+}
+
+/* ---- Console ------------------------------------------------------------- */
+
+.hx-tty {
+  grid-area: tty;
+  position: relative;
+  margin-top: clamp(20px, 3.2vh, 32px);
+  font-size: clamp(0.7rem, 0.88vw, 0.78rem);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.5) 72%, rgba(0, 0, 0, 0));
+  border-top: 1px solid var(--hx-rule);
+  border-bottom: 1px solid var(--hx-rule);
+}
+
+.hx-tty__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0 0;
+  font-size: 0.86em;
+  color: var(--hx-dim);
+}
+
+.hx-tty__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.hx-tty__arch {
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--hx-silver);
+}
+
+.hx-tty__reboot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  min-height: 32px;
+  margin: -6px -10px -6px 0;
+  padding: 0 10px;
+  font: inherit;
+  color: var(--hx-dim);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.hx-tty__reboot span {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hx-tty__reboot:hover,
+.hx-tty__reboot:focus-visible {
+  color: var(--hx-white);
+}
+
+.hx-tty__reboot:hover span {
+  transform: rotate(180deg);
+}
+
+.hx-tty__reboot:focus-visible,
+.hx-btn:focus-visible,
+.hx-node:focus-visible {
+  outline: 2px solid var(--hx-white);
+  outline-offset: 3px;
+}
+
+/* One screen: the log and the overview share the same box, so nothing below
+   it ever moves. */
+.hx-screen {
+  position: relative;
+  height: calc(var(--hx-row) * var(--hx-rows));
+  margin: 6px 0 10px;
+  overflow: hidden;
+  line-height: var(--hx-row);
+  color: var(--hx-silver);
+}
+
+.hx-scroll {
+  transform: translateY(calc(var(--shift, 0) * var(--hx-row) * -1));
+  transition:
+    transform 0.14s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+}
+
+.hx-line {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.hx-ts,
+.hx-st {
+  white-space: pre;
+  color: var(--hx-dim);
+}
+
+.hx-st b,
+.hx-unit {
+  font-weight: 700;
+  color: var(--hx-white);
+}
+
+.hx-cursor {
+  display: inline-block;
+  width: 0.62em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  background: var(--hx-silver);
+  animation: hx-blink 1.05s steps(1) infinite;
+}
+
+@keyframes hx-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* The overview: neofetch, in the same rhythm as the log. */
+.hx-fetch {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 6.6em minmax(0, 1fr);
+  align-items: center;
+  gap: 1.6em;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hx-fetch__logo {
+  width: 100%;
+  height: auto;
+  color: var(--hx-white);
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hx-fetch__info {
+  margin: 0;
+}
+
+.hx-fetch__info > div {
+  display: flex;
+  gap: 1ch;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(0.4em);
+  transition:
+    opacity 0.32s ease,
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(140ms + var(--i, 0) * 42ms);
+}
+
+.hx-fetch dt {
+  flex: none;
+  width: 9ch;
+  font-weight: 700;
+  color: var(--hx-white);
+}
+
+.hx-fetch dt::after {
+  content: ':';
+}
+
+.hx-fetch dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hx[data-boot='done'] .hx-scroll {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.22s ease,
+    visibility 0s linear 0.22s;
+}
+
+.hx[data-boot='done'] .hx-fetch {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hx[data-boot='done'] .hx-fetch__logo,
+.hx[data-boot='done'] .hx-fetch__info > div {
+  opacity: 1;
+  transform: none;
+}
+
+/* If the script never runs, the overview and the board still arrive. */
+.hx:not([data-boot]) .hx-scroll {
+  animation: hx-fallback-out 0.2s ease 4s forwards;
+}
+
+.hx:not([data-boot]) .hx-fetch,
+.hx:not([data-boot]) .hx-fetch__logo,
+.hx:not([data-boot]) .hx-fetch__info > div,
+.hx:not([data-boot]) .hx-node {
+  animation: hx-fallback-in 0.3s ease 4.1s forwards;
+}
+
+.hx:not([data-boot]):not([data-cpu]) .hx-cpu__card {
+  animation: hx-flip 1s cubic-bezier(0.6, 0, 0.25, 1) 4.6s forwards;
+}
+
+@keyframes hx-fallback-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes hx-fallback-in {
+  to {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+}
+
+/* ---- Pitch and actions --------------------------------------------------- */
+
+.hx__pitch {
+  grid-area: pitch;
+  max-width: 60ch;
+  margin: clamp(18px, 3vh, 26px) 0 0;
+  font-size: clamp(0.92rem, 1.08vw, 1.02rem);
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+.hx__actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 12px;
+  margin-top: clamp(20px, 3.2vh, 30px);
+}
+
+.hx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 46px;
+  padding: 0 22px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--hx-white);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.hx-btn:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.hx-btn--solid,
+.hx-btn--solid:hover {
+  color: #000;
+  background: var(--hx-white);
+  border-color: var(--hx-white);
+}
+
+.hx-btn--solid:hover {
+  background: #fff;
+}
+
+/* ---- The board ----------------------------------------------------------- */
+
+.hx-rig {
+  grid-area: rig;
+  align-self: center;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--hx-part);
+  grid-template-areas:
+    'pkg parts'
+    'live live';
+  column-gap: 46px;
+}
+
+/* The photo is the die of a wire-bonded package: pads round the edge, which
+   come up bright when the system powers on. */
+.hx-pkg {
+  grid-area: pkg;
+  position: relative;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 16px;
+  background: linear-gradient(150deg, #141414, #070707 62%);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.hx-pkg::before,
+.hx-pkg::after {
+  --pad: rgba(255, 255, 255, 0.17);
+  content: '';
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, var(--pad) 0 5px, transparent 5px 13px) 50% 0 / calc(100% - 46px) 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--pad) 0 5px, transparent 5px 13px) 50% 100% / calc(100% - 46px) 5px no-repeat,
+    repeating-linear-gradient(0deg, var(--pad) 0 5px, transparent 5px 13px) 0 50% / 5px calc(100% - 46px) no-repeat,
+    repeating-linear-gradient(0deg, var(--pad) 0 5px, transparent 5px 13px) 100% 50% / 5px calc(100% - 46px) no-repeat;
+}
+
+.hx-pkg::after {
+  --pad: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.9s ease 0.1s;
+}
+
+.hx[data-cpu] .hx-pkg::after {
+  opacity: 0.5;
+}
+
+.hx[data-cpu='unflip'] .hx-pkg::after {
+  opacity: 0;
+}
+
+/* ---- The processor ------------------------------------------------------- */
+
+/* A card with two faces: the processor on top, the photo underneath. The
+   faces are the only things inside the 3D context that clip or blend, so
+   nothing flattens it. */
+.hx-cpu {
+  position: relative;
+  aspect-ratio: 1;
+  perspective: 1500px;
+}
+
+.hx-cpu__card {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.hx-cpu__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.hx-cpu__front {
+  background: #0d0d0e;
+}
+
+.hx-cpu__back {
+  isolation: isolate;
+  container-type: inline-size;
+  background: #0b0b0b;
+  transform: rotateY(180deg);
+}
+
+.hx-cpu__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hx[data-cpu='flip'] .hx-cpu__card {
+  animation: hx-flip 1s cubic-bezier(0.6, 0, 0.25, 1) forwards;
+}
+
+.hx[data-cpu='back'] .hx-cpu__card {
+  transform: rotateY(180deg);
+}
+
+.hx[data-cpu='unflip'] .hx-cpu__card {
+  animation: hx-flip 0.9s cubic-bezier(0.6, 0, 0.25, 1) reverse forwards;
+}
+
+/* It lifts off the socket as it turns, and settles back. */
+@keyframes hx-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  50% {
+    transform: translateZ(70px) rotateY(90deg) rotateX(4deg);
+  }
+
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Unpowered, the silicon's lit layer is off; the strike lights the cores from
+   the middle out, they flicker while the kernel boots, then hold steady. */
+.hx-cpu__lit {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.hx[data-cpu='on'] .hx-cpu__lit,
+.hx[data-cpu='flip'] .hx-cpu__lit,
+.hx[data-cpu='back'] .hx-cpu__lit {
+  opacity: 1;
+}
+
+.hx-core {
+  opacity: 0;
+}
+
+.hx[data-cpu='flip'] .hx-core,
+.hx[data-cpu='back'] .hx-core {
+  opacity: 0.85;
+}
+
+.hx[data-cpu='on'] .hx-core {
+  animation: hx-core-on 0.5s ease-out calc(90ms + var(--d) * 110ms) both;
+}
+
+.hx[data-cpu='on'][data-boot='run'] .hx-core {
+  animation: hx-core-busy 0.46s steps(2, jump-none) calc(var(--k) * -0.13s) infinite;
+}
+
+.hx[data-cpu='on'][data-boot='done'] .hx-core {
+  animation: none;
+  opacity: 0.85;
+}
+
+@keyframes hx-core-on {
+  0% {
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes hx-core-busy {
+  0% {
+    opacity: 0.45;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* The strike's flash over the package. */
+.hx-cpu__flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(60% 60% at 50% 50%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.25) 45%, transparent 75%);
+  opacity: 0;
+}
+
+.hx[data-cpu='on'] .hx-cpu__flash {
+  animation: hx-flash 0.75s ease-out 0.05s;
+}
+
+@keyframes hx-flash {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  22% {
+    opacity: 0.25;
+  }
+
+  32% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The lightning: down from far above to the middle of the processor. The
+   leader draws downward, then the channel flickers as it discharges. */
+.hx-bolt {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: 50%;
+  width: 400px;
+  height: 1000px;
+  margin-left: -200px;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+
+.hx-bolt__glow {
+  stroke-width: 10;
+  stroke-opacity: 0.14;
+}
+
+.hx-bolt__core {
+  stroke-width: 1.8;
+}
+
+.hx-bolt__fork {
+  stroke-width: 1;
+  stroke-opacity: 0.75;
+}
+
+.hx[data-cpu='on'] .hx-bolt {
+  animation: hx-strike 0.7s linear forwards;
+}
+
+@keyframes hx-strike {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  9% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+
+  16% {
+    opacity: 0.2;
+  }
+
+  23% {
+    opacity: 1;
+  }
+
+  31% {
+    opacity: 0.35;
+  }
+
+  40% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The whole page brightens for an instant with the strike. */
+.hx::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(70% 80% at 72% 45%, rgba(255, 255, 255, 0.1), transparent 70%);
+  opacity: 0;
+}
+
+.hx[data-cpu='on']::after {
+  animation: hx-flash 0.75s ease-out 0.05s;
+}
+
+/* The edge connector the signals leave through. */
+.hx-port {
+  position: absolute;
+  z-index: 3;
+  right: -7px;
+  top: 58%;
+  width: 9px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(180deg, #9d9d9f 0 3px, #2a2a2b 3px 6px) 1px 3px / 5px calc(100% - 6px) no-repeat,
+    #111;
+}
+
+.hx-port i {
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7);
+  opacity: 0;
+}
+
+.hx-pkg__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: contrast(1.06);
+}
+
+/* Microlenses over the sensor, and a vignette into the package. */
+.hx-pkg__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.11), transparent 60%) 0 0 / 4px 4px,
+    linear-gradient(rgba(0, 0, 0, 0.26) 1px, transparent 1px) 0 0 / 4px 4px,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.26) 1px, transparent 1px) 0 0 / 4px 4px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 40px rgba(0, 0, 0, 0.75);
+  opacity: 0.8;
+}
+
+@media (min-resolution: 2dppx) {
+  .hx-pkg__grid {
+    background-size: 3px 3px;
+  }
+}
+
+/* The lens, traced from the photo: the reflection never leaves the glass. */
+.hx-lens {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  clip-path: polygon(
+    12.9% 36.7%, 20.3% 33.2%, 32.8% 31.3%, 50% 30.6%, 67.2% 31.3%, 81.3% 33.6%,
+    91.4% 38.3%, 97.3% 46.9%, 97.7% 54.7%, 94.9% 64.1%, 90.6% 75%, 85.9% 83.6%,
+    78.1% 89.8%, 62.5% 93.4%, 43.8% 93.8%, 28.1% 92.2%, 18% 87.5%, 13.7% 79.7%,
+    12.1% 62.5%, 12.1% 43.8%
+  );
+}
+
+/* The overview, mirrored and bent the way a lens bends a screen in front of
+   it: faint, and brightest where its lines begin. It drifts a little against
+   the mouse, as a reflection does when you move your head. */
+.hx-reflect {
+  --hx-tilt: translate(calc(var(--hx-px, 0) * -1.1cqw), calc(var(--hx-py, 0) * -0.7cqw));
+  position: absolute;
+  right: 51%;
+  top: 35.5%;
+  width: 46em;
+  font-size: 1.22cqw;
+  color: #fff;
+  opacity: 0.62;
+  transform: var(--hx-tilt) perspective(40em) rotateY(-24deg) rotateZ(-2.5deg) scaleX(-1);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 34%, transparent 88%),
+    linear-gradient(180deg, transparent, #000 14%, #000 78%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, #000 34%, transparent 88%),
+    linear-gradient(180deg, transparent, #000 14%, #000 78%, transparent);
+  mask-composite: intersect;
+}
+
+/* A lens has two surfaces, so a reflection comes with a fainter, offset twin. */
+.hx-reflect--ghost {
+  --hx-tilt: translate(calc(var(--hx-px, 0) * -1.7cqw + 0.9cqw), calc(var(--hx-py, 0) * -1.1cqw - 0.55cqw));
+  opacity: 0.2;
+  transform: var(--hx-tilt) perspective(40em) rotateY(-27deg) rotateZ(-2.9deg) scaleX(-1.03);
+}
+
+.hx-reflect .hx-screen {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  text-shadow: 0 0 0.5em rgba(255, 255, 255, 0.45);
+}
+
+.hx-reflect .hx-fetch,
+.hx-reflect .hx-fetch__logo,
+.hx-reflect .hx-fetch__info > div {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: none;
+  animation: none;
+}
+
+.hx-reflect .hx-fetch__logo {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* The glare on the glass: a soft highlight that slides the other way. */
+.hx-sheen {
+  position: absolute;
+  left: 50%;
+  top: 33%;
+  width: 40%;
+  height: 24%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.2), transparent);
+  transform: translate(calc(var(--hx-px, 0) * 3.2cqw), calc(var(--hx-py, 0) * 2.2cqw)) rotate(-14deg);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* A glint crosses the glass as the processor lands face down. */
+.hx-glint {
+  position: absolute;
+  inset: -10% -40%;
+  background: linear-gradient(104deg, transparent 42%, rgba(255, 255, 255, 0.16) 50%, transparent 58%);
+  opacity: 0;
+  transform: translateX(-55%);
+}
+
+.hx[data-cpu='back'] .hx-glint {
+  animation: hx-glint 1.4s cubic-bezier(0.45, 0, 0.2, 1) 0.1s;
+}
+
+@keyframes hx-glint {
+  0% {
+    opacity: 0;
+    transform: translateX(-55%);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(55%);
+  }
+}
+
+/* ---- Parts --------------------------------------------------------------- */
+
+/* The column of parts takes the package's height instead of setting it
+   (size containment: it adds nothing to the row), spread top to bottom. */
+.hx-parts {
+  grid-area: parts;
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-areas: 'api' 'axum' 'cache' 'ledger' 'stream';
+  align-content: space-between;
+  row-gap: 8px;
+  padding: 2px 0;
+  contain: size;
+}
+
+.hx-parts__cap {
+  display: none;
+}
+
+/* Each part is a small chip: pins down both sides, a name, a measured number. */
+.hx-node {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  padding: 9px 12px 10px;
+  font: inherit;
+  line-height: 1.25;
+  text-align: left;
+  color: var(--hx-white);
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+  cursor: pointer;
+  opacity: 0.32;
+  transition:
+    opacity 0.5s ease,
+    border-color 0.25s ease;
+}
+
+.hx-node::before {
+  content: '';
+  position: absolute;
+  inset: 9px -5px;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0 2px, transparent 2px 7px) 0 0 / 4px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0 2px, transparent 2px 7px) 100% 0 / 4px 100% no-repeat;
+}
+
+.hx-node[data-on] {
+  opacity: 1;
+}
+
+.hx-node:hover,
+.hx-node[data-active] {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.hx-node__flash {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #fff;
+  border-radius: inherit;
+  box-shadow:
+    0 0 22px rgba(255, 255, 255, 0.28),
+    inset 0 0 14px rgba(255, 255, 255, 0.07);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Powering on: one bright beat. */
+.hx-node::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 1px #fff, 0 0 26px rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hx-node[data-on]::after {
+  animation: hx-power 0.9s ease-out;
+}
+
+@keyframes hx-power {
+  0% {
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.hx-node__name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9a9a9a;
+}
+
+.hx-node__host svg {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--hx-silver);
+}
+
+.hx-node__value {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.hx-node__sub {
+  font-size: 0.7rem;
+  color: #767676;
+  white-space: nowrap;
+}
+
+/* ---- Traces and signals -------------------------------------------------- */
+
+.hx-wires {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.36);
+  stroke-width: 1;
+}
+
+.hx-wires > path {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.hx-wires > path[data-on] {
+  opacity: 1;
+}
+
+/* The channel out of the connector is a wider bus. */
+.hx-wires__bed {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 7;
+  stroke-linejoin: round;
+}
+
+.hx-sig path {
+  opacity: 0;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.hx-sig__bits {
+  stroke: #fff;
+  stroke-width: 1.7;
+}
+
+.hx-sig__bloom {
+  stroke: #fff;
+  stroke-width: 7;
+  stroke-opacity: 0.13;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Status line under the board ----------------------------------------- */
+
+.hx-status {
+  grid-area: live;
+  position: relative;
+  min-height: 4.4em;
+  margin-top: 16px;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--hx-dim);
+}
+
+.hx-status__idle {
+  transition: opacity 0.2s ease;
+}
+
+.hx-rig[data-inspect] .hx-status__idle {
+  opacity: 0;
+}
+
+.hx-live {
+  position: relative;
+  height: 1.55em;
+  margin: 0;
+  color: var(--hx-silver);
+}
+
+.hx-live > span {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+}
+
+.hx-live b {
+  font-weight: 600;
+  color: var(--hx-white);
+}
+
+.hx-live > .hx-live__boot {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.hx[data-cpu='back']:not([data-still]) .hx-live__boot {
+  opacity: 0;
+}
+
+.hx-legend {
+  margin: 2px 0 0;
+}
+
+.hx-src {
+  position: absolute;
+  inset: 0 0 auto;
+  margin: 0;
+  color: var(--hx-silver);
+}
+
+.hx-src strong {
+  color: var(--hx-white);
+}
+
+.hx-src__from {
+  color: var(--hx-dim);
+}
+
+.hx-src__detail {
+  display: block;
+  margin-top: 2px;
+}
+
+/* ---- Short laptop screens ------------------------------------------------ */
+
+@media (min-width: 861px) and (max-height: 820px) {
+  .hx {
+    --hx-rows: 6;
+    --hx-row: 1.62em;
+    padding-top: 96px;
+  }
+
+  .hx-fetch__info > div:nth-child(7) {
+    display: none;
+  }
+
+  .hx__pitch {
+    line-height: 1.65;
+  }
+}
+
+/* ---- Narrow windows: the text, then the board ----------------------------- */
+
+@media (max-width: 1139px) {
+  .hx__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'rig'
+      'tty'
+      'pitch'
+      'actions';
+    grid-template-rows: none;
+    width: min(720px, 100% - 48px);
+  }
+
+  .hx::before {
+    background: radial-gradient(90% 50% at 50% 30%, rgba(0, 0, 0, 0.75), transparent 85%);
+  }
+
+  .hx-rig {
+    margin-top: 28px;
+  }
+
+  .hx-tty {
+    margin-top: 30px;
+  }
+}
+
+/* ---- Phones -------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .hx {
+    --hx-rows: 7;
+    padding: 108px 0 40px;
+  }
+
+  .hx__inner {
+    width: min(560px, 100% - 40px);
+  }
+
+  .hx__name {
+    font-size: clamp(2.3rem, 12.4vw, 4rem);
+  }
+
+  /* The connector moves to the bottom edge, over the column the signals drop into. */
+  .hx-port {
+    right: auto;
+    top: auto;
+    left: 68%;
+    bottom: -7px;
+    width: 40px;
+    height: 9px;
+    background:
+      repeating-linear-gradient(90deg, #9d9d9f 0 3px, #2a2a2b 3px 6px) 3px 1px / calc(100% - 6px) 5px no-repeat,
+      #111;
+  }
+
+  .hx-port i {
+    left: auto;
+    right: -9px;
+    top: 50%;
+    margin: -2px 0 0;
+  }
+
+  .hx-rig {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'pkg'
+      'parts'
+      'live';
+    margin-top: 26px;
+  }
+
+  .hx-pkg {
+    padding: 13px;
+  }
+
+  /* A two-column snake under the photo; the trace drops straight out of the lens. */
+  .hx-parts {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'cap api'
+      'axum cache'
+      'ledger stream';
+    gap: 26px 22px;
+    margin-top: 30px;
+    padding: 0 5px;
+    contain: none;
+  }
+
+  .hx-pkg__grid {
+    opacity: 0.55;
+  }
+
+  .hx-parts__cap {
+    grid-area: cap;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hx-silver);
+  }
+
+  .hx-rec {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--hx-silver);
+    animation: hx-blink 1.6s steps(1) infinite;
+  }
+
+  .hx-fetch {
+    grid-template-columns: 4.6em minmax(0, 1fr);
+    gap: 1.1em;
+  }
+}
+
+@media (max-width: 420px) {
+  .hx-node {
+    padding: 9px 11px 10px;
+  }
+
+  .hx-node__value {
+    font-size: 0.92rem;
+  }
+
+  .hx-fetch dt {
+    width: 8.4ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-scroll,
+  .hx-fetch__logo,
+  .hx-fetch__info > div,
+  .hx-node,
+  .hx-pkg::after,
+  .hx-wires path,
+  .hx-reflect,
+  .hx-sheen,
+  .hx-cpu__lit {
+    transition: none;
+  }
+
+  .hx-cursor,
+  .hx-rec,
+  .hx-glint,
+  .hx-node[data-on]::after {
+    animation: none;
+  }
+
+  .hx-live > span:nth-child(2) {
+    opacity: 1;
+  }
+
+  .hx-live > .hx-live__boot {
+    opacity: 0;
+  }
+}

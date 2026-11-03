@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import BlurHighlight from './components/BlurHighlight.jsx'
 import Icon from './components/Icon.jsx'
-import ProfileCard from './components/ProfileCard.jsx'
+import Hero from './components/hero/Hero.jsx'
 import FolderFloat from './components/FolderFloat.jsx'
-import ContactLinks from './components/ContactLinks.jsx'
+import Connect from './components/Connect.jsx'
 import TargetCursor from './components/TargetCursor.jsx'
 import BounceCards from './components/BounceCards.jsx'
 import { techIcons } from './data/techIcons.js'
@@ -14,7 +14,7 @@ import { resolveIcons } from './data/projectIcons.js'
 import ProjectShowcase from './components/ProjectShowcase.jsx'
 import ExperienceJourney from './components/ExperienceJourney.jsx'
 import SectionTitle from './components/SectionTitle.jsx'
-import VariableProximity from './components/VariableProximity.jsx'
+import NavLogo from './components/NavLogo.jsx'
 import './components/HobbyBackgrounds.css'
 import { CosmosArt, CraftArt, StrategyArt, WordsArt } from './components/HobbyArt.jsx'
 import DownloadCvButton from './components/DownloadCvButton.jsx'
@@ -69,45 +69,10 @@ const NAV_LINKS = [
   ['#contact', 'Contact'],
 ]
 
-const TYPING_TEXTS = [
-  'Backend Architect',
-  'Founder of Mintaka',
-]
-
-function TypingSubtitle() {
-  const [textIndex, setTextIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  useEffect(() => {
-    const currentText = TYPING_TEXTS[textIndex]
-    let timeoutId
-
-    if (!isDeleting && charIndex === currentText.length) {
-      timeoutId = setTimeout(() => setIsDeleting(true), 1500)
-    } else if (isDeleting && charIndex === 0) {
-      timeoutId = setTimeout(() => {
-        setIsDeleting(false)
-        setTextIndex((idx) => (idx + 1) % TYPING_TEXTS.length)
-      }, 300)
-    } else {
-      const delay = isDeleting ? 50 : 100
-      timeoutId = setTimeout(() => {
-        setCharIndex((i) => i + (isDeleting ? -1 : 1))
-      }, delay)
-    }
-
-    return () => clearTimeout(timeoutId)
-  }, [charIndex, isDeleting, textIndex])
-
-  return <span className="typing-text">{TYPING_TEXTS[textIndex].substring(0, charIndex)}</span>
-}
-
 function App() {
   const heroContentRef = useRef(null)
   const navRef = useRef(null)
   const indicatorRef = useRef(null)
-  const navContainerRef = useRef(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const hydrated = useHydrated()
   usePauseOffscreen('section, footer')
@@ -188,21 +153,12 @@ function App() {
       {/* Follows the pointer, so it has nothing to show in the pre-rendered
           HTML — and on touch devices it renders nothing at all. */}
       {hydrated && (
-        <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav" />
+        <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav, #home" />
       )}
 
-      <nav ref={(el) => { navRef.current = el; navContainerRef.current = el }}>
+      <nav ref={navRef}>
         <div className="nav-content">
-          <div className="logo">
-            <VariableProximity
-              label={'qwantum'}
-              fromFontVariationSettings="'wght' 150"
-              toFontVariationSettings="'wght' 800"
-              containerRef={navContainerRef}
-              radius={110}
-              falloff='linear'
-            />
-          </div>
+          <NavLogo onClick={onNavClick} />
           <div className="nav-links">
             {NAV_LINKS.map(([href, label]) => (
               <a key={href} href={href} className="nav-link cursor-target" onClick={onNavClick}>
@@ -238,34 +194,7 @@ function App() {
         </div>
       </nav>
 
-      <section id="home" className="hero">
-        <div className="hero-content" ref={heroContentRef}>
-          {/* The name is shown as art inside the profile card, so the document
-              still needs a real <h1> for search engines and screen readers.
-              Visually hidden rather than restyled, to leave the design alone. */}
-          <h1 className="sr-only">Sharifzoda Bilol — Backend Architect</h1>
-
-          <div style={{ maxWidth: 420, margin: '20px auto 30px' }}>
-            <ProfileCard
-              name="Sharifzoda Bilol"
-              title=""
-              handle="qwantum"
-              status="Online"
-              contactText="Contact Me"
-              showUserInfo={true}
-              enableTilt={true}
-              enableMobileTilt={true}
-              onContactClick={() => scrollToTarget(document.querySelector('#contact'))}
-            />
-          </div>
-          <div className="hero-subtitle">
-            <TypingSubtitle />
-          </div>
-          <p style={{ marginBottom: '30px', color: 'var(--text-secondary)', maxWidth: '660px', fontSize: '1.18rem', lineHeight: 1.75 }}>
-            <BlurHighlight text="I create [[high-performance, scalable and secure]] software solutions. Using modern technologies, optimized algorithms and structures in terms of [[system design]], parallelism and architecting down to the [[smallest details]]. And making sure that [[my team does the same]]." />
-          </p>
-        </div>
-      </section>
+      <Hero contentRef={heroContentRef} onContact={() => scrollToTarget(document.querySelector('#contact'))} />
 
       <section id="about" className="section fade-in-section">
         <div className="container">
@@ -398,7 +327,7 @@ function App() {
               </div>
               <figure className="hobby-plate" aria-hidden="true">
                 <WordsArt />
-                <figcaption className="hobby-caption">Socrates, typed · pages turning</figcaption>
+                <figcaption className="hobby-caption">A line, typed · pages turning</figcaption>
               </figure>
             </ScrollStackItem>
           </ScrollStack>
@@ -408,7 +337,7 @@ function App() {
       <section id="contact" className="section fade-in-section">
         <div className="container">
           <h2 className="section-title">Let's Connect</h2>
-          <ContactLinks />
+          <Connect />
         </div>
       </section>
 

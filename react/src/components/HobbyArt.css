@@ -621,21 +621,21 @@
     width: calc(var(--chars) * 1ch);
     border-right: 2px solid #ffffff;
     vertical-align: bottom;
+    /* A timing function applies to each keyframe interval, so one step per
+       character both types the line and takes it back. */
     animation:
-        words-type 9s infinite,
+        words-type 9s steps(var(--chars), end) infinite,
         words-caret 0.9s steps(1) infinite;
 }
 
 @keyframes words-type {
     0% {
         width: 0;
-        animation-timing-function: steps(40, end);
     }
 
     35%,
     80% {
         width: calc(var(--chars) * 1ch);
-        animation-timing-function: steps(40, end);
     }
 
     95%,

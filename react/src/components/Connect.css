@@ -1,0 +1,765 @@
+/* Let's Connect. The handshake animates only while .connect[data-run] is set,
+   which happens the first time the section is seen; without it (the
+   pre-rendered frame, reduced motion) the ladder is drawn finished.
+   Everything that moves is transform or opacity. */
+
+.connect {
+  --c-white: #f4f4f4;
+  --c-silver: #bdbdbd;
+  --c-dim: #6f6f6f;
+  --c-rule: rgba(255, 255, 255, 0.11);
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(16, 16, 16, 0.92), rgba(6, 6, 6, 0.94));
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+/* ---- Top and bottom lines ------------------------------------------------ */
+
+.connect__bar,
+.connect__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 14px 26px;
+  font-size: 0.78rem;
+  color: var(--c-dim);
+}
+
+.connect__bar {
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.connect__foot {
+  border-top: 1px solid var(--c-rule);
+}
+
+.connect__bar p,
+.connect__foot p {
+  margin: 0;
+}
+
+.connect__prompt span {
+  color: var(--c-white);
+  font-weight: 600;
+}
+
+.connect__clock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6em;
+}
+
+.connect__city {
+  color: var(--c-silver);
+}
+
+.connect__time {
+  min-width: 8ch;
+  color: var(--c-white);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.download-cv-btn.download-cv-btn--connect {
+  margin: 0;
+}
+
+/* ---- Body: the sockets and the handshake --------------------------------- */
+
+.connect__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  align-items: center;
+}
+
+.connect__table {
+  padding: 22px 0 22px 14px;
+}
+
+.connect__head,
+.sock__link {
+  display: grid;
+  grid-template-columns: 76px 50px 120px minmax(0, 1fr) 58px;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.connect__head {
+  margin: 0 0 6px;
+  padding: 0 14px;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #575757;
+}
+
+.connect__socks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sock {
+  position: relative;
+}
+
+.sock + .sock {
+  border-top: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.sock__link {
+  position: relative;
+  min-height: 58px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  color: var(--c-silver);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.sock[data-on] .sock__link {
+  color: var(--c-white);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.sock__link:focus-visible,
+.sock__copy:focus-visible {
+  outline: 2px solid var(--c-white);
+  outline-offset: 2px;
+}
+
+.sock__state {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+.sock__state i {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid #5a5a5a;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.sock__listen,
+.sock__estab {
+  transition: opacity 0.3s ease;
+}
+
+.sock__listen {
+  /* Holds the width of the longest state, SYN-RECV, which sits over it. */
+  min-width: 8ch;
+  color: var(--c-dim);
+}
+
+.sock__estab,
+.sock__recv {
+  position: absolute;
+  left: 14px;
+  opacity: 0;
+}
+
+.sock__estab {
+  color: var(--c-white);
+  font-weight: 700;
+}
+
+.sock__recv {
+  color: var(--c-silver);
+}
+
+.sock[data-on] .sock__state i {
+  background: var(--c-white);
+  border-color: var(--c-white);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.sock[data-on] .sock__listen {
+  opacity: 0;
+}
+
+.sock[data-on] .sock__estab {
+  opacity: 1;
+}
+
+/* While the handshake runs, the socket goes through the server's states:
+   LISTEN until the SYN lands, SYN-RECV until the ACK lands, then ESTAB. */
+.connect[data-run] .sock[data-on] .sock__estab,
+.connect[data-run] .sock[data-on] .sock__state i {
+  animation: sock-up 0.3s ease 1.8s both;
+}
+
+.connect[data-run] .sock[data-on] .sock__listen {
+  animation: sock-down 0.15s ease 0.5s both;
+}
+
+.connect[data-run] .sock[data-on] .sock__recv {
+  animation: sock-hold 1.3s steps(1) 0.5s;
+}
+
+@keyframes sock-hold {
+  0%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sock-up {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sock-down {
+  from {
+    opacity: 1;
+  }
+}
+
+.sock__port {
+  color: var(--c-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.sock__service {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--c-white);
+}
+
+.sock__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  color: var(--c-white);
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.sock[data-on] .sock__mark {
+  color: #000;
+  background: var(--c-white);
+  border-color: var(--c-white);
+}
+
+.sock__logo {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: currentColor;
+}
+
+.sock__handle {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Email's last column holds Copy instead of the arrow; the row still opens it. */
+.sock--copy .sock__go {
+  visibility: hidden;
+}
+
+.sock__go {
+  justify-self: end;
+  color: var(--c-dim);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.25s ease;
+}
+
+.sock__link:hover .sock__go,
+.sock__link:focus-visible .sock__go {
+  color: var(--c-white);
+  transform: translate(2px, -2px);
+}
+
+.sock__copy {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  min-height: 30px;
+  padding: 0 11px;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--c-silver);
+  background: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.sock__copy:hover {
+  color: var(--c-white);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---- The handshake ------------------------------------------------------- */
+
+.hs {
+  position: relative;
+  margin: 0;
+  padding: 24px 28px 22px;
+  border-left: 1px solid var(--c-rule);
+  /* A faint board grid behind the ladder. */
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 18px 18px;
+}
+
+/* The drawing and its labels: left/top are percentages of this box. */
+.hs__draw {
+  position: relative;
+}
+
+.hs__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 400 / 300;
+  overflow: visible;
+  fill: none;
+}
+
+.hs__end,
+.hs__label,
+.hs__state {
+  position: absolute;
+}
+
+.hs__end {
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.hs__life {
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.hs__line {
+  stroke: rgba(255, 255, 255, 0.78);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.hs__head {
+  fill: rgba(255, 255, 255, 0.9);
+}
+
+.hs__dot {
+  fill: #fff;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+}
+
+.hs__pipe-line {
+  stroke: #fff;
+  stroke-width: 2.4;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hs__bit {
+  fill: #fff;
+  opacity: 0;
+}
+
+/* Endpoints: a small chip at the head of each lifeline. */
+.hs__chip {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 7px 12px 8px;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--c-dim);
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+/* Pins down both sides, like the parts on the hero's board. */
+.hs__chip::before {
+  content: '';
+  position: absolute;
+  inset: 7px -5px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0 2px, transparent 2px 6px) 0 0 / 4px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0 2px, transparent 2px 6px) 100% 0 / 4px 100% no-repeat;
+}
+
+.hs__chip b {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--c-white);
+}
+
+.hs__arch {
+  width: 0.95em;
+  height: 0.95em;
+  fill: currentColor;
+}
+
+/* A ring on the chip as each segment lands. */
+.hs__ping {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #fff;
+  border-radius: inherit;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+  opacity: 0;
+}
+
+.hs__label {
+  margin: 0;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  color: var(--c-dim);
+  /* Sits above the middle of its segment. */
+  transform: translate(-50%, calc(-100% - 6px));
+  padding: 0 6px;
+  background: rgba(10, 10, 10, 0.85);
+  border-radius: 4px;
+}
+
+.hs__label b {
+  color: var(--c-white);
+  font-weight: 700;
+}
+
+.hs__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #000;
+  background: var(--c-white);
+  border-radius: 999px;
+  box-shadow: 0 0 26px rgba(255, 255, 255, 0.25);
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+
+.hs__state i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #000;
+}
+
+.hs__cap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin: 14px 0 0;
+  font-size: 0.72rem;
+  color: var(--c-dim);
+}
+
+.hs__cap b {
+  color: var(--c-white);
+  font-weight: 600;
+}
+
+/* ---- The handshake, running ---------------------------------------------- */
+
+.connect[data-run] .hs__line {
+  animation: hs-draw 0.5s cubic-bezier(0.45, 0, 0.25, 1) var(--d) both;
+}
+
+.connect[data-run] .hs__dot {
+  /* forwards, not both: nothing may wait in place during the delay. */
+  animation: hs-travel 0.5s cubic-bezier(0.45, 0, 0.25, 1) var(--d) forwards;
+}
+
+.connect[data-run] .hs__head {
+  animation: hs-in 0.18s ease calc(var(--d) + 0.44s) both;
+}
+
+.connect[data-run] .hs__label {
+  animation: hs-label 0.35s ease var(--d) both;
+}
+
+.connect[data-run] .hs__ping {
+  animation: hs-ping 0.7s ease-out var(--d) forwards;
+}
+
+.connect[data-run] .hs__pipe-line {
+  animation: hs-pipe 0.55s cubic-bezier(0.22, 1, 0.36, 1) 1.86s both;
+}
+
+.connect[data-run] .hs__state {
+  animation: hs-state 0.45s cubic-bezier(0.22, 1, 0.36, 1) 2s both;
+}
+
+.connect[data-run] .hs__cap {
+  animation: hs-in 0.4s ease 2.1s both;
+}
+
+/* Once up, a little traffic keeps the connection alive both ways. */
+.connect[data-run] .hs__bit--out {
+  animation: hs-bit 2.6s linear 2.5s infinite;
+}
+
+.connect[data-run] .hs__bit--in {
+  animation: hs-bit 2.6s linear 3.8s infinite;
+}
+
+@keyframes hs-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes hs-travel {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(var(--len));
+  }
+}
+
+@keyframes hs-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hs-label {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 2px));
+  }
+}
+
+@keyframes hs-ping {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.18, 1.35);
+  }
+}
+
+@keyframes hs-pipe {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+}
+
+@keyframes hs-state {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.86);
+  }
+}
+
+@keyframes hs-bit {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  8%,
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(var(--len));
+  }
+}
+
+/* ---- Narrower windows ---------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .connect__head,
+  .sock__link {
+    grid-template-columns: 70px 46px 112px minmax(0, 1fr) 56px;
+    column-gap: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .connect__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hs {
+    order: -1;
+    padding: 22px 20px 20px;
+    border-left: 0;
+    border-bottom: 1px solid var(--c-rule);
+  }
+
+  .connect__table {
+    padding: 14px 8px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .connect {
+    border-radius: 16px;
+  }
+
+  .connect__bar,
+  .connect__foot {
+    padding: 12px 16px;
+  }
+
+  .connect__head {
+    display: none;
+  }
+
+  /* Each line becomes two: the service and its state, then the handle and port. */
+  .sock__link {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'service port state'
+      'handle handle handle';
+    column-gap: 12px;
+    row-gap: 6px;
+    min-height: 0;
+    padding: 12px 10px;
+  }
+
+  .sock__service {
+    grid-area: service;
+  }
+
+  .sock__state {
+    grid-area: state;
+    justify-self: end;
+  }
+
+
+  .sock__handle {
+    grid-area: handle;
+    padding-left: 40px;
+    font-size: 0.84rem;
+  }
+
+  .sock__port {
+    grid-area: port;
+    font-size: 0.74rem;
+  }
+
+  .sock__go {
+    display: none;
+  }
+
+  .sock--copy .sock__link {
+    padding-bottom: 50px;
+  }
+
+  .sock__copy {
+    top: auto;
+    bottom: 12px;
+    left: 50px;
+    right: auto;
+    transform: none;
+  }
+
+  .hs__chip {
+    padding: 6px 9px 7px;
+    font-size: 0.64rem;
+  }
+
+  .hs__chip b {
+    font-size: 0.7rem;
+  }
+
+  .hs__label {
+    font-size: 0.62rem;
+  }
+
+  .hs__label span {
+    display: none;
+  }
+
+  .hs__state {
+    font-size: 0.64rem;
+    padding: 3px 10px;
+  }
+
+  .hs__cap {
+    font-size: 0.66rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sock__link,
+  .sock__state i,
+  .sock__listen,
+  .sock__estab,
+  .sock__mark,
+  .sock__go {
+    transition: none;
+  }
+}

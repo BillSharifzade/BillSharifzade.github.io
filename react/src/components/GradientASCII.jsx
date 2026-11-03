@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import './GradientASCII.css';
+import { whenLinuxUp } from '../utils/linuxUp.js';
 
 // The site's backdrop: light drifting over a dark horizon, drawn as JetBrains
 // Mono characters. Adapted from React Bits' GradientASCII and cut down to the
@@ -31,7 +32,10 @@ const MAX_TRAIL = 24;
 const CLICK_LIFE = 1.2;
 const TRAIL_LIFE = 0.7;
 const TRAIL_STEP = 0.015;
-const INTRO_SECONDS = 2.4;
+// The backdrop waits for the hero's Linux to come up (utils/linuxUp.js), then
+// the light fades in while every column of symbols rises into place, glowing.
+const INTRO_SECONDS = 1.6;
+const RISE_SECONDS = 1.9;
 const ATLAS_CELL_W = 60;
 const ATLAS_CELL_H = 100;
 const FONT_SCALE = 0.78;
@@ -176,6 +180,7 @@ uniform vec2 uResolution;
 uniform vec2 uOffset;
 uniform float uFlicker;
 uniform float uGlyphTime;
+uniform float uRise;
 const vec2 CELL = vec2(${glsl(CELL_W)}, ${glsl(CELL_H)});
 const float COUNT = ${glsl(CHARACTERS.length)};
 ${COMMON}
@@ -186,6 +191,16 @@ float sampleGlyph(float index, vec2 local, vec2 coord) {
 }
 
 vec4 glyphAt(vec2 px) {
+  // The entrance: each column starts a little after a random neighbour and
+  // eases up from below, burning bright on the way and settling as it lands.
+  float rise = 1.0;
+  if (uRise < 1.0) {
+    float column = floor((px.x - uOffset.x) / CELL.x);
+    float lag = hash12(vec2(column, 7.0)) * 0.42;
+    rise = clamp((uRise - lag) / 0.58, 0.0, 1.0);
+    rise = 1.0 - (1.0 - rise) * (1.0 - rise) * (1.0 - rise);
+    px.y += (1.0 - rise) * uResolution.y * 0.24;
+  }
   vec2 coord = (px - uOffset) / CELL;
   vec2 cell = floor(coord);
   vec2 local = coord - cell;
@@ -208,8 +223,10 @@ vec4 glyphAt(vec2 px) {
   float cutoff = smoothstep(0.03, 0.1, value);
   float coverage = sampleGlyph(index, local, coord);
   float alpha = ${glsl(GLYPH_OPACITY)} * present * cutoff * coverage * mix(1.0, 0.35 + 0.65 * level, 0.55);
-  vec3 light = field.rgb * 0.55 + vec3(0.03) * field.a;
-  return vec4(light * alpha, 0.6 * field.a * alpha);
+  float burn = 1.0 + 2.6 * sin(rise * 3.14159265);
+  alpha *= smoothstep(0.0, 0.12, rise);
+  vec3 light = (field.rgb * 0.55 + vec3(0.03) * field.a) * burn;
+  return vec4(light * alpha, 0.6 * field.a * alpha * min(burn, 2.0));
 }
 `;
 
@@ -424,6 +441,8 @@ const GradientASCII = () => {
       let time = 0;
       let glyphTime = 0;
       let introClock = reduce ? 1 : 0;
+      let riseClock = reduce ? 1 : 0;
+      let released = false;
       let frameSeed = 0;
       let grainClock = 0;
       let raf = 0;
@@ -468,6 +487,7 @@ const GradientASCII = () => {
         gl.uniform2f(u.uResolution, canvas.width, canvas.height);
         gl.uniform2f(u.uOffset, offset.x, offset.y);
         gl.uniform1f(u.uGlyphTime, glyphTime);
+        gl.uniform1f(u.uRise, riseClock);
       };
 
       const draw = () => {
@@ -577,11 +597,14 @@ const GradientASCII = () => {
         }
         const dt = last ? clamp((now - last) / 1000, 0.001, 0.05) : 1 / 60;
         last = now;
-        if (!reduce) {
-          time += dt * 0.5;
-          glyphTime += dt;
+        if (released) {
+          if (!reduce) {
+            time += dt * 0.5;
+            glyphTime += dt;
+          }
+          if (introClock < 1) introClock = Math.min(1, introClock + dt / INTRO_SECONDS);
+          if (riseClock < 1) riseClock = Math.min(1, riseClock + dt / RISE_SECONDS);
         }
-        if (introClock < 1) introClock = Math.min(1, introClock + dt / INTRO_SECONDS);
         grainClock += dt;
         if (!reduce && grainClock > 1 / 24) {
           grainClock = 0;
@@ -589,7 +612,8 @@ const GradientASCII = () => {
         }
         updateInput(dt);
         draw();
-        const busy = !reduce || introClock < 1 || clicks.length > 0 || trail.length > 0;
+        // Until the hero's Linux is up there is nothing to draw, so no loop.
+        const busy = released && (!reduce || introClock < 1 || riseClock < 1 || clicks.length > 0 || trail.length > 0);
         if (busy) raf = requestAnimationFrame(frame);
         else last = 0;
       };
@@ -641,6 +665,12 @@ const GradientASCII = () => {
         wake();
       };
 
+      const cancelGate = whenLinuxUp(() => {
+        released = true;
+        last = 0;
+        wake();
+      });
+
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(container);
       window.addEventListener('pointermove', onPointerMove, { passive: true });
@@ -650,6 +680,7 @@ const GradientASCII = () => {
 
       return () => {
         disposed = true;
+        cancelGate();
         cancelAnimationFrame(raf);
         resizeObserver.disconnect();
         window.removeEventListener('pointermove', onPointerMove);

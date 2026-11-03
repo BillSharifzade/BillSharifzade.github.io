@@ -857,7 +857,6 @@
   }
 }
 
-.plive__site,
 .plive__love {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);
@@ -866,6 +865,24 @@
   height: 100%;
   box-sizing: border-box;
   padding: 11px 12px;
+  border: 1px solid var(--pshow-line);
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* A client's site: its own logo (white), what it is, a line about it, and
+   where it lives. */
+.plive__site {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px 11px;
   border: 1px solid var(--pshow-line);
   border-radius: 12px;
   color: inherit;
@@ -899,10 +916,38 @@
   letter-spacing: 0.02em;
 }
 
-.plive__site:hover .plive__mono {
-  border-color: #ffffff;
-  background: #ffffff;
-  color: #000000;
+/* As tall as the tallest logo, so the blurbs in a row start level. */
+.plive__brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 34px;
+}
+
+.plive__logo {
+  display: block;
+  width: auto;
+  max-width: min(150px, 64%);
+  object-fit: contain;
+  object-position: left center;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.plive__site:hover .plive__logo,
+.plive__site:focus-visible .plive__logo {
+  opacity: 1;
+}
+
+.plive__kind {
+  flex: none;
+  color: var(--pshow-dim);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .plive__text {
@@ -941,6 +986,10 @@
   font-size: 0.68rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.plive__site .plive__host {
+  margin-top: auto;
 }
 
 .plive__site:hover .plive__host {
@@ -1028,11 +1077,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .plive__site,
   .plive__love {
     grid-template-columns: 36px minmax(0, 1fr);
     gap: 12px;
     padding: 10px;
+  }
+
+  .plive__site {
+    padding: 11px 12px 10px;
   }
 
   .plive__host--love {

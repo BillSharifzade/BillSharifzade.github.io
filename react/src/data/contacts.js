@@ -5,7 +5,7 @@
  * exports and the crawler fallback, in the contact section's component, and
  * again inline in App.jsx for the mobile contact grid. Changing a handle meant
  * remembering all three, and nothing caught it when one drifted. Today the
- * page reads them once, for the contact links (ContactLinks.jsx).
+ * page reads them once, for the Let's Connect section (Connect.jsx).
  *
  * Listed in the order the site shows them. `handle` is what the page displays;
  * `cvValue` is the longer form the CV prints when the two differ (a CV is read

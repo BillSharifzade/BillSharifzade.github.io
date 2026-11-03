@@ -12,6 +12,12 @@ const SITE_REPO = `${PROFILE}/BillSharifzade.github.io`
 
 const host = (url) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
 
+// Logos come in every shape, from a square crest to a long wordmark. Giving
+// each the same area, not the same height, makes them read as one size.
+const LOGO_AREA = 2900
+const logoHeight = ({ width, height, weight = 1 }) =>
+  Math.round(Math.min(32, Math.max(15, weight * Math.sqrt((LOGO_AREA * height) / width))))
+
 function Logos({ icons }) {
   return icons.map((t) => (
     <svg key={t.title} viewBox="0 0 24 24">
@@ -315,15 +321,20 @@ export default function ProjectShowcase({ projects }) {
               {liveSites.map((site, k) => (
                 <li key={site.url} style={{ '--k': k }}>
                   <a className="plive__site" href={site.url} target="_blank" rel="noopener noreferrer">
-                    <span className="plive__mono" aria-hidden="true">
-                      {site.title.slice(0, 2)}
+                    <span className="plive__brand">
+                      <img
+                        className="plive__logo"
+                        src={site.logo.src}
+                        alt={site.title}
+                        width={site.logo.width}
+                        height={site.logo.height}
+                        style={{ height: logoHeight(site.logo) }}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <em className="plive__kind">{site.kind}</em>
                     </span>
-                    <span className="plive__text">
-                      <span className="plive__title">
-                        {site.title} <em>{site.kind}</em>
-                      </span>
-                      <span className="plive__blurb">{site.blurb}</span>
-                    </span>
+                    <span className="plive__blurb">{site.blurb}</span>
                     <span className="plive__host">
                       {host(site.url)} <span aria-hidden="true">↗</span>
                     </span>

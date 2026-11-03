@@ -4,7 +4,35 @@ Requested 2026-11-02 (second batch; the first one is in git history). Done top t
 bottom; each task is ticked once it builds and has been checked in the browser.
 
 ## 1. Hero — a new opening instead of the profile card
-- [ ] Talk it through first: proposals go to the user, nothing is built yet. (Waiting on the user.)
+- [x] Talk it through first: three directions proposed (trace, chip, boot).
+- [x] Build all three independently, each as a real production build with its own link,
+      so the user can rate them (`VITE_HERO=trace|die|boot`).
+- [x] Build a fourth that mixes the best of the three (`VITE_HERO=mix`).
+- [x] Main photo: the eye-behind-glasses macro (`src/assets/hero/eye.webp`); the Arch
+      logo stays as an accent.
+- [x] The user picked the mix; it is now the only hero (`components/hero/Hero.jsx`). The
+      build switch, the other candidates, ProfileCard and the arch.png preload are gone.
+
+## 1c. Hero polish and the rest (2026-11-03, third batch)
+- [x] Start on a realistic CPU (no photo); lightning strikes it, it powers up and boots
+      Linux; then the ASCII backdrop rises in (symbols go up and glow); then the CPU
+      turns over and the photo is on its back. Lens reflection kept and polished
+      (second-surface ghost, mouse-parallax glare).
+- [x] Signals leave an edge connector on the socket, not a "client" point in the photo,
+      as bit trains of light along the traces; the parts' numbers are live.
+- [x] Neofetch: Running 70+ projects; Users 30+ companies.
+- [x] The header's target cursor works in the hero too.
+- [x] Header logo: |qwantum>, letters in superposition with their Greek twins; hover
+      collapses it.
+- [x] Prompt reads qwantum@sudo.
+- [x] Live sites show the sites' real logos in black and white.
+- [x] Let's Connect is a new component (Connect.jsx).
+- [x] Verify: lint, full build, pre-render, desktop and phone, no console errors.
+
+## 1b. Small follow-ups (2026-11-03)
+- [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
+      images).
+- [x] The book in Beyond the Code types "Love can save the universe".
 
 ## 2. Header — Download CV hover
 - [x] Drop the particle burst and the white fill on hover.

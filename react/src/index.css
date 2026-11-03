@@ -168,30 +168,15 @@ nav.scrolled {
     border: 0;
 }
 
-.hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-    padding-top: 120px;
-}
-
-.hero-content {
-    animation: fadeInUp 1s ease;
-    transition: opacity 0.2s linear;
-}
-
-.hero-subtitle {
-    font-size: 1.65rem;
-    color: var(--text-secondary);
-    margin-bottom: 30px;
-}
-
 .typing-text::after {
     content: '|';
     animation: blink 1s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .typing-text::after {
+        animation: none;
+    }
 }
 
 @keyframes blink {
@@ -265,18 +250,6 @@ nav.scrolled {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(10, 10, 10, 0.3);
     backdrop-filter: blur(20px);
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .scroll-indicator {
@@ -485,10 +458,6 @@ nav.scrolled {
 @media (max-width: 768px) {
     nav {
         padding: 18px 20px;
-    }
-
-    .hero {
-        padding-top: 100px;
     }
 
     .section-title {

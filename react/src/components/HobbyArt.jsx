@@ -219,7 +219,7 @@ export function CraftArt() {
 
 // ---- Words & Thought: a book turning its pages, a line typing itself --------
 
-const QUOTE = 'The unexamined life is not worth living.'
+const QUOTE = 'Love can save the universe'
 
 export function WordsArt() {
   return (
