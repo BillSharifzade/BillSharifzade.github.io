@@ -1,160 +1,356 @@
+/* The CV download — see CvFormatDialog.jsx. A window like Selected Projects'. */
+
 .cv-dialog-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.45);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    animation: cvOverlayIn 0.25s ease;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  animation: cv-fade 0.25s ease;
 }
 
-@keyframes cvOverlayIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+@keyframes cv-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 .cv-dialog {
-    position: relative;
-    width: min(560px, 100%);
-    padding: 40px 36px 36px;
-    border-radius: 24px;
-    background: linear-gradient(160deg, rgba(22, 22, 22, 0.96), rgba(10, 10, 10, 0.96));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
-    animation: cvDialogIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  --cv-line: rgba(255, 255, 255, 0.1);
+  --cv-dim: #8f8f8f;
+  --cv-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  width: min(880px, 100%);
+  max-height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: #070707;
+  box-shadow:
+    0 40px 120px -30px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  container-type: inline-size;
+  animation: cv-rise 0.4s var(--cv-ease);
 }
 
-@keyframes cvDialogIn {
-    from {
-        opacity: 0;
-        transform: translateY(18px) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+@keyframes cv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
 }
 
-.cv-dialog-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 50%;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.25s ease;
+/* ---- Title bar ----------------------------------------------------------- */
+
+.cv-dialog__chrome {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 16px;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--cv-line);
+  color: var(--cv-dim);
+  font-size: 0.74rem;
 }
 
-.cv-dialog-close:hover {
-    color: #000;
-    background: var(--primary);
-    border-color: var(--primary);
-    transform: rotate(90deg);
+/* The window's close button, its mark always showing: it is the only one. */
+.cv-dialog__close {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #9a9a9a;
+  color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
 }
 
-.cv-dialog-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--primary);
-    text-align: center;
+.cv-dialog__close::before {
+  content: '';
+  position: absolute;
+  inset: -13px;
 }
 
-.cv-dialog-subtitle {
-    margin-top: 6px;
-    margin-bottom: 28px;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+.cv-dialog__close svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
 }
 
-.cv-dialog-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+.cv-dialog__close:hover {
+  background: #e6e6e6;
+  transform: scale(1.15);
 }
 
-.cv-format-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 20px 10px 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    color: var(--text-primary);
-    font-family: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
+.cv-dialog__close:active {
+  transform: scale(0.95);
 }
 
-.cv-format-btn .icon {
-    font-size: 1.9rem;
-    color: var(--primary);
-    transition: transform 0.25s ease;
+.cv-dialog__close:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
 }
 
-.cv-format-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--primary);
-    transform: translateY(-4px);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+.cv-dialog__path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
 }
 
-.cv-format-btn:hover .icon {
-    transform: scale(1.12);
+.cv-dialog__path b {
+  color: #fff;
+  font-weight: 600;
 }
 
-.cv-format-label {
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+.cv-dialog__path span {
+  color: #fff;
 }
 
-.cv-format-hint {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
+/* ---- Body: the list and the preview -------------------------------------- */
+
+.cv-dialog__body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  min-height: 0;
+  overflow-y: auto;
 }
 
-@media (max-width: 560px) {
-    .cv-dialog {
-        padding: 32px 20px 24px;
-    }
-
-    .cv-dialog-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .cv-format-btn {
-        padding: 16px 8px 12px;
-    }
-
-    .cv-format-btn .icon {
-        font-size: 1.6rem;
-    }
+.cv-dialog__pick {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 26px 22px;
 }
 
-.cv-dialog:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.4);
-    outline-offset: 2px;
+.cv-dialog__title {
+  margin: 0;
+  color: #fff;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cv-dialog__lead {
+  margin: 8px 0 22px;
+  color: #a5a5a5;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+/* A terminal picker: one white bar, inverting the row it sits on. */
+.cv-list {
+  --row: 50px;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  isolation: isolate;
+}
+
+.cv-list__bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--row);
+  border-radius: 10px;
+  background: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  transform: translateY(calc(var(--i) * var(--row)));
+  transition: transform 0.3s var(--cv-ease);
+}
+
+.cv-row {
+  display: grid;
+  grid-template-columns: 4.4em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  height: var(--row);
+  padding: 0 16px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.cv-row__ext {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.cv-row__hint {
+  overflow: hidden;
+  color: var(--cv-dim);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-row__go {
+  display: grid;
+  place-items: center;
+  width: 1.2em;
+  color: var(--cv-dim);
+  transition: transform 0.3s var(--cv-ease);
+}
+
+.cv-row[data-active] .cv-row__go {
+  color: #fff;
+  transform: translateY(2px);
+}
+
+.cv-row:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.cv-dialog__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: auto 0 0;
+  padding-top: 22px;
+  color: #6c6c6c;
+  font-size: 0.7rem;
+}
+
+.cv-dialog__keys span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cv-dialog__keys kbd {
+  min-width: 1.9em;
+  padding: 2px 5px;
+  border: 1px solid var(--cv-line);
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: #a5a5a5;
+  font-family: inherit;
+  text-align: center;
+}
+
+/* The preview: the file under the bar, on the project windows' grid. */
+.cv-dialog__view {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 26px;
+  border-left: 1px solid var(--cv-line);
+  background-color: #050505;
+  background-image:
+    radial-gradient(90% 70% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+  container-type: inline-size;
+}
+
+/* 64 columns of 0.6em and a 1.2em margin each side; as large as the pane and
+   the window's height allow. */
+.cv-sheet {
+  box-sizing: border-box;
+  width: 40.8em;
+  padding: 1.2em;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: #0b0b0c;
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.95);
+  color: #a8a8a8;
+  font-size: min(calc(100cqw / 40.8), calc((100dvh - 230px) / 50.4), 11px);
+  line-height: 1.2;
+  white-space: pre;
+  transition: opacity 0.3s ease;
+}
+
+/* A page or a file runs on below the sheet; a spreadsheet ends at its tabs. */
+.cv-sheet__text {
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent);
+  mask-image: linear-gradient(180deg, #000 72%, transparent);
+}
+
+.cv-sheet[data-kind='sheet'] .cv-sheet__text {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.cv-sheet__text div {
+  height: 1.2em;
+}
+
+.cv-sheet [data-tone='lo'] {
+  color: #5d5d5d;
+}
+
+.cv-sheet [data-tone='hi'] {
+  color: #e6e6e6;
+}
+
+.cv-sheet [data-tone='name'] {
+  color: #fff;
+  font-weight: 800;
+}
+
+.cv-dialog__view[data-state='failed'] .cv-sheet {
+  opacity: 0;
+}
+
+/* ---- Phones: the list alone ---------------------------------------------- */
+
+@container (max-width: 680px) {
+  .cv-dialog__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cv-dialog__view,
+  .cv-dialog__keys {
+    display: none;
+  }
+
+  .cv-dialog__pick {
+    padding: 24px 16px 16px;
+  }
+
+  .cv-list {
+    --row: 54px;
+  }
+}
+
+@media (hover: none) {
+  .cv-dialog__keys {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-dialog-overlay,
+  .cv-dialog {
+    animation: none;
+  }
+
+  .cv-list__bar,
+  .cv-row__go,
+  .cv-dialog__close {
+    transition: none;
+  }
 }

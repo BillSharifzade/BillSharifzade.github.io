@@ -8,12 +8,12 @@
 export const CV_BASENAME = 'Sharifzoda_Bilol_CV'
 
 export const CV_FORMATS = [
-  { id: 'pdf', label: 'PDF', hint: 'Print-ready document', icon: 'file-pdf' },
-  { id: 'docx', label: 'DOCX', hint: 'Microsoft Word', icon: 'file-word' },
-  { id: 'xlsx', label: 'XLSX', hint: 'Excel spreadsheet', icon: 'file-excel' },
-  { id: 'csv', label: 'CSV', hint: 'Structured data', icon: 'file-csv' },
-  { id: 'md', label: 'MD', hint: 'Markdown', icon: 'markdown' },
-  { id: 'txt', label: 'TXT', hint: 'Plain text', icon: 'file-lines' },
+  { id: 'pdf', label: 'PDF', hint: 'To read or print' },
+  { id: 'docx', label: 'DOCX', hint: 'To edit in Word' },
+  { id: 'xlsx', label: 'XLSX', hint: 'A sheet per section' },
+  { id: 'csv', label: 'CSV', hint: 'A row per field' },
+  { id: 'md', label: 'MD', hint: 'For notes and wikis' },
+  { id: 'txt', label: 'TXT', hint: 'Pastes into any form' },
 ].map((f) => ({ ...f, file: `${CV_BASENAME}.${f.id}`, href: `/cv/${CV_BASENAME}.${f.id}` }))
 
 /** Starts the download of one format. */

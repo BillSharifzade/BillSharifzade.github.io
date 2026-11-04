@@ -61,6 +61,15 @@ bottom; each task is ticked once it builds and has been checked in the browser.
       and scrambled by a passing band on hover. Dushanbe clock with day/night.
 - [x] Verify: desktop, phone, hover, copy, keyboard focus, reduced motion.
 
+## 1g. CV download dialog (2026-11-04)
+- [x] The format dialog is one of the site's windows: the project windows' title bar
+      with the file's path, a terminal picker whose white bar follows the pointer and
+      the arrow keys (one click downloads), and a sheet that shows the file under the
+      bar printed in the backdrop's characters (the PDF and DOCX as a page, the XLSX
+      as its first sheet, the plain files as they are). Phones get the list alone.
+- [x] Verify: desktop, laptop, phone, every preview, keys, focus trap, Esc, a
+      download, reduced motion, previews failing to load.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).
