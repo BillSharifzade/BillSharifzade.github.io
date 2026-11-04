@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import './GradientASCII.css';
-import { whenLinuxUp } from '../utils/linuxUp.js';
+import { watchLinux } from '../utils/linuxUp.js';
 
 // The site's backdrop: light drifting over a dark horizon, drawn as JetBrains
 // Mono characters. Adapted from React Bits' GradientASCII and cut down to the
@@ -34,8 +34,10 @@ const TRAIL_LIFE = 0.7;
 const TRAIL_STEP = 0.015;
 // The backdrop waits for the hero's Linux to come up (utils/linuxUp.js), then
 // the light fades in while every column of symbols rises into place, glowing.
+// When the hero reboots it plays backwards, quicker, and waits again.
 const INTRO_SECONDS = 1.6;
 const RISE_SECONDS = 1.9;
+const SINK_SECONDS = 0.9;
 const ATLAS_CELL_W = 60;
 const ATLAS_CELL_H = 100;
 const FONT_SCALE = 0.78;
@@ -440,14 +442,16 @@ const GradientASCII = () => {
       let atlas = buildAtlas(gl);
       let time = 0;
       let glyphTime = 0;
-      let introClock = reduce ? 1 : 0;
-      let riseClock = reduce ? 1 : 0;
+      let introClock = 0;
+      let riseClock = 0;
       let released = false;
       let frameSeed = 0;
       let grainClock = 0;
       let raf = 0;
       let last = 0;
       let disposed = false;
+      // The entrance has finished playing in the direction Linux last went.
+      const settled = () => (released ? introClock >= 1 && riseClock >= 1 : introClock <= 0 && riseClock <= 0);
 
       // The palette, the flicker and the samplers never change: set them once.
       gl.useProgram(field.program);
@@ -597,13 +601,16 @@ const GradientASCII = () => {
         }
         const dt = last ? clamp((now - last) / 1000, 0.001, 0.05) : 1 / 60;
         last = now;
-        if (released) {
-          if (!reduce) {
-            time += dt * 0.5;
-            glyphTime += dt;
+        if (!reduce && (released || !settled())) {
+          time += dt * 0.5;
+          glyphTime += dt;
+          if (released) {
+            introClock = Math.min(1, introClock + dt / INTRO_SECONDS);
+            riseClock = Math.min(1, riseClock + dt / RISE_SECONDS);
+          } else {
+            introClock = Math.max(0, introClock - dt / SINK_SECONDS);
+            riseClock = Math.max(0, riseClock - dt / SINK_SECONDS);
           }
-          if (introClock < 1) introClock = Math.min(1, introClock + dt / INTRO_SECONDS);
-          if (riseClock < 1) riseClock = Math.min(1, riseClock + dt / RISE_SECONDS);
         }
         grainClock += dt;
         if (!reduce && grainClock > 1 / 24) {
@@ -612,8 +619,9 @@ const GradientASCII = () => {
         }
         updateInput(dt);
         draw();
-        // Until the hero's Linux is up there is nothing to draw, so no loop.
-        const busy = released && (!reduce || introClock < 1 || riseClock < 1 || clicks.length > 0 || trail.length > 0);
+        // While the hero's Linux is down there is nothing to draw, so no loop
+        // once the backdrop has sunk away.
+        const busy = released ? !reduce || clicks.length > 0 || trail.length > 0 : !settled();
         if (busy) raf = requestAnimationFrame(frame);
         else last = 0;
       };
@@ -665,8 +673,9 @@ const GradientASCII = () => {
         wake();
       };
 
-      const cancelGate = whenLinuxUp(() => {
-        released = true;
+      const cancelGate = watchLinux(up => {
+        released = up;
+        if (reduce) introClock = riseClock = up ? 1 : 0;
         last = 0;
         wake();
       });

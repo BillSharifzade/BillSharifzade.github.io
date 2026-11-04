@@ -29,6 +29,18 @@ bottom; each task is ticked once it builds and has been checked in the browser.
 - [x] Let's Connect is a new component (Connect.jsx).
 - [x] Verify: lint, full build, pre-render, desktop and phone, no console errors.
 
+## 1d. Hero: mass, legs and a new reveal (2026-11-03, fourth batch)
+- [x] The chip has mass instead of a flat 3D turn: a moulded body with a visible
+      edge and a shadow on the board. It stays flat (it is soldered down), and the
+      photo is printed onto it like photolithography: a stepper walks its reticle
+      over the fields and each one flashes and leaves the photo.
+- [x] The glare crosses the glasses every 4 seconds.
+- [x] Reboot takes the ASCII backdrop down with Linux and brings it back when
+      Linux is up again.
+- [x] Legs on the processor and on every part, soldered to the board with traces
+      running into it; signals leave and enter through the legs, which light up.
+- [x] Verify: lint, build, desktop, laptop and phone, reboot, reduced motion.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

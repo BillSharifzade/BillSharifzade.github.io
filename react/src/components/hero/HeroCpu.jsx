@@ -251,6 +251,62 @@ export function CpuFront() {
   )
 }
 
+// The package's legs: gull-wing leads down all four sides, each soldered to
+// its pad on the board with a trace running off into it. Drawn for the bottom
+// side and turned for the other three, in the package's units (480 across,
+// the body's edge at 480). The signals' channel is legs 13–15 of the right
+// side (Hero.css places .hx-port over their pads).
+const LEG = { n: 24, pitch: 16, w: 6.4, reach: 15, pad: [5, 18], padW: 9, trace: [18, 38], traceW: 1.6 }
+const LEG_FIRST = 240 - ((LEG.n - 1) * LEG.pitch) / 2
+const legRow = (w, [from, to]) => ({
+  d: `M${r1(LEG_FIRST - w / 2)} ${r1(480 + (from + to) / 2)}H${r1(LEG_FIRST + (LEG.n - 1) * LEG.pitch + w / 2)}`,
+  strokeWidth: to - from,
+  strokeDasharray: `${w} ${r1(LEG.pitch - w)}`,
+})
+
+/** The legs round the package; `lit` draws them carrying current, in white. */
+export function CpuLegs({ lit = false }) {
+  const id = lit ? 'hx-legs-lit' : 'hx-legs'
+  return (
+    <svg className={lit ? 'hx-legs hx-legs--lit' : 'hx-legs'} viewBox="-40 -40 560 560" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id={`${id}-trace`} gradientUnits="userSpaceOnUse" x1="0" y1={480 + LEG.trace[0]} x2="0" y2={480 + LEG.trace[1]}>
+          <stop offset="0" stopColor="#fff" stopOpacity={lit ? 0.85 : 0.2} />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        {!lit && (
+          <>
+            {/* Out of the body's shadow, over the shoulder, down the bend, and
+                flat on the pad in a bright fillet of solder. */}
+            <linearGradient id="hx-legs-metal" gradientUnits="userSpaceOnUse" x1="0" y1="480" x2="0" y2={480 + LEG.reach}>
+              <stop offset="0" stopColor="#18181a" />
+              <stop offset="0.16" stopColor="#4a4a4f" />
+              <stop offset="0.3" stopColor="#1d1d20" />
+              <stop offset="0.44" stopColor="#2e2e32" />
+              <stop offset="0.52" stopColor="#87878d" />
+              <stop offset="0.8" stopColor="#c8c8cc" />
+              <stop offset="1" stopColor="#6a6a70" />
+            </linearGradient>
+            <linearGradient id="hx-legs-shade" gradientUnits="userSpaceOnUse" x1="0" y1="480" x2="0" y2="489">
+              <stop offset="0" stopColor="#000" stopOpacity="0.7" />
+              <stop offset="1" stopColor="#000" stopOpacity="0" />
+            </linearGradient>
+          </>
+        )}
+      </defs>
+      <g id={`${id}-side`} fill="none">
+        <path {...legRow(LEG.traceW, LEG.trace)} stroke={`url(#${id}-trace)`} />
+        <path {...legRow(LEG.padW, LEG.pad)} stroke={lit ? '#fff' : '#29292c'} strokeOpacity={lit ? 0.4 : undefined} />
+        <path {...legRow(LEG.w, [0, LEG.reach])} stroke={lit ? '#fff' : 'url(#hx-legs-metal)'} />
+        {!lit && <rect x="44" y="480" width="392" height="9" fill="url(#hx-legs-shade)" />}
+      </g>
+      {[90, 180, 270].map((a) => (
+        <use key={a} href={`#${id}-side`} transform={`rotate(${a} 240 240)`} />
+      ))}
+    </svg>
+  )
+}
+
 // The lightning: a stepped leader from far above to the die, by midpoint
 // displacement, with a few forks that die out on the way down.
 const bolt = (() => {

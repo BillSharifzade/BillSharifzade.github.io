@@ -7,8 +7,8 @@ import eye360 from '../../assets/hero/eye-360.webp'
 import { experience } from '../../data/cv.js'
 import { liveSites } from '../../data/liveSites.js'
 import { wipProjects } from '../../data/wip.js'
-import { signalLinuxUp } from '../../utils/linuxUp.js'
-import { Bolt, CpuFront } from './HeroCpu.jsx'
+import { signalLinuxDown, signalLinuxUp } from '../../utils/linuxUp.js'
+import { Bolt, CpuFront, CpuLegs } from './HeroCpu.jsx'
 import './Hero.css'
 
 const SEEN_KEY = 'hero-booted'
@@ -113,13 +113,11 @@ const PROTOCOLS = ['REST', 'GraphQL', 'JSON-RPC', 'SOAP', 'WebSocket', 'SSE']
 const fmtRate = (v, unit) => (unit === 'rps' ? `${(v / 1000).toFixed(1)}k rps` : `${Math.round(v).toLocaleString('en-US')} tx/s`)
 const fmtP99 = (v) => `p99 ${v < 10 ? v.toFixed(1) : Math.round(v)} ms`
 
-// The opening, in ms: the strike after mount, the boot after the strike, the
-// flip once Linux is up, and how long the flip takes.
+// The opening, in ms: the strike after mount, the boot after the strike, and
+// the print once Linux is up.
 const STRIKE_AT = 420
 const BOOT_AFTER = 1000
-const FLIP_AFTER = 1150
-const FLIP_MS = 1000
-const UNFLIP_MS = 900
+const PRINT_AFTER = 900
 
 // ---- The console: the services the boot brings up. `lights` are the parts
 // of the board that power on when the line prints.
@@ -159,13 +157,15 @@ const sign = Math.sign
 
 // ---- Wiring ---------------------------------------------------------------
 
-// An orthogonal route between two boxes: out of A's right side into B's left
-// when B lies to the right, otherwise out of A's bottom into B's top. When a
-// part sits in the way of a straight drop, the trace skirts round its right.
+// An orthogonal route between two boxes, from the toe of the middle leg of one
+// side to the toe of the middle leg of another: out of A's right side into
+// B's left when B lies to the right, otherwise out of A's bottom into B's top.
+// When a part sits in the way of a straight drop, the trace skirts round its
+// right.
 function route(a, b, others) {
   if (b.l >= a.r - 1) {
     const [x0, y0, x1, y1] = [a.r, a.cy, b.l, b.cy]
-    if (y0 > b.t + 12 && y0 < b.b - 12) return [[x0, y0], [x1, y0]]
+    if (Math.abs(y0 - y1) < 1.5) return [[x0, y0], [x1, y0]]
     const xm = a.point ? Math.max(x0 + 14, x1 - 30) : (x0 + x1) / 2
     return [[x0, y0], [xm, y0], [xm, y1], [x1, y1]]
   }
@@ -175,7 +175,7 @@ function route(a, b, others) {
     const x = Math.max(a.r, b.r, ...between.map((o) => o.r)) + 18
     return [[a.r, a.cy], [x, a.cy], [x, b.cy], [b.r, b.cy]]
   }
-  if (x0 > b.l + 16 && x0 < b.r - 16) return [[x0, y0], [x0, y1]]
+  if (Math.abs(x0 - x1) < 1.5) return [[x0, y0], [x0, y1]]
   const ym = a.point ? Math.max(y0 + 14, y1 - 26) : (y0 + y1) / 2
   return [[x0, y0], [x0, ym], [x1, ym], [x1, y1]]
 }
@@ -245,6 +245,90 @@ function pulses(intervals, period, fade) {
     })
   kf.push({ offset: 1, opacity: 0 })
   return kf
+}
+
+// ---- The print ------------------------------------------------------------
+
+// The photo is printed onto the chip the way a die's own pattern is: a
+// stepper walks its reticle over the chip field by field, back and forth along
+// the rows, and exposes each field with a flash of light. It starts carefully
+// and speeds up, each step a little quicker than the last, down to STEP_MIN
+// ms. Stripping the print runs the same walk backwards, with the light off.
+const FIELDS = 6
+const LEAD = 140
+const STEP_FIRST = 74
+const STEP_MIN = 22
+const STEP_STRIP = 11
+const GLOW = 460
+
+// The i-th field of the walk, as [row, column].
+function field(i) {
+  const r = Math.floor(i / FIELDS)
+  const c = i % FIELDS
+  return [r, r % 2 ? FIELDS - 1 - c : c]
+}
+
+// What is printed once field i is done, as a clip path: the rows finished so
+// far and the run along the current one (six corners, whatever the shape).
+function printed(i) {
+  const p = ([x, y]) => `${+x.toFixed(3)}% ${+y.toFixed(3)}%`
+  if (i < 0) return `polygon(${Array(6).fill('0 0').join(', ')})`
+  const f = 100 / FIELDS
+  const [r, c] = field(i)
+  const [top, bottom] = [r * f, (r + 1) * f]
+  const corners =
+    r % 2
+      ? [[0, 0], [100, 0], [100, bottom], [c * f, bottom], [c * f, top], [0, top]]
+      : [[0, 0], [100, 0], [100, top], [(c + 1) * f, top], [(c + 1) * f, bottom], [0, bottom]]
+  return `polygon(${corners.map(p).join(', ')})`
+}
+
+/**
+ * Prints the photo onto the chip, or with `strip` takes it off again. Returns
+ * the animations and how long until the last of them is over.
+ */
+function print({ photo, litho, strip }) {
+  const n = FIELDS * FIELDS
+  const order = [...Array(n).keys()]
+  if (strip) order.reverse()
+  let t = strip ? 0 : LEAD
+  const at = order.map((_, k) => {
+    const now = t
+    t += strip ? STEP_STRIP : Math.max(STEP_MIN, STEP_FIRST - k * 4)
+    return now
+  })
+  const end = t
+  const hold = { easing: 'steps(1, end)' }
+  const clip = [{ offset: 0, clipPath: printed(strip ? n - 1 : -1), ...hold }]
+  order.forEach((i, k) => clip.push({ offset: at[k] / end, clipPath: printed(strip ? i - 1 : i), ...hold }))
+  clip.push({ offset: 1, clipPath: printed(strip ? -1 : n - 1) })
+  const anims = [photo.animate(clip, { duration: end, fill: 'both' })]
+  if (strip) return { anims, end }
+
+  // Each exposure: the field flashes white and fades to the fresh print.
+  const fields = litho.querySelectorAll('.hx-litho__field')
+  order.forEach((i, k) => {
+    const [r, c] = field(i)
+    const flash = [{ opacity: 0.9 }, { opacity: 0.32, offset: 0.3 }, { opacity: 0 }]
+    anims.push(fields[r * FIELDS + c].animate(flash, { duration: GLOW, delay: at[k], easing: 'ease-out' }))
+  })
+  // The reticle jumps to each field just before it is exposed.
+  const reticle = litho.querySelector('.hx-litho__reticle')
+  const span = end + 160
+  const place = (i) => {
+    const [r, c] = field(i)
+    return `translate(${c * 100}%, ${r * 100}%)`
+  }
+  const moves = [{ offset: 0, transform: place(order[0]), ...hold }]
+  order.forEach((i, k) => moves.push({ offset: Math.max(0, at[k] - 12) / span, transform: place(i), ...hold }))
+  moves.push({ offset: 1, transform: place(order[n - 1]) })
+  anims.push(
+    reticle.animate(moves, { duration: span, fill: 'both' }),
+    reticle.animate([{ opacity: 0 }, { opacity: 1, offset: LEAD / span }, { opacity: 1, offset: end / span }, { opacity: 0 }], {
+      duration: span,
+    }),
+  )
+  return { anims, end: end + GLOW }
 }
 
 // ---- Boot -----------------------------------------------------------------
@@ -419,14 +503,15 @@ function Screen({ logRef, scrollRef, upFor }) {
 }
 
 /**
- * The opening. A processor sits dark in its socket until lightning strikes
- * it; it powers up and boots Linux (a dmesg of this very page load), and each
- * project's parts light up across the board as its service starts. Once
- * Linux is up the page's ASCII backdrop rises in, and the processor turns
- * over: on its back is my eye, the overview reflected in my glasses. From then
- * on, signals leave the socket's edge connector and run the traces through
- * those parts, staying in each for its measured p99, and the parts' readouts
- * stay live.
+ * The opening. A processor sits dark on the board, soldered down by its legs,
+ * until lightning strikes it; the current runs out through its legs, it boots
+ * Linux (a dmesg of this very page load), and each project's parts light up
+ * across the board as its service starts. Once Linux is up the page's ASCII
+ * backdrop rises in, and my eye is printed onto the chip field by field, the
+ * overview reflected in my glasses. From then on, signals leave through three
+ * of its legs and run the traces through those parts, staying in each for its
+ * measured p99, and the parts' readouts stay live. Rebooting strips the print,
+ * takes the backdrop down with Linux and plays it all again.
  *
  * The name, the pitch, the processor and the overview are in the pre-rendered
  * HTML; the script only animates what is there. The opening plays once per
@@ -440,6 +525,8 @@ export default function Hero({ contentRef, onContact }) {
   const portRef = useRef(null)
   const wiresRef = useRef(null)
   const imgRef = useRef(null)
+  const photoRef = useRef(null)
+  const lithoRef = useRef(null)
   const pathRefs = useRef([])
   const bedRef = useRef(null)
   const sigRefs = useRef([])
@@ -477,6 +564,7 @@ export default function Hero({ contentRef, onContact }) {
     let lastLocal = -1
     let seq = 0
     let proto = 0
+    let printing = []
 
     setUpFor(uptime(new Date()))
 
@@ -544,7 +632,7 @@ export default function Hero({ contentRef, onContact }) {
     }
 
     // A part is powered when its node carries data-on; a trace lights once
-    // both of its ends are powered (the socket always is).
+    // both of its ends are powered (the processor always is).
     const power = (ids, on) => {
       ids.forEach((id) => {
         const node = nodeRefs.current[id]
@@ -642,7 +730,12 @@ export default function Hero({ contentRef, onContact }) {
       frame = 0
       const base = stage.getBoundingClientRect()
       const rects = { origin: { ...box(portRef.current, base), point: true } }
-      NODES.forEach(({ id }) => (rects[id] = box(nodeRefs.current[id], base)))
+      // Traces end at the toes of the parts' legs, --leg out from the body.
+      const leg = parseFloat(getComputedStyle(nodeRefs.current.api).getPropertyValue('--leg')) || 0
+      NODES.forEach(({ id }) => {
+        const b = box(nodeRefs.current[id], base)
+        rects[id] = { ...b, l: b.l - leg, t: b.t - leg, r: b.r + leg, b: b.b + leg }
+      })
       svg.setAttribute('viewBox', `0 0 ${base.width.toFixed(1)} ${base.height.toFixed(1)}`)
       edges = new Map()
       EDGES.forEach(([a, b], i) => {
@@ -674,6 +767,20 @@ export default function Hero({ contentRef, onContact }) {
         /* storage blocked: it just plays again next time */
       }
     }
+    const stopPrint = () => {
+      printing.forEach((a) => a.cancel())
+      printing = []
+    }
+    const runPrint = (strip, done) => {
+      stopPrint()
+      if (still) return done()
+      const { anims, end } = print({ photo: photoRef.current, litho: lithoRef.current, strip })
+      printing = anims
+      later(() => {
+        done()
+        stopPrint()
+      }, end)
+    }
     const open = (origin) => {
       later(() => cpu('on'), STRIKE_AT)
       later(() => {
@@ -688,33 +795,35 @@ export default function Hero({ contentRef, onContact }) {
             power(ALL, true)
             signalLinuxUp()
             seen()
-            later(() => cpu('flip'), FLIP_AFTER)
             later(() => {
-              cpu('back')
-              flow()
-            }, FLIP_AFTER + FLIP_MS)
+              cpu('print')
+              runPrint(false, () => {
+                cpu('photo')
+                flow()
+              })
+            }, PRINT_AFTER)
           },
         })
       }, STRIKE_AT + BOOT_AFTER)
     }
-    // Rebooting turns the processor back over, powers everything down and
-    // plays the opening again.
+    // Rebooting strips the print, powers everything down (the backdrop goes
+    // with Linux) and plays the opening again.
     rebootRef.current = () => {
       stopBoot?.()
       stopBoot = null
       stopFlow()
+      stopPrint()
       clearLater()
       power(ALL, false)
+      signalLinuxDown()
       delete root.dataset.boot
-      const front = root.dataset.cpu !== 'back' && root.dataset.cpu !== 'flip'
-      cpu(front ? null : 'unflip')
-      later(
-        () => {
-          cpu(null)
-          open(performance.now())
-        },
-        front ? 0 : UNFLIP_MS,
-      )
+      const replay = () => {
+        cpu(null)
+        open(performance.now())
+      }
+      if (root.dataset.cpu !== 'photo') return replay()
+      cpu('strip')
+      runPrint(true, replay)
     }
 
     const ro = new ResizeObserver(schedule)
@@ -734,10 +843,10 @@ export default function Hero({ contentRef, onContact }) {
     } catch {
       /* storage blocked */
     }
-    // Past 4 s the CSS fallback has already turned the processor over; don't take it back.
+    // Past 4 s the CSS fallback has already shown the photo; don't take it back.
     if (wasSeen || still || performance.now() > 4000) {
       root.dataset.boot = 'done'
-      cpu('back')
+      cpu('photo')
       signalLinuxUp()
       if (still) power(ALL, true)
       else ALL.forEach((id, i) => later(() => power([id], true), 160 + i * 120))
@@ -772,6 +881,7 @@ export default function Hero({ contentRef, onContact }) {
       clearInterval(tick)
       clearLater()
       stopBoot?.()
+      stopPrint()
       anims.forEach((a) => a.cancel())
       power(ALL, false)
       delete root.dataset.boot
@@ -812,39 +922,45 @@ export default function Hero({ contentRef, onContact }) {
 
         <div className="hx-rig" ref={stageRef} data-inspect={inspect || undefined}>
           <figure className="hx-pkg">
+            <CpuLegs />
+            <CpuLegs lit />
             <div className="hx-cpu">
-              <div className="hx-cpu__card">
-                <div className="hx-cpu__face hx-cpu__front">
-                  <CpuFront />
-                  <span className="hx-cpu__flash" aria-hidden="true" />
-                </div>
-                <div className="hx-cpu__face hx-cpu__back">
-                  <img
-                    ref={imgRef}
-                    className="hx-pkg__img"
-                    src={eye}
-                    srcSet={`${eye360} 360w, ${eye} 640w`}
-                    sizes="(max-width: 860px) 86vw, 440px"
-                    width="640"
-                    height="640"
-                    alt="Sharifzoda Bilol's eye behind glasses, a screen of code reflected in the lens"
-                  />
-                  <span className="hx-pkg__grid" aria-hidden="true" />
-                  <div className="hx-lens" aria-hidden="true">
-                    <div className="hx-reflect hx-reflect--ghost">
-                      <div className="hx-screen">
-                        <Fetch upFor={upFor} />
-                      </div>
+              <div className="hx-cpu__face hx-cpu__front">
+                <CpuFront />
+                <span className="hx-cpu__flash" aria-hidden="true" />
+              </div>
+              <div className="hx-cpu__face hx-cpu__photo" ref={photoRef}>
+                <img
+                  ref={imgRef}
+                  className="hx-pkg__img"
+                  src={eye}
+                  srcSet={`${eye360} 360w, ${eye} 640w`}
+                  sizes="(max-width: 860px) 86vw, 440px"
+                  width="640"
+                  height="640"
+                  alt="Sharifzoda Bilol's eye behind glasses, a screen of code reflected in the lens"
+                />
+                <span className="hx-pkg__grid" aria-hidden="true" />
+                <div className="hx-lens" aria-hidden="true">
+                  <div className="hx-reflect hx-reflect--ghost">
+                    <div className="hx-screen">
+                      <Fetch upFor={upFor} />
                     </div>
-                    <div className="hx-reflect">
-                      <div className="hx-screen">
-                        <Fetch upFor={upFor} />
-                      </div>
-                    </div>
-                    <span className="hx-sheen" />
-                    <span className="hx-glint" />
                   </div>
+                  <div className="hx-reflect">
+                    <div className="hx-screen">
+                      <Fetch upFor={upFor} />
+                    </div>
+                  </div>
+                  <span className="hx-sheen" />
+                  <span className="hx-glint" />
                 </div>
+              </div>
+              <div className="hx-litho" ref={lithoRef} aria-hidden="true">
+                {Array.from({ length: FIELDS * FIELDS }, (_, i) => (
+                  <i key={i} className="hx-litho__field" />
+                ))}
+                <i className="hx-litho__reticle" />
               </div>
             </div>
             <span className="hx-port" ref={portRef} aria-hidden="true">
