@@ -1,15 +1,16 @@
-/* |qwantum> — see NavLogo.jsx. */
+/* qwantum in the backdrop's characters — see NavLogo.jsx. */
 
 .qlogo {
-    --q-ease: cubic-bezier(0.22, 1, 0.36, 1);
     position: relative;
     display: inline-flex;
-    align-items: baseline;
-    padding: 6px 4px 12px;
-    margin: -6px -4px -12px;
-    font-weight: 300;
-    color: var(--primary);
+    flex: none;
+    padding: 6px 4px;
+    margin: -6px -4px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
     text-decoration: none;
+    white-space: pre;
     border-radius: 6px;
 }
 
@@ -18,177 +19,42 @@
     outline-offset: 2px;
 }
 
-/* The brackets wait just outside the word, faint, until it is observed. */
-.qlogo__ket {
-    color: var(--text-secondary);
-    opacity: 0.32;
-    transition:
-        opacity 0.35s ease,
-        transform 0.5s var(--q-ease),
-        color 0.35s ease;
+/* On the way up the ramp a letter is one of the backdrop's light glyphs. */
+.qlogo span[data-noise] {
+    font-weight: 300;
 }
 
-.qlogo__ket--l {
-    margin-right: 0.08em;
-    transform: translateX(-0.22em);
-}
-
-.qlogo__ket--r {
-    margin-left: 0.08em;
-    transform: translateX(0.22em);
-}
-
-.qlogo__word {
-    display: inline-flex;
-}
-
-/* A letter and its twin share one cell: as one fades, the other appears. */
-.qlogo__q {
-    position: relative;
-    display: inline-block;
-    animation: qlogo-self 6.4s ease-in-out infinite;
-    animation-delay: calc(var(--i) * -0.91s);
-    transition:
-        font-weight 0.4s ease,
-        color 0.3s ease;
-    transition-delay: calc(var(--i) * 28ms);
-}
-
-.qlogo__q::after {
-    content: attr(data-twin);
-    position: absolute;
-    inset: 0;
-    text-align: center;
-    color: #9a9a9a;
+/* Until the script takes over, the name waits for the boot the way the hero's
+   photo does, and shows anyway if the script never comes. */
+.qlogo:not([data-live]) span {
     opacity: 0;
-    animation: qlogo-twin 6.4s ease-in-out infinite;
-    animation-delay: calc(var(--i) * -0.91s);
+    animation: qlogo-in 0.6s ease 4.6s forwards;
 }
 
-@keyframes qlogo-self {
-    0%,
-    62%,
-    100% {
-        opacity: 1;
-        transform: none;
-    }
-
-    72%,
-    80% {
-        opacity: 0.18;
-        transform: translateY(-0.06em);
-    }
-}
-
-@keyframes qlogo-twin {
-    0%,
-    62%,
-    100% {
-        opacity: 0;
-        transform: translateY(0.12em);
-    }
-
-    72%,
-    80% {
-        opacity: 0.85;
-        transform: none;
-    }
-}
-
-/* The wave packet: a carrier sliding under a bell-shaped envelope. */
-.qlogo__wave {
-    position: absolute;
-    left: 14%;
-    right: 14%;
-    bottom: 1px;
-    height: 8px;
-    overflow: hidden;
-    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
-    mask-image: radial-gradient(closest-side, #000 30%, transparent);
-    opacity: 0.55;
-    transform-origin: 50% 50%;
-    transition:
-        transform 0.45s var(--q-ease),
-        opacity 0.3s ease;
-}
-
-.qlogo__wave i {
-    position: absolute;
-    inset: 0 -12px 0 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 4Q3 .8 6 4T12 4' fill='none' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E") 0 0 / 12px 8px repeat-x;
-    animation: qlogo-carrier 1.1s linear infinite;
-}
-
-@keyframes qlogo-carrier {
+@keyframes qlogo-in {
     to {
-        transform: translateX(-12px);
+        opacity: 1;
     }
 }
 
-/* Where the measurement found it. */
-.qlogo__dot {
-    position: absolute;
-    left: 50%;
-    bottom: 3px;
-    width: 4px;
-    height: 4px;
-    margin-left: -2px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.6);
-    opacity: 0;
-    transform: scale(0);
-    transition:
-        transform 0.4s var(--q-ease) 0.12s,
-        opacity 0.2s ease 0.12s;
-}
-
-/* Observed. */
-.qlogo:hover .qlogo__q,
-.qlogo:focus-visible .qlogo__q,
-.qlogo:active .qlogo__q {
-    animation: none;
-    font-weight: 700;
+/* A character on its way from the backdrop into the name. */
+.qlogo-fly {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1001;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
     color: #fff;
-}
-
-.qlogo:hover .qlogo__q::after,
-.qlogo:focus-visible .qlogo__q::after,
-.qlogo:active .qlogo__q::after {
-    animation: none;
-    opacity: 0;
-}
-
-.qlogo:hover .qlogo__ket,
-.qlogo:focus-visible .qlogo__ket,
-.qlogo:active .qlogo__ket {
-    opacity: 1;
-    color: #fff;
-    transform: none;
-}
-
-.qlogo:hover .qlogo__wave,
-.qlogo:focus-visible .qlogo__wave,
-.qlogo:active .qlogo__wave {
-    opacity: 0;
-    transform: scaleY(0) scaleX(0.2);
-}
-
-.qlogo:hover .qlogo__dot,
-.qlogo:focus-visible .qlogo__dot,
-.qlogo:active .qlogo__dot {
-    opacity: 1;
-    transform: none;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+    pointer-events: none;
+    will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .qlogo__q,
-    .qlogo__q::after,
-    .qlogo__wave i {
+    .qlogo:not([data-live]) span {
+        opacity: 1;
         animation: none;
-    }
-
-    .qlogo__wave {
-        display: none;
     }
 }

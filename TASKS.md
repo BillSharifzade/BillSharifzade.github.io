@@ -41,6 +41,16 @@ bottom; each task is ticked once it builds and has been checked in the browser.
       running into it; signals leave and enter through the legs, which light up.
 - [x] Verify: lint, build, desktop, laptop and phone, reboot, reduced motion.
 
+## 1e. Header logo: decode (2026-11-04)
+- [x] Six candidates tried in the real header; the user chose "decode" and the
+      rest are deleted.
+- [x] The name is built from the ASCII backdrop's characters: when Linux is up and
+      the backdrop rises, one lit character per letter lifts off the backdrop's
+      grid, flies into the header and climbs the ramp into its letter. Reboot
+      dissolves it; hover runs the ramp again; reduced motion shows it plainly.
+- [x] Verify: first visit, reboot, repeat visit, phone, hover, reduced motion,
+      blocked scripts.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

@@ -1,7 +1,8 @@
 // The hero boots a Linux before the page's ASCII backdrop may appear: the
 // backdrop follows this signal, rising in when Linux comes up and sinking away
 // when the hero reboots. If the hero never sends it (no script, an error), the
-// backdrop does not wait forever.
+// backdrop does not wait forever. The backdrop in turn says when it starts to
+// rise, and the header logo lifts its letters out of it.
 
 const FALLBACK_MS = 9000
 let up = false
@@ -28,4 +29,15 @@ export function watchLinux(fn) {
     watchers.delete(fn)
     clearTimeout(timer)
   }
+}
+
+const risers = new Set()
+
+/** The backdrop has started rising (each time Linux comes up). */
+export const signalBackdropRise = () => risers.forEach((fn) => fn())
+
+/** Calls `fn()` each time the backdrop starts rising. Returns a function that stops watching. */
+export function watchBackdropRise(fn) {
+  risers.add(fn)
+  return () => risers.delete(fn)
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import './GradientASCII.css';
-import { watchLinux } from '../utils/linuxUp.js';
+import { signalBackdropRise, watchLinux } from '../utils/linuxUp.js';
+import { CELL_H, CELL_W, CHARACTERS, gridOffset, hash12, lendSampler } from '../utils/asciiGrid.js';
 
 // The site's backdrop: light drifting over a dark horizon, drawn as JetBrains
 // Mono characters. Adapted from React Bits' GradientASCII and cut down to the
@@ -11,8 +12,6 @@ import { watchLinux } from '../utils/linuxUp.js';
 // the black body.
 const COLORS = ['#3d3d3d', '#989898', '#c0c0c0', '#ffffff'];
 const FONT = "'JetBrains Mono', monospace";
-// Characters from dimmest to brightest.
-const CHARACTERS = ' =+xX0S8#@';
 // Faint, so the glow never washes out the text that scrolls over it.
 const GRADIENT_OPACITY = 0.2;
 const GLYPH_OPACITY = 0.85;
@@ -41,11 +40,8 @@ const SINK_SECONDS = 0.9;
 const ATLAS_CELL_W = 60;
 const ATLAS_CELL_H = 100;
 const FONT_SCALE = 0.78;
-// A character cell in CSS pixels. The canvas draws one device pixel per CSS
-// pixel: on HiDPI screens anything more is 4x the fragment work for a
-// background.
-const CELL_H = 18;
-const CELL_W = CELL_H * (ATLAS_CELL_W / ATLAS_CELL_H);
+// The canvas draws one device pixel per CSS pixel (cells in utils/asciiGrid.js):
+// on HiDPI screens anything more is 4x the fragment work for a background.
 
 // A JS number as a GLSL float literal.
 const glsl = n => (Number.isInteger(n) ? `${n}.0` : `${n}`);
@@ -544,8 +540,7 @@ const GradientASCII = () => {
       const resize = () => {
         canvas.width = Math.max(1, container.clientWidth);
         canvas.height = Math.max(1, container.clientHeight);
-        offset.x = (canvas.width - Math.ceil(canvas.width / CELL_W) * CELL_W) / 2;
-        offset.y = (canvas.height - Math.ceil(canvas.height / CELL_H) * CELL_H) / 2;
+        Object.assign(offset, gridOffset(canvas.width, canvas.height));
         sizeTarget(
           gl,
           fieldTarget,
@@ -673,9 +668,48 @@ const GradientASCII = () => {
         wake();
       };
 
+      // Which cells show a glyph, and which one, read back from the field the
+      // way the glyph pass decides it (less the flicker): the header logo
+      // lifts its letters out of these.
+      const stopLending = lendSampler(({ left, top, width, height }) => {
+        const rows = Math.round((canvas.height - 2 * offset.y) / CELL_H);
+        const x0 = clamp(Math.floor(left / 2), 0, fieldTarget.width - 1);
+        const y0 = clamp(Math.floor((canvas.height - top - height) / 2), 0, fieldTarget.height - 1);
+        const w = clamp(Math.ceil(width / 2), 1, fieldTarget.width - x0);
+        const h = clamp(Math.ceil(height / 2), 1, fieldTarget.height - y0);
+        const texels = new Uint8Array(w * h * 4);
+        gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fieldTarget.framebuffer);
+        gl.readBuffer(gl.COLOR_ATTACHMENT0);
+        gl.readPixels(x0, y0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, texels);
+        gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+        const cells = [];
+        const c0 = Math.ceil((left - offset.x) / CELL_W - 0.5);
+        const r0 = Math.ceil((top - offset.y) / CELL_H - 0.5);
+        for (let row = r0; (row + 0.5) * CELL_H + offset.y < top + height; row++) {
+          for (let col = c0; (col + 0.5) * CELL_W + offset.x < left + width; col++) {
+            const x = offset.x + (col + 0.5) * CELL_W;
+            const y = offset.y + (row + 0.5) * CELL_H;
+            const tx = Math.floor(x / 2) - x0;
+            const ty = Math.floor((canvas.height - y) / 2) - y0;
+            if (tx < 0 || ty < 0 || tx >= w || ty >= h) continue;
+            const k = (ty * w + tx) * 4;
+            const value = (0.2126 * texels[k] + 0.7152 * texels[k + 1] + 0.0722 * texels[k + 2]) / 255;
+            if (value < 0.1) continue;
+            const cell = [col, rows - 1 - row];
+            const level = hash12(cell[0] * 1.73 + 4.1, cell[1] * 1.73 + 4.1);
+            const tone = clamp(Math.pow(value, 0.75) + (level - 0.5) * 0.1, 0, 1);
+            const index = Math.floor(tone * (CHARACTERS.length - 1) + 0.5);
+            if (index < 1 || hash12(...cell) > DENSITY * (1 + (0.3 + tone * 1.1 - 1) * 0.55)) continue;
+            cells.push({ x, y, char: CHARACTERS[index], value });
+          }
+        }
+        return cells.sort((a, b) => b.value - a.value);
+      });
+
       const cancelGate = watchLinux(up => {
         released = up;
         if (reduce) introClock = riseClock = up ? 1 : 0;
+        else if (up) signalBackdropRise();
         last = 0;
         wake();
       });
@@ -689,6 +723,7 @@ const GradientASCII = () => {
 
       return () => {
         disposed = true;
+        stopLending();
         cancelGate();
         cancelAnimationFrame(raf);
         resizeObserver.disconnect();
