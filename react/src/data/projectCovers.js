@@ -11,7 +11,7 @@ import paymentPhone from '../assets/projects/payment-phone.webp'
 // desktop one.
 export const projectCovers = {
   apiweave: [apiweave],
-  screenx: [screenx1, screenx2],
+  screenx: [screenx1, { src: screenx2, phone: true }],
   'hr-progress': [hrProgress],
   tek: [tekDesktop, { src: tekPhone, phone: true }],
   payment: [paymentDesktop, { src: paymentPhone, phone: true }],

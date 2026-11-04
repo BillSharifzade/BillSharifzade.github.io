@@ -77,6 +77,12 @@ bottom; each task is ticked once it builds and has been checked in the browser.
       - tek: 1,000+ electricians; revenue is private to the company.
 - [x] Live sites: a compact list with short descriptions, plus "infinite romantic
       websites for my future wife", highlighted in the footer's colour.
+- [x] (2026-11-04) Recruitment's Mini App screenshot drawn as a handset, like tek and
+      payment_system. Competency Matrix and apiweave stay without one: they have
+      no phone layout.
+- [x] (2026-11-04) Window buttons 14px with bold, centred marks drawn as strokes
+      (the text glyphs sat off-centre, and their bold weight never applied).
+      Restore while maximised shows two inward corners.
 
 ## 6. Professional Journey — easier reading
 - [x] Comfortable line length, spacing and hierarchy in the expanded card.

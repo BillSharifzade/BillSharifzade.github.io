@@ -26,6 +26,22 @@ function Logos({ icons }) {
   ))
 }
 
+// The window buttons' marks, drawn as strokes in a 10 × 10 box so each one
+// sits on the button's centre (text glyphs ride on the font's baseline).
+const MARKS = {
+  close: 'M2.8 2.8l4.4 4.4M7.2 2.8L2.8 7.2',
+  min: 'M2.2 5h5.6',
+  max: 'M5 2.2v5.6M2.2 5h5.6',
+  // Two corners pointing in, filled (see .pshow__ctl[aria-pressed]).
+  restore: 'M4.3 4.3V1.4L1.4 4.3zM5.7 5.7v2.9l2.9-2.9z',
+}
+
+const Mark = ({ d }) => (
+  <svg viewBox="0 0 10 10" aria-hidden="true">
+    <path d={MARKS[d]} />
+  </svg>
+)
+
 /**
  * Selected projects as a repository browser: an index of repos on the left,
  * and on the right a window with the chosen one's screenshots, stack, summary
@@ -109,10 +125,10 @@ export default function ProjectShowcase({ projects }) {
       {i === active && (
         <span className="pshow__ctls">
           <button type="button" className="pshow__ctl" aria-label="Close window" onClick={() => putAway('closed')}>
-            <span aria-hidden="true">×</span>
+            <Mark d="close" />
           </button>
           <button type="button" className="pshow__ctl" aria-label="Minimise window" onClick={() => putAway('min')}>
-            <span aria-hidden="true">−</span>
+            <Mark d="min" />
           </button>
           <button
             type="button"
@@ -121,7 +137,7 @@ export default function ProjectShowcase({ projects }) {
             aria-pressed={max}
             onClick={toggleMax}
           >
-            <span aria-hidden="true">{max ? '⤡' : '+'}</span>
+            <Mark d={max ? 'restore' : 'max'} />
           </button>
         </span>
       )}

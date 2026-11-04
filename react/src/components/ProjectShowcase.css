@@ -317,12 +317,12 @@
 .pshow__ctls {
   display: flex;
   flex: none;
-  gap: 7px;
+  gap: 8px;
 }
 
 .pshow__dots i {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #3a3a3a;
 }
@@ -336,14 +336,13 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: #4f4f4f;
-  color: rgba(0, 0, 0, 0.75);
-  font: 700 10px/1 inherit;
+  color: rgba(0, 0, 0, 0.78);
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -353,12 +352,24 @@
 .pshow__ctl::before {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: -4px;
 }
 
-.pshow__ctl span {
+.pshow__ctl svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0;
   transition: opacity 0.15s ease;
+}
+
+.pshow__ctl[aria-pressed='true'] svg {
+  fill: currentColor;
+  stroke-width: 0.9;
 }
 
 .pshow__ctls:hover .pshow__ctl,
@@ -366,8 +377,8 @@
   background: #9a9a9a;
 }
 
-.pshow__ctls:hover .pshow__ctl span,
-.pshow__ctls:focus-within .pshow__ctl span {
+.pshow__ctls:hover .pshow__ctl svg,
+.pshow__ctls:focus-within .pshow__ctl svg {
   opacity: 1;
 }
 
