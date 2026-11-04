@@ -282,7 +282,6 @@ function App() {
               </div>
               <figure className="hobby-plate" aria-hidden="true">
                 <CosmosArt />
-                <figcaption className="hobby-caption">Spiral galaxy · field equations</figcaption>
               </figure>
             </ScrollStackItem>
             <ScrollStackItem itemClassName="hobby-card">
@@ -297,7 +296,6 @@ function App() {
               </div>
               <figure className="hobby-plate" aria-hidden="true">
                 <StrategyArt />
-                <figcaption className="hobby-caption">A knight’s circuit · crosshair lock</figcaption>
               </figure>
             </ScrollStackItem>
             <ScrollStackItem itemClassName="hobby-card">
@@ -312,7 +310,6 @@ function App() {
               </div>
               <figure className="hobby-plate" aria-hidden="true">
                 <CraftArt />
-                <figcaption className="hobby-caption">A strum · a scarf, row by row</figcaption>
               </figure>
             </ScrollStackItem>
             <ScrollStackItem itemClassName="hobby-card">
@@ -327,7 +324,6 @@ function App() {
               </div>
               <figure className="hobby-plate" aria-hidden="true">
                 <WordsArt />
-                <figcaption className="hobby-caption">A line, typed · pages turning</figcaption>
               </figure>
             </ScrollStackItem>
           </ScrollStack>

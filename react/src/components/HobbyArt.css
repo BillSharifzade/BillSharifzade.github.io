@@ -790,7 +790,7 @@
     }
 }
 
-/* Short plates (phones): a shorter scarf, so it clears the caption. */
+/* Short plates (phones): a shorter scarf, so it stays clear of the ball of yarn. */
 @container (max-height: 200px) {
     .knit-scarf {
         --rows: 11;

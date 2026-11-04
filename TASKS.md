@@ -51,6 +51,16 @@ bottom; each task is ticked once it builds and has been checked in the browser.
 - [x] Verify: first visit, reboot, repeat visit, phone, hover, reduced motion,
       blocked scripts.
 
+## 1f. Hobbies captions and a new Let's Connect (2026-11-04)
+- [x] Beyond the Code: the captions under the animations are gone.
+- [x] Let's Connect rebuilt for ease of use: the ss -tln table and the handshake
+      ladder are gone. Email first, as large as the card allows, with Copy and
+      Write buttons (the address copies on click too); one big card per other
+      channel with a plain verb. The address condenses out of the backdrop's ramp
+      when reached and on copy; each brand mark is drawn in the ramp's characters
+      and scrambled by a passing band on hover. Dushanbe clock with day/night.
+- [x] Verify: desktop, phone, hover, copy, keyboard focus, reduced motion.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

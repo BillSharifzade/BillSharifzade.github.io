@@ -34,6 +34,9 @@ const SETS = {
     exportName: 'ICON_PATHS',
     solid: {
       bars: 'bars',
+      check: 'check',
+      copy: 'copy',
+      'paper-plane': 'paper-plane',
       'chess-knight': 'chess-knight',
       'chevron-down': 'chevron-down',
       crosshairs: 'crosshairs',
