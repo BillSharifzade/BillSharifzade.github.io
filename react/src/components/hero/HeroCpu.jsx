@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { siArchlinux } from 'simple-icons'
 
 // The front of the board's processor: a flip-chip package seen from above,
@@ -121,7 +122,7 @@ const ARRAYS = CORES.flatMap((c) => [c.l2, ...c.l1].map(rect)).join('')
 const VECTOR = CORES.map((c) => rect(c.vec)).join('')
 
 /** The processor's top side, drawn into a 400 × 400 box. */
-export function CpuFront() {
+function CpuFrontArt() {
   return (
     <svg className="hx-cpu__art" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
       <defs>
@@ -265,7 +266,7 @@ const legRow = (w, [from, to]) => ({
 })
 
 /** The legs round the package; `lit` draws them carrying current, in white. */
-export function CpuLegs({ lit = false }) {
+function CpuLegsArt({ lit = false }) {
   const id = lit ? 'hx-legs-lit' : 'hx-legs'
   return (
     <svg className={lit ? 'hx-legs hx-legs--lit' : 'hx-legs'} viewBox="-40 -40 560 560" aria-hidden="true" focusable="false">
@@ -336,7 +337,7 @@ const bolt = (() => {
 })()
 
 /** The strike, drawn from far above the processor down to its centre. */
-export function Bolt() {
+function BoltArt() {
   return (
     <svg className="hx-bolt" viewBox="-200 -1000 400 1000" aria-hidden="true" focusable="false">
       <g className="hx-bolt__glow">
@@ -354,3 +355,9 @@ export function Bolt() {
     </svg>
   )
 }
+
+// Drawn once: none of them changes with the hero's state, so they skip the
+// re-render a hovered part sets off.
+export const CpuFront = memo(CpuFrontArt)
+export const CpuLegs = memo(CpuLegsArt)
+export const Bolt = memo(BoltArt)

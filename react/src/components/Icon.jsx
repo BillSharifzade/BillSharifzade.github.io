@@ -11,7 +11,7 @@ import './Icon.css'
  * Decorative by default. Pass `label` for an icon that carries meaning on its
  * own (no adjacent text saying the same thing).
  */
-export default function Icon({ name, className = '', spin = false, label, style }) {
+export default function Icon({ name, className = '', label, style }) {
   const icon = ICON_PATHS[name]
   if (!icon) {
     if (import.meta.env.DEV) console.warn(`Icon: unknown name "${name}"`)
@@ -21,7 +21,7 @@ export default function Icon({ name, className = '', spin = false, label, style 
 
   return (
     <svg
-      className={`icon${spin ? ' icon--spin' : ''}${className ? ` ${className}` : ''}`}
+      className={`icon${className ? ` ${className}` : ''}`}
       viewBox={`0 0 ${width} ${height}`}
       // Font Awesome icons are not square — `infinity` is 1.25em wide, `times`
       // 0.75em — and the webfont advanced by each glyph's own width. Forcing a

@@ -211,6 +211,21 @@ function useDushanbeClock(live) {
   return { now, day: hour === null ? null : hour >= 8 && hour < 23 }
 }
 
+/** The clock line. Its own component, so the tick re-renders it alone. */
+function DushanbeClock({ live, ahead }) {
+  const { now, day } = useDushanbeClock(live)
+  return (
+    <p className="connect__clock" data-day={day === null ? undefined : day ? 'day' : 'night'}>
+      <i aria-hidden="true" />
+      <time className="connect__time">{now ?? '--:--:--'}</time>
+      <span>
+        in Dushanbe{day !== null && <span className="connect__daypart"> · {day ? 'daytime' : 'night'}</span>}
+        {ahead && ` · ${ahead}`}
+      </span>
+    </p>
+  )
+}
+
 function aheadOf(offsetMinutes) {
   // Dushanbe is UTC+5 all year; getTimezoneOffset() is minutes *behind* UTC.
   const diff = 300 + offsetMinutes
@@ -240,7 +255,6 @@ export default function Connect() {
   const [live, setLive] = useState(false) // on screen, tab visible
   const [copied, setCopied] = useState(false)
   const [ahead, setAhead] = useState('')
-  const { now, day } = useDushanbeClock(live)
   const [envelopeRef, shineEnvelope] = useAsciiMark('Email', 34, 14)
 
   useEffect(() => {
@@ -303,14 +317,7 @@ export default function Connect() {
   return (
     <div className="connect" ref={rootRef}>
       <div className="connect__status">
-        <p className="connect__clock" data-day={day === null ? undefined : day ? 'day' : 'night'}>
-          <i aria-hidden="true" />
-          <time className="connect__time">{now ?? '--:--:--'}</time>
-          <span>
-            in Dushanbe{day !== null && <span className="connect__daypart"> · {day ? 'daytime' : 'night'}</span>}
-            {ahead && ` · ${ahead}`}
-          </span>
-        </p>
+        <DushanbeClock live={live} ahead={ahead} />
         <DownloadCvButton className="download-cv-btn--connect" />
       </div>
 

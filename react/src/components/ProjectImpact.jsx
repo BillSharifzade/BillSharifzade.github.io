@@ -212,11 +212,13 @@ export default function ProjectImpact({ project, cells, open, origin, onClose, b
   const paint = () => {
     frame.current = 0
     const { x, y } = pointer.current
-    cellRefs.current.forEach((el) => {
-      if (!el) return
-      const r = el.getBoundingClientRect()
-      el.style.setProperty('--mx', `${(x - r.left).toFixed(0)}px`)
-      el.style.setProperty('--my', `${(y - r.top).toFixed(0)}px`)
+    // Every rect first, then every write: a read after a write would make the
+    // browser restyle the cell before it could answer.
+    const cells = cellRefs.current.filter(Boolean)
+    const rects = cells.map((el) => el.getBoundingClientRect())
+    cells.forEach((el, i) => {
+      el.style.setProperty('--mx', `${(x - rects[i].left).toFixed(0)}px`)
+      el.style.setProperty('--my', `${(y - rects[i].top).toFixed(0)}px`)
     })
   }
   useEffect(() => () => cancelAnimationFrame(frame.current), [])

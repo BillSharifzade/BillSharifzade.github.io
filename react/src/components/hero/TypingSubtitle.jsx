@@ -1,33 +1,54 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useRef } from 'react'
 
 const TYPING_TEXTS = ['Backend Architect', 'Founder of Mintaka']
 
-/** Types each title out, holds it, deletes it, and moves on to the next. */
-export default function TypingSubtitle({ texts = TYPING_TEXTS }) {
-  const [textIndex, setTextIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
+/**
+ * Types each title out, holds it, deletes it, and moves on to the next.
+ * Written straight into the span: a keystroke every 50–100 ms has no reason
+ * to go through React.
+ */
+function TypingSubtitle({ texts = TYPING_TEXTS }) {
+  const ref = useRef(null)
 
   useEffect(() => {
-    const currentText = texts[textIndex]
+    const el = ref.current
+    let textIndex = 0
+    let charIndex = 0
+    let isDeleting = false
     let timeoutId
 
-    if (!isDeleting && charIndex === currentText.length) {
-      timeoutId = setTimeout(() => setIsDeleting(true), 1500)
-    } else if (isDeleting && charIndex === 0) {
-      timeoutId = setTimeout(() => {
-        setIsDeleting(false)
-        setTextIndex((idx) => (idx + 1) % texts.length)
-      }, 300)
-    } else {
-      const delay = isDeleting ? 50 : 100
-      timeoutId = setTimeout(() => {
-        setCharIndex((i) => i + (isDeleting ? -1 : 1))
-      }, delay)
+    // The pause before the next change depends on where the title is.
+    const delay = () => {
+      if (!isDeleting && charIndex === texts[textIndex].length) return 1500
+      if (isDeleting && charIndex === 0) return 300
+      return isDeleting ? 50 : 100
+    }
+    const advance = () => {
+      // Off screen (usePauseOffscreen marks the hero) it waits where it is,
+      // like the CSS loops do: each keystroke would cost the page a frame.
+      if (el.closest('[data-offscreen]')) {
+        timeoutId = setTimeout(advance, 250)
+        return
+      }
+      if (!isDeleting && charIndex === texts[textIndex].length) isDeleting = true
+      else if (isDeleting && charIndex === 0) {
+        isDeleting = false
+        textIndex = (textIndex + 1) % texts.length
+      } else {
+        charIndex += isDeleting ? -1 : 1
+        el.textContent = texts[textIndex].substring(0, charIndex)
+      }
+      timeoutId = setTimeout(advance, delay())
     }
 
-    return () => clearTimeout(timeoutId)
-  }, [charIndex, isDeleting, textIndex, texts])
+    timeoutId = setTimeout(advance, delay())
+    return () => {
+      clearTimeout(timeoutId)
+      el.textContent = ''
+    }
+  }, [texts])
 
-  return <span className="typing-text">{texts[textIndex].substring(0, charIndex)}</span>
+  return <span className="typing-text" ref={ref} />
 }
+
+export default memo(TypingSubtitle)

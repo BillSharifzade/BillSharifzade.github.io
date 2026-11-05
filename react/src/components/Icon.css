@@ -11,19 +11,3 @@
     overflow: visible;
     flex-shrink: 0;
 }
-
-.icon--spin {
-    animation: iconSpin 2s linear infinite;
-}
-
-@keyframes iconSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .icon--spin {
-        animation-duration: 4s;
-    }
-}

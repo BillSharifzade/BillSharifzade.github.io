@@ -1,7 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { wipProjects } from '../data/wip.js'
 import { CV_FORMATS, downloadCv } from '../data/cvFormats.js'
+import { usePauseHidden } from '../utils/usePauseOffscreen.js'
 import './WipTerminal.css'
+
+// Powering the terminal off and on swaps the stage's class.
+const POWER_STATE = ['class']
 
 
 const HOME = '/universe/laniakea/milky_way/solar_system/earth/coolest_website'
@@ -284,6 +288,8 @@ export default function WipTerminal() {
   const [hintStage, setHintStage] = useState('hidden')
   const [srStatus, setSrStatus] = useState('')
   const stageRef = useRef(null)
+  // Powered off, the terminal is hidden; its shimmer and cursor wait for it.
+  usePauseHidden(stageRef, '.wip-terminal', POWER_STATE)
   const rootRef = useRef(null)
   const bodyRef = useRef(null)
   const inputRef = useRef(null)

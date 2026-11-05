@@ -85,12 +85,43 @@ function JourneyLogo({ company }) {
   )
 }
 
+// The curve through the timeline's nodes. Its size is state of its own: while a
+// card opens, the observer resizes it every frame, and that should re-render
+// the curve, not the six cards.
+function JourneyCurve({ pathRef, sizeRef }) {
+  const [svgSize, setSvgSize] = useState({ w: 0, h: 0 })
+  useLayoutEffect(() => {
+    sizeRef.current = setSvgSize
+    return () => {
+      sizeRef.current = null
+    }
+  }, [sizeRef])
+  return (
+    <svg
+      className="journey-curve"
+      width={svgSize.w}
+      height={svgSize.h}
+      viewBox={`0 0 ${svgSize.w || 1} ${svgSize.h || 1}`}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="journeyStroke" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+          <stop offset="60%" stopColor="rgba(255,255,255,0.45)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0.12)" />
+        </linearGradient>
+      </defs>
+      <path ref={pathRef} fill="none" stroke="url(#journeyStroke)" strokeWidth="2" />
+    </svg>
+  )
+}
+
 function ExperienceJourney() {
   const wrapperRef = useRef(null)
   const pathRef = useRef(null)
   const nodeRefs = useRef([])
   const [expanded, setExpanded] = useState(() => new Set())
-  const [svgSize, setSvgSize] = useState({ w: 0, h: 0 })
+  const sizeRef = useRef(null)
 
   function toggle(index) {
     setExpanded((prev) => {
@@ -133,7 +164,7 @@ function ExperienceJourney() {
       // A fresh object every ResizeObserver tick re-renders the whole timeline
       // even when nothing moved, and the render can feed the observer again.
       const next = { w: Math.round(rect.width), h: Math.round(rect.height) }
-      setSvgSize((prev) => (prev.w === next.w && prev.h === next.h ? prev : next))
+      sizeRef.current?.((prev) => (prev.w === next.w && prev.h === next.h ? prev : next))
     }
 
     redraw()
@@ -162,22 +193,7 @@ function ExperienceJourney() {
 
   return (
     <div className="journey" ref={wrapperRef}>
-      <svg
-        className="journey-curve"
-        width={svgSize.w}
-        height={svgSize.h}
-        viewBox={`0 0 ${svgSize.w || 1} ${svgSize.h || 1}`}
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="journeyStroke" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-            <stop offset="60%" stopColor="rgba(255,255,255,0.45)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.12)" />
-          </linearGradient>
-        </defs>
-        <path ref={pathRef} fill="none" stroke="url(#journeyStroke)" strokeWidth="2" />
-      </svg>
+      <JourneyCurve pathRef={pathRef} sizeRef={sizeRef} />
 
       {experience.map((exp, i) => {
         const isOpen = expanded.has(i)

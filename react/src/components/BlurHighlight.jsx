@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import './BlurHighlight.css'
 
 // Delay between words as they blur in, and how long each takes (BlurHighlight.css).
@@ -21,7 +21,7 @@ function parse(text) {
  * get the finished state: every word in place and the phrases highlighted.
  * The effect only arms itself once React runs, so the text never depends on it.
  */
-export default function BlurHighlight({ text, className = '', ...rest }) {
+function BlurHighlight({ text, className = '', ...rest }) {
   const rootRef = useRef(null)
   const segments = useMemo(() => parse(text), [text])
 
@@ -85,3 +85,5 @@ export default function BlurHighlight({ text, className = '', ...rest }) {
     </span>
   )
 }
+
+export default memo(BlurHighlight)

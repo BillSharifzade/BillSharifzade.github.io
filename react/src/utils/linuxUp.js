@@ -7,10 +7,17 @@
 const FALLBACK_MS = 9000
 let up = false
 const watchers = new Set()
+// Pending fallbacks. Once Linux has come up they have nothing left to cover,
+// and one firing later would bring the backdrop up in the middle of a reboot.
+const fallbacks = new Set()
 
 const set = (state) => {
   if (up === state) return
   up = state
+  if (up) {
+    fallbacks.forEach(clearTimeout)
+    fallbacks.clear()
+  }
   watchers.forEach((fn) => fn(state))
 }
 
@@ -25,9 +32,11 @@ export function watchLinux(fn) {
   watchers.add(fn)
   fn(up)
   const timer = up ? 0 : setTimeout(signalLinuxUp, FALLBACK_MS)
+  if (timer) fallbacks.add(timer)
   return () => {
     watchers.delete(fn)
     clearTimeout(timer)
+    fallbacks.delete(timer)
   }
 }
 

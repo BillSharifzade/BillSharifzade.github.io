@@ -9,7 +9,6 @@
   scroll-behavior: smooth;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  will-change: scroll-position;
 }
 
 .scroll-stack-scroller::-webkit-scrollbar {
@@ -27,7 +26,8 @@
 
 .scroll-stack-card {
   transform-origin: top center;
-  will-change: transform, filter;
+  /* Only the transform moves; the blur filter is off (blurAmount is 0). */
+  will-change: transform;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   height: 20rem;

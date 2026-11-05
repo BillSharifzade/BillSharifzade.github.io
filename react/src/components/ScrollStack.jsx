@@ -6,6 +6,40 @@ export const ScrollStackItem = ({ children, itemClassName = '' }) => (
   <div className={`scroll-stack-card ${itemClassName}`.trim()}>{children}</div>
 );
 
+/**
+ * Drives `lenis` on animation frames while it has a scroll to animate, and
+ * lets the loop sleep in between: an idle Lenis has nothing to advance, but a
+ * frame requested for it still costs the page a full frame of work. The next
+ * wheel or touch gesture, or a scrollTo from the page, wakes it, and its clock
+ * resumes one frame back, so the first step is as long as it would have been
+ * had the loop never stopped.
+ */
+function runLenis(lenis, frameRef) {
+  let interval = 1000 / 60;
+  let waking = false;
+  const raf = time => {
+    if (waking) {
+      waking = false;
+      lenis.time = time - interval;
+    } else if (lenis.time) {
+      interval = Math.min(Math.max(time - lenis.time, 4), 50);
+    }
+    lenis.raf(time);
+    frameRef.current = lenis.animate.isRunning ? requestAnimationFrame(raf) : 0;
+    if (!frameRef.current) waking = true;
+  };
+  const wake = () => {
+    if (!frameRef.current) frameRef.current = requestAnimationFrame(raf);
+  };
+  lenis.on('virtual-scroll', wake);
+  const scrollTo = lenis.scrollTo.bind(lenis);
+  lenis.scrollTo = (...args) => {
+    scrollTo(...args);
+    wake();
+  };
+  frameRef.current = requestAnimationFrame(raf);
+}
+
 const ScrollStack = ({
   children,
   className = '',
@@ -28,6 +62,10 @@ const ScrollStack = ({
   const cardsRef = useRef([]);
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
+  // Where the cards and the stack's end sit in the page. They only move when
+  // the layout does, so they are read then and not on every scroll frame
+  // (where the reads would also wait on the transforms just written).
+  const offsetsRef = useRef(null);
 
   const calculateProgress = useCallback((scrollTop, start, end) => {
     if (scrollTop < start) return 0;
@@ -76,6 +114,16 @@ const ScrollStack = ({
     [useWindowScroll]
   );
 
+  const measureOffsets = useCallback(() => {
+    const endElement = useWindowScroll
+      ? document.querySelector('.scroll-stack-end')
+      : scrollerRef.current?.querySelector('.scroll-stack-end');
+    offsetsRef.current = {
+      cards: cardsRef.current.map(card => (card ? getElementOffset(card) : 0)),
+      end: endElement ? getElementOffset(endElement) : 0
+    };
+  }, [useWindowScroll, getElementOffset]);
+
   const updateCardTransforms = useCallback(() => {
     if (!cardsRef.current.length || isUpdatingRef.current) return;
 
@@ -85,16 +133,14 @@ const ScrollStack = ({
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
 
-    const endElement = useWindowScroll
-      ? document.querySelector('.scroll-stack-end')
-      : scrollerRef.current?.querySelector('.scroll-stack-end');
-
-    const endElementTop = endElement ? getElementOffset(endElement) : 0;
+    if (!offsetsRef.current) measureOffsets();
+    const offsets = offsetsRef.current;
+    const endElementTop = offsets.end;
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
-      const cardTop = getElementOffset(card);
+      const cardTop = offsets.cards[i];
       const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
       const triggerEnd = cardTop - scaleEndPositionPx;
       const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
@@ -109,7 +155,7 @@ const ScrollStack = ({
       if (blurAmount) {
         let topCardIndex = 0;
         for (let j = 0; j < cardsRef.current.length; j++) {
-          const jCardTop = getElementOffset(cardsRef.current[j]);
+          const jCardTop = offsets.cards[j];
           const jTriggerStart = jCardTop - stackPositionPx - itemStackDistance * j;
           if (scrollTop >= jTriggerStart) {
             topCardIndex = j;
@@ -176,12 +222,11 @@ const ScrollStack = ({
     baseScale,
     rotationAmount,
     blurAmount,
-    useWindowScroll,
     onStackComplete,
     calculateProgress,
     parsePercentage,
     getScrollData,
-    getElementOffset
+    measureOffsets
   ]);
 
   const handleScroll = useCallback(() => {
@@ -203,12 +248,7 @@ const ScrollStack = ({
       });
 
       lenis.on('scroll', handleScroll);
-
-      const raf = time => {
-        lenis.raf(time);
-        animationFrameRef.current = requestAnimationFrame(raf);
-      };
-      animationFrameRef.current = requestAnimationFrame(raf);
+      runLenis(lenis, animationFrameRef);
 
       lenisRef.current = lenis;
       if (typeof window !== 'undefined') window.__appLenis = lenis;
@@ -236,12 +276,7 @@ const ScrollStack = ({
       });
 
       lenis.on('scroll', handleScroll);
-
-      const raf = time => {
-        lenis.raf(time);
-        animationFrameRef.current = requestAnimationFrame(raf);
-      };
-      animationFrameRef.current = requestAnimationFrame(raf);
+      runLenis(lenis, animationFrameRef);
 
       lenisRef.current = lenis;
       return lenis;
@@ -267,7 +302,7 @@ const ScrollStack = ({
       if (i < cards.length - 1) {
         card.style.marginBottom = `${itemDistance}px`;
       }
-      card.style.willChange = 'transform, filter';
+      card.style.willChange = blurAmount ? 'transform, filter' : 'transform';
       card.style.transformOrigin = 'top center';
       card.style.backfaceVisibility = 'hidden';
       card.style.transform = 'translateZ(0)';
@@ -276,13 +311,26 @@ const ScrollStack = ({
       card.style.webkitPerspective = '1000px';
     });
 
+    const frames = animationFrameRef;
+    offsetsRef.current = null;
+    const remeasure = () => {
+      offsetsRef.current = null;
+    };
+    const layout = new ResizeObserver(remeasure);
+    layout.observe(document.body);
+    window.addEventListener('resize', remeasure);
+    window.addEventListener('load', remeasure);
+
     setupLenis();
 
     updateCardTransforms();
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      layout.disconnect();
+      window.removeEventListener('resize', remeasure);
+      window.removeEventListener('load', remeasure);
+      if (frames.current) {
+        cancelAnimationFrame(frames.current);
       }
       if (lenisRef.current) {
         lenisRef.current.destroy();

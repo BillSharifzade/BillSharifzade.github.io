@@ -1,11 +1,76 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import './StrokeText.css';
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
+// Titles drawn on scroll start once their top reaches this far down the
+// window. This used to be a ScrollTrigger ('top 82%', once); one shared
+// listener does the same without keeping ScrollTrigger's loops alive for the
+// whole visit. Positions are measured when ScrollTrigger measured them: the
+// frame after a title arms, at window load, and 0.2 s after a resize that is
+// more than a phone's address bar showing or hiding.
+const SCROLL_START = 0.82;
+const waiting = new Map();
+let viewport = 0;
+let resizeTimer = 0;
+let baseSize = [0, 0];
+
+const checkWaiting = () => {
+  const y = window.scrollY;
+  waiting.forEach((title, el) => {
+    if (title.top === null || y < title.top - SCROLL_START * viewport) return;
+    waiting.delete(el);
+    title.play();
+  });
+  if (!waiting.size) stopWatching();
+};
+
+// The window's height as 100vh gives it, which the address bar doesn't move.
+const measureWaiting = () => {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;top:0;width:1px;height:100vh;visibility:hidden';
+  document.body.appendChild(probe);
+  viewport = probe.offsetHeight || window.innerHeight;
+  probe.remove();
+  baseSize = [window.innerWidth, window.innerHeight];
+  waiting.forEach((title, el) => {
+    title.top = el.getBoundingClientRect().top + window.scrollY;
+  });
+  checkWaiting();
+};
+
+const onResize = () => {
+  const touch = window.matchMedia?.('(hover: none), (pointer: coarse)').matches;
+  const [w, h] = baseSize;
+  if (touch && w === window.innerWidth && Math.abs(window.innerHeight - h) <= window.innerHeight * 0.25) return;
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(measureWaiting, 200);
+};
+
+const onLoad = () => measureWaiting();
+
+function startWatching() {
+  window.addEventListener('scroll', checkWaiting, { passive: true });
+  window.addEventListener('resize', onResize);
+  if (document.readyState !== 'complete') window.addEventListener('load', onLoad, { once: true });
+}
+
+function stopWatching() {
+  window.removeEventListener('scroll', checkWaiting);
+  window.removeEventListener('resize', onResize);
+  window.removeEventListener('load', onLoad);
+  clearTimeout(resizeTimer);
+}
+
+/** Plays `play` once `el` is scrolled up to SCROLL_START. Returns a cancel. */
+function playOnScroll(el, play) {
+  if (!waiting.size) startWatching();
+  waiting.set(el, { play, top: null });
+  const frame = requestAnimationFrame(measureWaiting);
+  return () => {
+    cancelAnimationFrame(frame);
+    if (waiting.delete(el) && !waiting.size) stopWatching();
+  };
 }
 
 const DEFAULT_TEXT = 'Draw Attention';
@@ -161,7 +226,7 @@ const StrokeText = ({
     };
 
     let timeline = null;
-    let scrollTrigger = null;
+    let cancelScroll = null;
     let removeHover = null;
 
     if (trigger === 'hover') {
@@ -176,12 +241,7 @@ const StrokeText = ({
     } else {
       timeline = build();
       if (trigger === 'scroll') {
-        scrollTrigger = ScrollTrigger.create({
-          trigger: root,
-          start: 'top 82%',
-          once: true,
-          onEnter: () => timeline?.play(0)
-        });
+        cancelScroll = playOnScroll(root, () => timeline?.play(0));
       } else {
         timeline.play(0);
       }
@@ -189,7 +249,7 @@ const StrokeText = ({
 
     return () => {
       removeHover?.();
-      scrollTrigger?.kill();
+      cancelScroll?.();
       timeline?.kill();
       gsap.killTweensOf(targets);
     };

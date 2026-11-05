@@ -4,6 +4,7 @@ import Icon from './Icon.jsx'
 import ProjectImpact from './ProjectImpact.jsx'
 import { projectImpact } from '../data/projectImpact.js'
 import { liveSites } from '../data/liveSites.js'
+import { usePauseHidden } from '../utils/usePauseOffscreen.js'
 import './ProjectShowcase.css'
 
 const GITHUB = 'github.com/BillSharifzade/'
@@ -35,6 +36,9 @@ const MARKS = {
   // Two corners pointing in, filled (see .pshow__ctl[aria-pressed]).
   restore: 'M4.3 4.3V1.4L1.4 4.3zM5.7 5.7v2.9l2.9-2.9z',
 }
+
+// What shows or hides a panel: the chosen project and the window buttons.
+const PANEL_STATE = ['data-active', 'data-win', 'data-max']
 
 const Mark = ({ d }) => (
   <svg viewBox="0 0 10 10" aria-hidden="true">
@@ -71,7 +75,9 @@ export default function ProjectShowcase({ projects }) {
   const backRef = useRef(null)
   const reopenRef = useRef(null)
   const dockRef = useRef(null)
+  const rootRef = useRef(null)
   const uid = useId()
+  usePauseHidden(rootRef, '.pshow__panel', PANEL_STATE)
 
   const select = (i, focus) => {
     if (i !== active) setImpact(null)
@@ -151,6 +157,7 @@ export default function ProjectShowcase({ projects }) {
 
   return (
     <div
+      ref={rootRef}
       className="pshow"
       data-win={win}
       data-max={max ? '' : undefined}

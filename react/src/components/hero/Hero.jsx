@@ -1,4 +1,4 @@
-import { createRef, useEffect, useRef, useState } from 'react'
+import { createRef, memo, useEffect, useRef, useState } from 'react'
 import BlurHighlight from '../BlurHighlight.jsx'
 import ArchMark from './ArchMark.jsx'
 import TypingSubtitle from './TypingSubtitle.jsx'
@@ -8,6 +8,7 @@ import { experience } from '../../data/cv.js'
 import { liveSites } from '../../data/liveSites.js'
 import { wipProjects } from '../../data/wip.js'
 import { signalLinuxDown, signalLinuxUp } from '../../utils/linuxUp.js'
+import { usePauseHidden } from '../../utils/usePauseOffscreen.js'
 import { Bolt, CpuFront, CpuLegs } from './HeroCpu.jsx'
 import './Hero.css'
 
@@ -460,7 +461,7 @@ function boot({ root, screens, img, tookOver, origin, onService, onDone }) {
 }
 
 // The overview: neofetch. It also hangs, mirrored, in the lens of the photo.
-function Fetch({ upFor }) {
+const Fetch = memo(function Fetch({ upFor }) {
   return (
     <div className="hx-fetch">
       <ArchMark className="hx-fetch__logo" />
@@ -482,7 +483,7 @@ function Fetch({ upFor }) {
       </dl>
     </div>
   )
-}
+})
 
 // The console: the log while booting, then the overview, in the same box.
 function Screen({ logRef, scrollRef, upFor }) {
@@ -519,6 +520,9 @@ function Screen({ logRef, scrollRef, upFor }) {
  * or transform, apart from the signals' dash offsets; all of it pauses off
  * screen and in hidden tabs.
  */
+// What brings the boot console back: a reboot clears data-boot.
+const BOOT_STATE = ['data-boot']
+
 export default function Hero({ contentRef, onContact }) {
   const rootRef = useRef(null)
   const stageRef = useRef(null)
@@ -526,6 +530,7 @@ export default function Hero({ contentRef, onContact }) {
   const wiresRef = useRef(null)
   const imgRef = useRef(null)
   const photoRef = useRef(null)
+  const lensRef = useRef(null)
   const lithoRef = useRef(null)
   const pathRefs = useRef([])
   const bedRef = useRef(null)
@@ -539,6 +544,8 @@ export default function Hero({ contentRef, onContact }) {
   const [screens] = useState(() => [{ log: createRef(), scroll: createRef() }])
   const [inspect, setInspect] = useState(null)
   const [upFor, setUpFor] = useState(`since ${MONTHS[firstJob.m]} ${firstJob.y}`)
+  // The boot console hides once the photo is up; its cursor stops blinking then.
+  usePauseHidden(rootRef, '.hx-scroll', BOOT_STATE)
 
   useEffect(() => {
     const root = rootRef.current
@@ -854,13 +861,15 @@ export default function Hero({ contentRef, onContact }) {
     } else open(0)
 
     // The reflection in the glasses shifts a little as the mouse moves, the
-    // way it would as you move your head.
+    // way it would as you move your head. Set on the lens, the only part that
+    // reads them, so a move restyles the lens and not the whole hero.
     let tilt = 0
     let pointer = [0, 0]
+    const lens = lensRef.current
     const lean = () => {
       tilt = 0
-      root.style.setProperty('--hx-px', pointer[0].toFixed(3))
-      root.style.setProperty('--hx-py', pointer[1].toFixed(3))
+      lens.style.setProperty('--hx-px', pointer[0].toFixed(3))
+      lens.style.setProperty('--hx-py', pointer[1].toFixed(3))
     }
     const onPointer = (e) => {
       if (e.pointerType !== 'mouse' || still) return
@@ -941,7 +950,7 @@ export default function Hero({ contentRef, onContact }) {
                   alt="Sharifzoda Bilol's eye behind glasses, a screen of code reflected in the lens"
                 />
                 <span className="hx-pkg__grid" aria-hidden="true" />
-                <div className="hx-lens" aria-hidden="true">
+                <div className="hx-lens" ref={lensRef} aria-hidden="true">
                   <div className="hx-reflect hx-reflect--ghost">
                     <div className="hx-screen">
                       <Fetch upFor={upFor} />

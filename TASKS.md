@@ -70,6 +70,29 @@ bottom; each task is ticked once it builds and has been checked in the browser.
 - [x] Verify: desktop, laptop, phone, every preview, keys, focus trap, Esc, a
       download, reduced motion, previews failing to load.
 
+## 1h. Phone hero fade and a lighter page (2026-11-04)
+- [x] Phones and tablets: the hero no longer fades before it has been scrolled
+      through. It fades over 400px from the moment its bottom is on screen, which
+      on desktop (where it fits the window) is from the top, as before.
+- [x] Efficiency pass, with nothing changing on screen:
+      - Loops inside hidden elements pause once they are hidden (the live-sites
+        panel and closed windows, the hero's boot console, the powered-off
+        terminal). Chrome can't composite an animation nobody can see, so each
+        cost a main-thread frame every frame.
+      - Lenis sleeps between gestures; ScrollTrigger is gone (titles start at
+        the same scroll positions from one shared listener, about 17 kB gz less);
+        the backdrop no longer asks for the frames it skips.
+      - The hero's tilt restyles the lens only; the subtitle types without React
+        and waits off screen; hovering a part, opening the menu, hydrating, the
+        Connect clock and opening a job card no longer re-render whole sections;
+        the stack cards and the impact light read layout once per change, not
+        per frame; the cursor makes no tweens while parked.
+      - The stale Linux fallback timer could bring the backdrop up mid-reboot.
+- [x] Verify: every section on desktop and phone pixel-identical to the previous
+      build in reduced-motion stills; wheel and link scrolling, title start points
+      and the backdrop's draw rhythm match; idle main-thread time down (Selected
+      Projects 477 → 94 ms/s, Skills 163 → 78, In Progress 557 → 296).
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

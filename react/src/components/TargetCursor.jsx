@@ -76,7 +76,9 @@ const TargetCursor = ({
       x: x - offsetX,
       y: y - offsetY,
       duration: 0.1,
-      ease: 'power3.out'
+      ease: 'power3.out',
+      // The newest move wins anyway; this ends the ones it replaces.
+      overwrite: 'auto'
     });
   }, []);
 
@@ -153,6 +155,12 @@ const TargetCursor = ({
 
         const finalX = currentX + (targetX - currentX) * strength;
         const finalY = currentY + (targetY - currentY) * strength;
+
+        // Parked on a target, a corner has nowhere to go: a new tween would only
+        // hold it where it is, so none is made (until something moves it).
+        if (Math.abs(finalX - currentX) < 0.01 && Math.abs(finalY - currentY) < 0.01 && !gsap.isTweening(corner)) {
+          return;
+        }
 
         const duration = strength >= 0.99 ? (parallaxOn ? 0.2 : 0) : 0.05;
 

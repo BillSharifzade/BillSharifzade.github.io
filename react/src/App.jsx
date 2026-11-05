@@ -69,58 +69,17 @@ const NAV_LINKS = [
   ['#contact', 'Contact'],
 ]
 
-function App() {
-  const heroContentRef = useRef(null)
-  const navRef = useRef(null)
-  const indicatorRef = useRef(null)
+// The parts that only make sense live: rendered once React has taken the page
+// over, so they never reach the pre-rendered HTML. A component of their own,
+// so that moment re-renders them and not the whole page.
+function ClientOnly({ children }) {
+  return useHydrated() ? children : null
+}
+
+// The header and the phone drawer. The drawer's state lives here, so opening
+// it re-renders the header alone.
+function SiteNav({ navRef }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const hydrated = useHydrated()
-  usePauseOffscreen('section, footer')
-
-  // Scroll drives three purely visual properties. Writing them straight from
-  // the scroll event interleaves style writes with the browser's own layout
-  // work; batching into one rAF keeps it to a single write per frame.
-  useEffect(() => {
-    let frame = 0
-    const paint = () => {
-      frame = 0
-      const scrolled = window.scrollY
-      const nav = navRef.current
-      if (nav) nav.classList.toggle('scrolled', scrolled > 100)
-
-      const hero = heroContentRef.current
-      if (hero) hero.style.opacity = String(Math.max(0, 1 - scrolled / 400))
-
-      const indicator = indicatorRef.current
-      if (indicator) {
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-        indicator.style.width = `${maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0}%`
-      }
-    }
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(paint)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    paint()
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [])
-
-  useEffect(() => {
-    const sectionObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-          observer.unobserve(entry.target)
-        }
-      })
-    }, { root: null, threshold: 0.05, rootMargin: '0px' })
-    document.querySelectorAll('.fade-in-section').forEach(section => sectionObserver.observe(section))
-
-    return () => { sectionObserver.disconnect() }
-  }, [])
 
   // Escape closes the drawer, matching what a dialog-like overlay is expected
   // to do once it has covered the page.
@@ -140,59 +99,141 @@ function App() {
   }
 
   return (
+    <nav ref={navRef}>
+      <div className="nav-content">
+        <NavLogo onClick={onNavClick} />
+        <div className="nav-links">
+          {NAV_LINKS.map(([href, label]) => (
+            <a key={href} href={href} className="nav-link cursor-target" onClick={onNavClick}>
+              <span className="nav-link-roll" data-text={label}>{label}</span>
+            </a>
+          ))}
+          <DownloadCvButton />
+        </div>
+        <button
+          className="hamburger-menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-controls="mobileNavLinks"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <Icon name={menuOpen ? 'times' : 'bars'} />
+        </button>
+      </div>
+      {/* inert keeps the off-canvas drawer out of the tab order and out of the
+          accessibility tree while it is translated off-screen. */}
+      <div
+        className={`mobile-nav-links${menuOpen ? ' active' : ''}`}
+        id="mobileNavLinks"
+        inert={!menuOpen}
+      >
+        {NAV_LINKS.map(([href, label]) => (
+          <a key={href} href={href} className="nav-link" onClick={onNavClick}>{label}</a>
+        ))}
+        <DownloadCvButton
+          className="download-cv-btn--mobile"
+          onDownloaded={() => setMenuOpen(false)}
+        />
+      </div>
+    </nav>
+  )
+}
+
+function App() {
+  const heroContentRef = useRef(null)
+  const navRef = useRef(null)
+  const indicatorRef = useRef(null)
+  usePauseOffscreen('section, footer')
+
+  // Scroll drives three purely visual properties. Writing them straight from
+  // the scroll event interleaves style writes with the browser's own layout
+  // work; batching into one rAF keeps it to a single write per frame.
+  //
+  // The hero fades over 400px of scroll from the moment its bottom is on
+  // screen. Where it fits the window (desktop) that is from the top; on a
+  // phone, where it runs well below the fold, not before it has been read.
+  useEffect(() => {
+    let frame = 0
+    let heroBottom = 0
+    let pageHeight = 0
+    const hero = heroContentRef.current
+    // Sizes are read when they change, not on every scroll frame, so a frame
+    // only writes.
+    const measure = () => {
+      if (hero) heroBottom = hero.getBoundingClientRect().bottom + window.scrollY
+      pageHeight = document.documentElement.scrollHeight
+    }
+    const paint = () => {
+      frame = 0
+      const scrolled = window.scrollY
+      const nav = navRef.current
+      if (nav) nav.classList.toggle('scrolled', scrolled > 100)
+
+      if (hero) {
+        const from = Math.max(0, heroBottom - window.innerHeight)
+        hero.style.opacity = String(Math.max(0, Math.min(1, 1 - (scrolled - from) / 400)))
+      }
+
+      const indicator = indicatorRef.current
+      if (indicator) {
+        const maxScroll = pageHeight - window.innerHeight
+        indicator.style.width = `${maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0}%`
+      }
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(paint)
+    }
+    const onResize = () => {
+      measure()
+      onScroll()
+    }
+    const sizes = new ResizeObserver(onResize)
+    if (hero) sizes.observe(hero)
+    sizes.observe(document.body)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize)
+    measure()
+    paint()
+    return () => {
+      sizes.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  useEffect(() => {
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { root: null, threshold: 0.05, rootMargin: '0px' })
+    document.querySelectorAll('.fade-in-section').forEach(section => sectionObserver.observe(section))
+
+    return () => { sectionObserver.disconnect() }
+  }, [])
+
+  return (
     <>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
-        {hydrated && (
+        <ClientOnly>
           <Suspense fallback={null}>
             <GradientASCII />
           </Suspense>
-        )}
+        </ClientOnly>
       </div>
       <div className="scroll-indicator" ref={indicatorRef}></div>
 
       {/* Follows the pointer, so it has nothing to show in the pre-rendered
           HTML — and on touch devices it renders nothing at all. */}
-      {hydrated && (
+      <ClientOnly>
         <TargetCursor spinDuration={2} hideDefaultCursor={false} parallaxOn={true} scopeSelector="nav, #home" />
-      )}
+      </ClientOnly>
 
-      <nav ref={navRef}>
-        <div className="nav-content">
-          <NavLogo onClick={onNavClick} />
-          <div className="nav-links">
-            {NAV_LINKS.map(([href, label]) => (
-              <a key={href} href={href} className="nav-link cursor-target" onClick={onNavClick}>
-                <span className="nav-link-roll" data-text={label}>{label}</span>
-              </a>
-            ))}
-            <DownloadCvButton />
-          </div>
-          <button
-            className="hamburger-menu"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-controls="mobileNavLinks"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <Icon name={menuOpen ? 'times' : 'bars'} />
-          </button>
-        </div>
-        {/* inert keeps the off-canvas drawer out of the tab order and out of the
-            accessibility tree while it is translated off-screen. */}
-        <div
-          className={`mobile-nav-links${menuOpen ? ' active' : ''}`}
-          id="mobileNavLinks"
-          inert={!menuOpen}
-        >
-          {NAV_LINKS.map(([href, label]) => (
-            <a key={href} href={href} className="nav-link" onClick={onNavClick}>{label}</a>
-          ))}
-          <DownloadCvButton
-            className="download-cv-btn--mobile"
-            onDownloaded={() => setMenuOpen(false)}
-          />
-        </div>
-      </nav>
+      <SiteNav navRef={navRef} />
 
       <Hero contentRef={heroContentRef} onContact={() => scrollToTarget(document.querySelector('#contact'))} />
 

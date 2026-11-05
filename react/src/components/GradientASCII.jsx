@@ -444,7 +444,10 @@ const GradientASCII = () => {
       let frameSeed = 0;
       let grainClock = 0;
       let raf = 0;
+      let timer = 0;
       let last = 0;
+      // The display's refresh, measured below from back-to-back frames.
+      let refresh = 1000 / 60;
       let disposed = false;
       // The entrance has finished playing in the direction Linux last went.
       const settled = () => (released ? introClock >= 1 && riseClock >= 1 : introClock <= 0 && riseClock <= 0);
@@ -537,7 +540,11 @@ const GradientASCII = () => {
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       };
 
+      // The container is fixed to the viewport, so its box only changes when
+      // it is resized; pointer moves read it from here.
+      let bounds = { left: 0, top: 0, width: 1, height: 1 };
       const resize = () => {
+        bounds = container.getBoundingClientRect();
         canvas.width = Math.max(1, container.clientWidth);
         canvas.height = Math.max(1, container.clientHeight);
         Object.assign(offset, gridOffset(canvas.width, canvas.height));
@@ -617,18 +624,46 @@ const GradientASCII = () => {
         // While the hero's Linux is down there is nothing to draw, so no loop
         // once the backdrop has sunk away.
         const busy = released ? !reduce || clicks.length > 0 || trail.length > 0 : !settled();
-        if (busy) raf = requestAnimationFrame(frame);
+        if (busy) later();
         else last = 0;
       };
+
+      // Asking for a frame costs the page a whole frame of work, drawn or not,
+      // so the frames between draws aren't asked for: the next request goes
+      // out on a timer half a refresh before the one the draw belongs to. A
+      // request any later could miss that frame and draw a refresh late, so
+      // when the browser answers it with the frame before (it may start one
+      // straight away), that frame is skipped as before and the draw still
+      // lands on time.
+      const drawGap = () => Math.ceil((1000 / FPS - 8) / refresh) * refresh;
+      function later() {
+        const wait = last + drawGap() - refresh / 2 - performance.now();
+        if (wait <= 0) {
+          raf = requestAnimationFrame(frame);
+          return;
+        }
+        timer = setTimeout(() => {
+          timer = 0;
+          if (!disposed) raf = requestAnimationFrame(frame);
+        }, wait);
+      }
+      requestAnimationFrame(a =>
+        requestAnimationFrame(b =>
+          requestAnimationFrame(c => {
+            const step = Math.min(b - a, c - b);
+            if (step > 4 && step < 50) refresh = step;
+          })
+        )
+      );
 
       // The canvas is a fixed full-viewport backdrop, never scrolled out of
       // view, so only page visibility pauses it.
       function wake() {
-        if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(frame);
+        if (!raf && !timer && !disposed && !document.hidden) raf = requestAnimationFrame(frame);
       }
 
       const locate = event => {
-        const rect = container.getBoundingClientRect();
+        const rect = bounds;
         const x = (event.clientX - rect.left) / Math.max(1, rect.width);
         const y = 1 - (event.clientY - rect.top) / Math.max(1, rect.height);
         const aspect = rect.width / Math.max(1, rect.height);
@@ -726,6 +761,7 @@ const GradientASCII = () => {
         stopLending();
         cancelGate();
         cancelAnimationFrame(raf);
+        clearTimeout(timer);
         resizeObserver.disconnect();
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerdown', onPointerDown);
