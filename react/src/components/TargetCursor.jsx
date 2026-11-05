@@ -176,18 +176,32 @@ const TargetCursor = ({
 
     tickerFnRef.current = tickerFn;
 
+    // Inside its scope this cursor stands in for the page's own, which steps
+    // aside there (TargetCursor.css) only while this one is showing: the two
+    // never show at once, and one is always there.
+    const setScopeVisible = inScope => {
+      if (inScope === scopeVisibleRef.current) return;
+      scopeVisibleRef.current = inScope;
+      document.querySelectorAll(scopeSelector).forEach(el => el.toggleAttribute('data-target-cursor', inScope));
+      gsap.to(cursor, { autoAlpha: inScope ? 1 : 0, duration: 0.2, overwrite: 'auto' });
+      if (!activeTarget) spinTl.current?.[inScope ? 'play' : 'pause']();
+    };
+
     const moveHandler = e => {
       moveCursor(e.clientX, e.clientY);
       if (scopeSelector) {
-        const inScope = e.target instanceof Element && !!e.target.closest(scopeSelector);
-        if (inScope !== scopeVisibleRef.current) {
-          scopeVisibleRef.current = inScope;
-          gsap.to(cursor, { autoAlpha: inScope ? 1 : 0, duration: 0.2, overwrite: 'auto' });
-          if (!activeTarget) spinTl.current?.[inScope ? 'play' : 'pause']();
-        }
+        setScopeVisible(e.target instanceof Element && !!e.target.closest(scopeSelector));
       }
     };
     window.addEventListener('mousemove', moveHandler);
+    // Scrolling slides the page under a still mouse without a mousemove, but
+    // the browser reports the new element under it with a mouseover.
+    if (scopeSelector) window.addEventListener('mouseover', moveHandler, { passive: true });
+    // Out of the window, there is nothing for it to stand in for.
+    const outHandler = e => {
+      if (scopeSelector && !e.relatedTarget) setScopeVisible(false);
+    };
+    document.addEventListener('mouseout', outHandler);
 
     const scrollHandler = () => {
       if (!activeTarget || !cursorRef.current) return;
@@ -389,6 +403,11 @@ const TargetCursor = ({
       }
 
       window.removeEventListener('mousemove', moveHandler);
+      window.removeEventListener('mouseover', moveHandler);
+      document.removeEventListener('mouseout', outHandler);
+      if (scopeSelector) {
+        document.querySelectorAll('[data-target-cursor]').forEach(el => el.removeAttribute('data-target-cursor'));
+      }
       window.removeEventListener('mouseover', enterHandler);
       window.removeEventListener('scroll', scrollHandler);
       window.removeEventListener('resize', resizeHandler);

@@ -93,6 +93,23 @@ bottom; each task is ticked once it builds and has been checked in the browser.
       and the backdrop's draw rhythm match; idle main-thread time down (Selected
       Projects 477 → 94 ms/s, Skills 163 → 78, In Progress 557 → 296).
 
+## 1i. Hero: one cursor at a time (2026-11-05)
+- [x] The custom cursor covers the nav and the hero, but only the nav hid the
+      page's own cursor, so both showed in the hero. Now the page's cursor is
+      hidden wherever the custom one is showing, and only then: scrolling in or
+      out of the hero with a still mouse swaps them, and leaving the window hands
+      back the normal cursor.
+
+## 1j. iPhone section titles and a smooth CV window close (2026-11-05)
+- [x] On iPhones (WebKit) the section titles showed filled before they drew:
+      WebKit ignores a clip on <text> that covers none of the text, so the
+      fill's empty wipe clip did nothing. The clip now sits on a <g> around the
+      fill, which WebKit honours; Chrome renders it pixel for pixel the same.
+- [x] The CV window closes the way it opens, backwards: the backdrop fades and
+      the window sinks (0.24s). It hands back the page (scroll, keys, focus) the
+      moment it starts closing; opened again mid-close, it starts as a new
+      window. Reduced motion closes at once.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

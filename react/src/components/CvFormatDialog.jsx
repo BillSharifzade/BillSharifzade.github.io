@@ -177,7 +177,7 @@ function print(els, { lines, tones }, width) {
  * bar holds, printed in the ASCII backdrop's characters: the PDF and DOCX as a
  * page, the XLSX as its first sheet, and the plain files as they are.
  */
-function CvWindow({ onClose, onDownloaded }) {
+function CvWindow({ closing, onClose, onDownloaded, onGone }) {
   const panelRef = useRef(null)
   const linksRef = useRef([])
   const rowsRef = useRef([])
@@ -188,12 +188,15 @@ function CvWindow({ onClose, onDownloaded }) {
   const format = CV_FORMATS[active]
   // The callbacks are made anew on every render of the button's owner (the
   // contact section re-renders with its clock), so effects read them from here.
-  const calls = useRef({ onClose, onDownloaded })
+  const calls = useRef({ onClose, onDownloaded, onGone })
   useEffect(() => {
-    calls.current = { onClose, onDownloaded }
+    calls.current = { onClose, onDownloaded, onGone }
   })
 
+  // While open, the window holds the keys, the focus and the page's scroll.
+  // It lets them go as soon as it starts closing, not once it has faded.
   useEffect(() => {
+    if (closing) return undefined
     const prevFocus = document.activeElement
     linksRef.current[0]?.focus({ preventScroll: true })
     const onKey = (e) => {
@@ -233,7 +236,20 @@ function CvWindow({ onClose, onDownloaded }) {
       document.body.style.overflow = ''
       prevFocus?.focus?.()
     }
-  }, [])
+  }, [closing])
+
+  // Closing plays the opening backwards (CvFormatDialog.css), then the window
+  // goes. With reduced motion there is nothing to wait for; the timer covers an
+  // animation that never ends (a stylesheet that didn't load).
+  useEffect(() => {
+    if (!closing) return undefined
+    if (reduced()) {
+      calls.current.onGone()
+      return undefined
+    }
+    const t = setTimeout(() => calls.current.onGone(), 1000)
+    return () => clearTimeout(t)
+  }, [closing])
 
   useEffect(() => {
     let live = true
@@ -279,8 +295,17 @@ function CvWindow({ onClose, onDownloaded }) {
   return (
     <div
       className="cv-dialog-overlay"
+      data-closing={closing || undefined}
+      inert={closing}
       onMouseDown={(e) => {
-        if (!panelRef.current?.contains(e.target)) onClose()
+        if (panelRef.current?.contains(e.target)) return
+        // Focus goes back to the button that opened the window, as it does
+        // for Escape, rather than to the fading backdrop that was clicked.
+        e.preventDefault()
+        onClose()
+      }}
+      onAnimationEnd={(e) => {
+        if (closing && e.target === e.currentTarget && e.animationName === 'cv-fade-out') onGone()
       }}
     >
       <div className="cv-dialog" role="dialog" aria-modal="true" aria-labelledby="cv-dialog-title" ref={panelRef}>
@@ -356,6 +381,31 @@ function CvWindow({ onClose, onDownloaded }) {
   )
 }
 
+/**
+ * Stays on screen after `open` turns false, long enough to close the way it
+ * opened. Opened again while it is still closing, it starts over as a new
+ * window rather than bringing the old one back.
+ */
 export default function CvFormatDialog({ open, onClose, onDownloaded }) {
-  return open ? createPortal(<CvWindow onClose={onClose} onDownloaded={onDownloaded} />, document.body) : null
+  const [wasOpen, setWasOpen] = useState(open)
+  const [shown, setShown] = useState(open)
+  const [run, setRun] = useState(0)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) {
+      setShown(true)
+      setRun((n) => n + 1)
+    }
+  }
+  if (!shown) return null
+  return createPortal(
+    <CvWindow
+      key={run}
+      closing={!open}
+      onClose={onClose}
+      onDownloaded={onDownloaded}
+      onGone={() => setShown(false)}
+    />,
+    document.body
+  )
 }

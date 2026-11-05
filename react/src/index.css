@@ -94,13 +94,6 @@ nav.scrolled {
     position: relative;
 }
 
-@media (pointer: fine) {
-    nav,
-    nav * {
-        cursor: none !important;
-    }
-}
-
 .nav-link:hover {
     color: var(--primary);
 }

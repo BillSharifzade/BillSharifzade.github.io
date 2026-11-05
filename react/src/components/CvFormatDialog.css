@@ -46,6 +46,29 @@
   }
 }
 
+/* Closing: the opening backwards, a little quicker and easing in. The window
+   lets go of the page at once (inert), so nothing waits for the fade. */
+.cv-dialog-overlay[data-closing] {
+  animation: cv-fade-out 0.24s ease forwards;
+}
+
+.cv-dialog-overlay[data-closing] .cv-dialog {
+  animation: cv-sink 0.24s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes cv-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes cv-sink {
+  to {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+
 /* ---- Title bar ----------------------------------------------------------- */
 
 .cv-dialog__chrome {
@@ -344,7 +367,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cv-dialog-overlay,
-  .cv-dialog {
+  .cv-dialog,
+  .cv-dialog-overlay[data-closing],
+  .cv-dialog-overlay[data-closing] .cv-dialog {
     animation: none;
   }
 

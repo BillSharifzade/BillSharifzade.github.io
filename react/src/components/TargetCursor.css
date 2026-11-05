@@ -56,3 +56,10 @@
   border-right: none;
   border-top: none;
 }
+
+/* Where the custom cursor is showing (TargetCursor marks its scope), the
+   page's own cursor steps aside, pointers and text bars included. */
+[data-target-cursor],
+[data-target-cursor] * {
+  cursor: none !important;
+}

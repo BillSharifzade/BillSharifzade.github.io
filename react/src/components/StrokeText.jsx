@@ -299,21 +299,18 @@ const StrokeText = ({
           ))}
         </text>
 
-        <text
-          className="stroke-text__fill"
-          x="0"
-          y="0"
-          fill={fillColor}
-          stroke="none"
-          style={fontStyle}
-          clipPath={fillMode === 'wipe' && box ? `url(#${wipeId})` : undefined}
-        >
-          {characters.map((char, index) => (
-            <tspan data-fill-char key={`f-${index}`}>
-              {char}
-            </tspan>
-          ))}
-        </text>
+        {/* The wipe clips a group around the fill, not the text itself: WebKit
+            (Safari, every iPhone browser) ignores a clip on <text> that covers
+            none of it, so the fill showed in full before the wipe began. */}
+        <g clipPath={fillMode === 'wipe' && box ? `url(#${wipeId})` : undefined}>
+          <text className="stroke-text__fill" x="0" y="0" fill={fillColor} stroke="none" style={fontStyle}>
+            {characters.map((char, index) => (
+              <tspan data-fill-char key={`f-${index}`}>
+                {char}
+              </tspan>
+            ))}
+          </text>
+        </g>
       </svg>
     </span>
   );
