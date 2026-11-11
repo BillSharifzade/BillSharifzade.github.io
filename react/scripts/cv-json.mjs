@@ -49,7 +49,7 @@ const cv = {
     desc: exp.desc,
     bullets: exp.bullets,
   })),
-  projects: projects.map((p) => ({
+  projects: projects.filter((p) => p.cv !== false).map((p) => ({
     name: p.name,
     href: p.href,
     repoLine: projectRepoLine(p),

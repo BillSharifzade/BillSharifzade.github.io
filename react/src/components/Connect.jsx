@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
 import DownloadCvButton from './DownloadCvButton.jsx'
+import MintakaMark from './MintakaMark.jsx'
+import { MINTAKA, MINTAKA_MARK, circlePath } from '../data/mintaka.js'
 import { channels } from '../data/contacts.js'
 import { SIGNAL_LOGO } from '../data/signalLogo.js'
 import { ICON_PATHS } from '../data/icons.js'
@@ -24,6 +26,12 @@ const SHAPES = {
   Telegram: shape('telegram'),
   LinkedIn: shape('linkedin'),
   GitHub: shape('github'),
+  // The viewBox doesn't start at 0 0: x and y move it there.
+  Mintaka: (() => {
+    const [x, y, w, h] = MINTAKA_MARK.viewBox.split(' ').map(Number)
+    const { body, betelgeuse, mintaka, belt } = MINTAKA_MARK
+    return { x, y, w, h, paths: [body, ...[betelgeuse, mintaka, ...belt].map(circlePath)] }
+  })(),
 }
 
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -70,7 +78,7 @@ function condense(spans, text, { blank = false, stagger = 22 } = {}) {
 /* ---- Brand marks drawn in the backdrop's characters ----------------------- */
 
 /** How dense each cell of a mark is, as a step of the ramp (0 = empty). */
-function rasterise({ w, h, paths }, cols, rows) {
+function rasterise({ x = 0, y = 0, w, h, paths }, cols, rows) {
   // Six by ten pixels a cell: the shape of a JetBrains Mono character.
   const cw = 6
   const ch = 10
@@ -82,6 +90,7 @@ function rasterise({ w, h, paths }, cols, rows) {
   const s = Math.min(canvas.width / w, canvas.height / h) * 0.96
   ctx.translate((canvas.width - w * s) / 2, (canvas.height - h * s) / 2)
   ctx.scale(s, s)
+  ctx.translate(-x, -y)
   ctx.fillStyle = '#fff'
   paths.forEach((d) => ctx.fill(new Path2D(d)))
   const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height)
@@ -183,6 +192,42 @@ function Channel({ channel }) {
         {channel.external && <span className="sr-only"> (opens in a new tab)</span>}
       </a>
     </li>
+  )
+}
+
+/**
+ * For work that needs a team: Mintaka, the studio, and its brief form. Drawn
+ * like the channel cards, a full row under them.
+ */
+function Studio() {
+  const [artRef, shine] = useAsciiMark('Mintaka', 15, 12)
+
+  return (
+    <a
+      className="studio"
+      href={MINTAKA.brief}
+      target="_blank"
+      rel="noopener noreferrer"
+      onPointerEnter={shine}
+      onFocus={shine}
+    >
+      <pre className="studio__art" ref={artRef} aria-hidden="true" />
+      <span className="studio__mark" aria-hidden="true">
+        <MintakaMark />
+      </span>
+      <span className="studio__text">
+        <span className="studio__name">
+          Mintaka <em>my studio</em>
+        </span>
+        <span className="studio__line">
+          Need a whole team? We build high-load Rust backends and the fast interfaces on top of them.
+        </span>
+        <span className="studio__verb">
+          Start a project <span aria-hidden="true">↗</span>
+        </span>
+      </span>
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
   )
 }
 
@@ -355,6 +400,8 @@ export default function Connect() {
           <Channel key={c.label} channel={c} />
         ))}
       </ul>
+
+      <Studio />
     </div>
   )
 }

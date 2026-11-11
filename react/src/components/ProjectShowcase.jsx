@@ -305,6 +305,11 @@ export default function ProjectShowcase({ projects }) {
                     <a className="pshow__link" href={p.href} target="_blank" rel="noopener noreferrer">
                       <Icon name="github" /> Open {p.repo}
                     </a>
+                    {p.site && (
+                      <a className="pshow__link" href={p.site} target="_blank" rel="noopener noreferrer">
+                        <Icon name="globe" /> Visit the site
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

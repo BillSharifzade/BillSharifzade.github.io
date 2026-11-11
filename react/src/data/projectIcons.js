@@ -16,6 +16,8 @@ import {
   siBun,
   siNatsdotio,
   siKotlin,
+  siWebassembly,
+  siLetsencrypt,
 } from 'simple-icons'
 
 const SOURCE = {
@@ -36,6 +38,8 @@ const SOURCE = {
   siBun,
   siNatsdotio,
   siKotlin,
+  siWebassembly,
+  siLetsencrypt,
 }
 
 export const projectIcons = Object.fromEntries(

@@ -1,0 +1,8 @@
+/* One colour, from the parent's text colour (the brand kit's mono colourway). */
+.mk-mark {
+  display: block;
+  height: 100%;
+  width: auto;
+  overflow: visible;
+  fill: currentColor;
+}

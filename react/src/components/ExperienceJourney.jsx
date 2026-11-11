@@ -7,7 +7,14 @@ import technohubLogo from '../assets/technohub.png'
 import tagLogo from '../assets/tag.png'
 import foundersLogo from '../assets/founder_school.png'
 import Icon from './Icon.jsx'
+import MintakaMark from './MintakaMark.jsx'
 import './ExperienceJourney.css'
+
+// Marks drawn inline rather than loaded: no request, and the mark takes the
+// card's white from the text colour, as the image logos get it from a filter.
+const COMPANY_MARKS = {
+  Mintaka: MintakaMark,
+}
 
 const COMPANY_LOGOS = {
   'Azal Telecommunications': azalLogo,
@@ -70,6 +77,14 @@ function monogram(company) {
 }
 
 function JourneyLogo({ company }) {
+  const Mark = COMPANY_MARKS[company]
+  if (Mark) {
+    return (
+      <span className="journey-logo journey-logo--mark">
+        <Mark title={`${company} logo`} />
+      </span>
+    )
+  }
   const src = COMPANY_LOGOS[company]
   if (src) {
     return (
@@ -88,6 +103,20 @@ function JourneyLogo({ company }) {
 // The curve through the timeline's nodes. Its size is state of its own: while a
 // card opens, the observer resizes it every frame, and that should re-render
 // the curve, not the six cards.
+// The name with its arrow. The last word and the arrow can't be split, so on
+// a narrow card the arrow never wraps onto a line of its own.
+function CompanyName({ name }) {
+  const cut = name.lastIndexOf(' ') + 1
+  return (
+    <>
+      {name.slice(0, cut)}
+      <span className="journey-company__tail">
+        {name.slice(cut)} <span aria-hidden="true">↗</span>
+      </span>
+    </>
+  )
+}
+
 function JourneyCurve({ pathRef, sizeRef }) {
   const [svgSize, setSvgSize] = useState({ w: 0, h: 0 })
   useLayoutEffect(() => {
@@ -212,7 +241,14 @@ function ExperienceJourney() {
                 <div className="journey-card-meta">
                   <span className="journey-date">{exp.date}</span>
                   <h3 className="journey-title">{exp.title}</h3>
-                  <span className="journey-company">{exp.company}</span>
+                  {exp.site ? (
+                    <a className="journey-company journey-company--link" href={exp.site} target="_blank" rel="noopener noreferrer">
+                      <CompanyName name={exp.company} />
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ) : (
+                    <span className="journey-company">{exp.company}</span>
+                  )}
                 </div>
                 <button
                   type="button"

@@ -10,10 +10,20 @@ import koinotinavJob from '../assets/live/koinotinav-job.svg?no-inline'
 import dsc from '../assets/live/dsc.webp?no-inline'
 import ats from '../assets/live/ats.webp?no-inline'
 import velve from '../assets/live/velve.webp?no-inline'
+// The brand kit's mono logo in white, like the others.
+import mintaka from '../assets/live/mintaka.svg?no-inline'
+import { MINTAKA } from './mintaka.js'
 
 // Sites Bilol has built that are live today, for the "Live sites" window in
 // Selected Projects. A few of many; the rest aren't public.
 export const liveSites = [
+  {
+    title: 'Mintaka',
+    logo: { src: mintaka, width: 519, height: 155 },
+    kind: 'My studio',
+    blurb: 'The studio I founded, with a lab that measures every claim live.',
+    url: MINTAKA.studio,
+  },
   {
     title: 'TechnoHub',
     logo: { src: technohub, width: 441, height: 96 },

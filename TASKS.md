@@ -110,6 +110,27 @@ bottom; each task is ticked once it builds and has been checked in the browser.
       moment it starts closing; opened again mid-close, it starts as a new
       window. Reduced motion closes at once.
 
+## 1k. Mintaka on the site (2026-11-09)
+Links and the mark live in `react/src/data/mintaka.js`, so the studio's move to a
+domain of its own is one edit. Its logos are black and white like everyone
+else's (the brand kit's mono colourway); the project's screenshots keep their
+colour, as the other projects' do.
+- [x] Professional Journey: the Mintaka mark replaces the "MI" monogram, and the
+      company name links to the studio.
+- [x] Selected Projects: `mintaka_web` after tek — the lab's live Dushanbe search and
+      the studio on a phone as covers, an Impact view (< 50 µs per request at p99,
+      0 third parties, < 14 kB first screen, Measure → Build → Prove) and a
+      "Visit the site" button.
+      Site only (`cv: false`): on the CV it would start a fourth page.
+- [x] Live sites: Mintaka first, with its logo.
+- [x] Let's Connect: a Mintaka row under the channels ("Need a whole team?"),
+      its mark drawn in the backdrop's characters, linking to the brief form.
+- [x] JSON-LD: `worksFor` Mintaka.
+- [x] (2026-11-11) Mintaka's logos black and white like everyone else's.
+- [x] (2026-11-11) The KTech (Koinoti Nav), TechnoHub and TAG cards link their
+      company names to kit.tj, technohub.tj and tag.tj, like Mintaka's. On a
+      narrow card the arrow wraps with the last word, never alone.
+
 ## 1b. Small follow-ups (2026-11-03)
 - [x] Docker leftovers from the screenshot run removed (containers, volumes, dangling
       images).

@@ -42,6 +42,7 @@ const showcaseProjects = projects.map((p) => ({
   name: p.name,
   repo: p.repo,
   href: p.href,
+  site: p.site,
   stack: p.stack,
   blurb: p.blurb,
   images: projectCovers[p.cover].map((img) => (typeof img === 'string' ? { src: img } : img)),

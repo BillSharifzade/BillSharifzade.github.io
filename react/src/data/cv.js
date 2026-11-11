@@ -1,4 +1,5 @@
 import { cvContacts } from './contacts.js'
+import { MINTAKA } from './mintaka.js'
 
 export const profile = {
   name: 'Sharifzoda Bilol',
@@ -42,6 +43,9 @@ export const experience = [
   {
     title: 'Founder',
     company: 'Mintaka',
+    // The company's own site, linked from its name (site only: the exports
+    // pick their fields in scripts/cv-json.mjs).
+    site: MINTAKA.studio,
     date: 'December 2025 - Present',
     type: 'Founder',
     desc: 'Founded and lead a software company building efficient, reliable, and secure solutions with polished UI/UX for B2C, B2B, and B2G across platforms, systems, and SaaS.',
@@ -56,6 +60,7 @@ export const experience = [
   {
     title: 'Backend Architect',
     company: 'Koinoti Nav',
+    site: 'https://kit.tj/',
     date: 'October 2025 - Present',
     type: 'Engineering',
     desc: 'Build performant, secure, and scalable software with Rust and Next.js. Design high-load architectures for modern systems.',
@@ -80,6 +85,7 @@ export const experience = [
   {
     title: 'Technical Instructor',
     company: 'TechnoHub',
+    site: 'https://technohub.tj/',
     date: 'January 2025 - February 2026',
     desc: 'Taught programming, trained corporate teams, and developed software projects for enterprise clients.',
     summary: 'Teaching everything from Assembly to AI forced me to explain fundamentals precisely, and that precision now shapes how I write code and documentation. Training corporate teams showed me how technology actually changes the way an organisation works.',
@@ -92,6 +98,7 @@ export const experience = [
   {
     title: 'AI Specialist',
     company: 'TAG Marketeer Agency',
+    site: 'https://tag.tj/',
     date: 'February 2025 - March 2025',
     desc: 'Implemented AI solutions and automated marketing workflows, optimizing business processes through intelligent automation.',
     summary: 'Turning months of manual work into a single day showed me how quickly well-aimed automation pays for itself. It grounded my AI work in measurable business outcomes rather than demos.',
@@ -187,6 +194,26 @@ export const projects = [
       + 'per-account discount and cashback rules, multi-axis product variants with their own URLs and stock, cart '
       + 'estimates in Excel, B2B invoicing, a manager panel, catalogue import from 1C exports, and CRM, 1C and e-mail '
       + 'delivery through a transactional outbox. Catalogue listings serve ~30,000 rps (p99 14 ms) in load tests.',
+  },
+  {
+    name: 'Mintaka Studio & Lab',
+    href: MINTAKA.repo,
+    repo: 'mintaka_web',
+    site: MINTAKA.studio,
+    // On the site only: the CV is three pages, and this would start a fourth.
+    // Mintaka is on the CV as the Founder role.
+    cv: false,
+    cover: 'mintaka',
+    icons: ['siRust', 'siWebassembly', 'siTypescript', 'siLetsencrypt'],
+    stack: 'Rust (Axum, rustls, quinn, Maud) \u00b7 WebAssembly \u00b7 TypeScript \u00b7 HTTP/3 \u00b7 Fluent',
+    blurb:
+      'My studio\u2019s website, where every claim is measured in front of the visitor: a Rust server that spends '
+      + 'under 50 \u00b5s on a request, a first screen under 14 kB, and a lab of live instruments you can attack yourself.',
+    desc:
+      'The website of Mintaka, the studio I founded, where every claim is measured live. Rust end to end: a '
+      + 'generator that enforces a 14 kB first screen, an Axum + rustls server with post-quantum TLS and HTTP/3 that '
+      + 'spends under 50 \u00b5s on a request at p99, and WebAssembly instruments \u2014 a fuzzer, city-scale routing '
+      + 'and a queueing simulator.',
   },
   {
     name: 'Payment System',

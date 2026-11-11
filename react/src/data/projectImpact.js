@@ -40,6 +40,16 @@ export const projectImpact = {
     { kind: 'flow', label: 'An order', steps: ['Price per account', 'Cart', 'Invoice', '1C reserve', 'CRM'] },
     { kind: 'stack', label: 'Built with' },
   ],
+  // From mintaka_web's production benchmark (bench/results/2026-10-30-koinot-dyu-1.md:
+  // the server's own time per request, p99 27–47 µs) and the site's build budgets.
+  mintaka_web: [
+    { kind: 'metric', label: 'Server time', prefix: '< ', value: 50, suffix: ' µs', note: 'per request, p99 at 4,000 req/s', icon: 'gauge-high', grid: true },
+    { kind: 'fact', label: 'The lab', title: 'Dushanbe, routed live', note: 'Dijkstra and A* across 8,393 intersections, in your browser', icon: 'globe' },
+    { kind: 'fact', label: 'Third parties', title: '0', note: 'requests, trackers or cookies', icon: 'shield-alt' },
+    { kind: 'fact', label: 'First screen', title: '< 14 kB', note: 'compressed; the build enforces it', icon: 'bolt' },
+    { kind: 'flow', label: 'Every project', steps: ['Measure', 'Build', 'Prove'] },
+    { kind: 'stack', label: 'Built with' },
+  ],
   payment_system: [
     { kind: 'potential', label: 'Status', status: 'Alpha', title: 'Potential', note: 'beyond the usual scale, in money and in people' },
     { kind: 'fact', label: 'Money', title: 'No floats, ever', note: 'integer minor units', icon: 'scale-balanced' },

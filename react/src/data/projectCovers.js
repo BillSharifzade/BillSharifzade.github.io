@@ -6,6 +6,8 @@ import tekDesktop from '../assets/projects/tek-desktop.webp'
 import tekPhone from '../assets/projects/tek-phone.webp'
 import paymentDesktop from '../assets/projects/payment-desktop.webp'
 import paymentPhone from '../assets/projects/payment-phone.webp'
+import mintakaDesktop from '../assets/projects/mintaka-desktop.webp'
+import mintakaPhone from '../assets/projects/mintaka-phone.webp'
 
 // Screenshots per project. A `phone` shot is drawn as a handset over the
 // desktop one.
@@ -15,4 +17,6 @@ export const projectCovers = {
   'hr-progress': [hrProgress],
   tek: [tekDesktop, { src: tekPhone, phone: true }],
   payment: [paymentDesktop, { src: paymentPhone, phone: true }],
+  // The lab's live search over Dushanbe, and the studio's front page.
+  mintaka: [mintakaDesktop, { src: mintakaPhone, phone: true }],
 }

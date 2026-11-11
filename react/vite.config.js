@@ -17,6 +17,7 @@ import {
   dateLine,
 } from './src/data/cv.js'
 import { CV_FORMATS } from './src/data/cvFormats.js'
+import { MINTAKA } from './src/data/mintaka.js'
 
 const SITE = 'https://billsharifzade.github.io/'
 
@@ -118,6 +119,8 @@ function renderJsonLd() {
       .filter((c) => c.href && c.href.startsWith('http'))
       .map((c) => c.href),
     alumniOf: education.map((ed) => ({ '@type': 'CollegeOrUniversity', name: ed.school })),
+    // The studio Bilol founded (cv.js profile.role: "Founder of Mintaka").
+    worksFor: { '@type': 'Organization', name: MINTAKA.name, url: MINTAKA.studio, sameAs: [MINTAKA.repo] },
   }
   const json = JSON.stringify(data).replace(/</g, '\\u003c')
   return `<script type="application/ld+json">${json}</script>`
